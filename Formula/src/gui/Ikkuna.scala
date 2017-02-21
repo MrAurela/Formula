@@ -13,7 +13,7 @@ import javax.swing._
 
 
 
-object Window extends SimpleSwingApplication {
+object Ikkuna extends SimpleSwingApplication {
   UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
   
   val w = 1000
@@ -42,7 +42,7 @@ object Window extends SimpleSwingApplication {
   
   
   val vasenPuoli = new BoxPanel(Orientation.Vertical) {
-    val ruudukko = new Grid(10, 10)
+    val ruudukko = new Ruudukko(10, 10)
     this.contents += ruudukko
     this.contents += vaihteenVaihto
   }

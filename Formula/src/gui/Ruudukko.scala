@@ -2,7 +2,7 @@ package gui
 
 import scala.swing._
 
-class Grid(cols: Int, rows: Int) extends Panel {
+class Ruudukko(cols: Int, rows: Int) extends Panel {
   
   var squareSize = 50
   
