@@ -1,8 +1,11 @@
 
 package gui
 
+import peli.Peli
+
 import scala.swing._
 import javax.swing._
+
 
 /* Lähteet:
  * Pentaminoes-projektin (Ryhmämme työ Ohjelmointi 1 kurssilla) GameWindow-olio 
@@ -42,7 +45,7 @@ object Ikkuna extends SimpleSwingApplication {
   
   
   val vasenPuoli = new BoxPanel(Orientation.Vertical) {
-    val ruudukko = new Ruudukko(10, 10)
+    var ruudukko = new Ruudukko(5, 5)
     this.contents += ruudukko
     this.contents += vaihteenVaihto
   }
@@ -53,8 +56,7 @@ object Ikkuna extends SimpleSwingApplication {
     layout(vasenPuoli) = c
   }
   
-  
-  val ikkuna = new MainFrame {
+  def top = new MainFrame {
     title = "Formula"
     preferredSize = new Dimension(leveys, korkeus)
     
@@ -62,9 +64,7 @@ object Ikkuna extends SimpleSwingApplication {
     //Tarvitaan vain jos käytetään näppäimistöä
     //gameScreen.requestFocus
   }
-  
-  def top = ikkuna
-    
     
     
 }
+
