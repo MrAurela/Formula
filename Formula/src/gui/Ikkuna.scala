@@ -16,8 +16,8 @@ import javax.swing._
 object Ikkuna extends SimpleSwingApplication {
   UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
   
-  val w = 1000
-  val h = 800
+  val leveys = 1000
+  val korkeus = 800
   
   val vaihteenVaihto = new BoxPanel(Orientation.Horizontal) {
   
@@ -56,7 +56,7 @@ object Ikkuna extends SimpleSwingApplication {
   
   val ikkuna = new MainFrame {
     title = "Formula"
-    preferredSize = new Dimension(w, h)
+    preferredSize = new Dimension(leveys, korkeus)
     
     contents = ikkunanSisalto
     //Tarvitaan vain jos käytetään näppäimistöä
