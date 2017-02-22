@@ -13,7 +13,7 @@ class Ruudukko(vaakaRuudut: Int, pystyRuudut: Int) extends Panel {
   preferredSize = new Dimension(pystyRuudut * ruudunKoko + 1, vaakaRuudut * ruudunKoko + 1 )
   
   override def paintComponent(g: Graphics2D) = {
-    this.piirraMaastot(g)
+    this.piirraMaastotJaAutot(g)
     this.piirraRuudukko(g)
   }
   
@@ -23,13 +23,13 @@ class Ruudukko(vaakaRuudut: Int, pystyRuudut: Int) extends Panel {
     for (pysty <- 0 to pystyRuudut) g.drawLine(0, pysty * ruudunKoko, vaakaRuudut * ruudunKoko, pysty * ruudunKoko)
   }
   
-  private def piirraMaastot(g: Graphics2D) = { //Piirtää maastoruudut eri väreillä sekä autot
+  private def piirraMaastotJaAutot(g: Graphics2D) = { //Piirtää maastoruudut eri väreillä sekä autot
     val ruudut = Peli.pelitilanne.get.pelilauta.ruudut
     for (vaaka <- 0 until vaakaRuudut; pysty <- 0 until pystyRuudut) {
       ruudut(vaaka)(pysty).maasto match { //Valitaan maaston väri
-        case Rata => g.setColor(Color.BLACK)
-        case Reuna => g.setColor(Color.WHITE)
-        case Maali => g.setColor(Color.GRAY)
+        case Rata => g.setColor(Color.WHITE)
+        case Reuna => g.setColor(Color.BLACK)
+        case Maali(_) => g.setColor(Color.GRAY)
       }
       g.fillRect(vaaka * ruudunKoko, pysty * ruudunKoko, ruudunKoko, ruudunKoko) //Piirretään maastoruutu
       

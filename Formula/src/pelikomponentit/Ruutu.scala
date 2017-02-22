@@ -7,7 +7,7 @@ class Ruutu(maasto_ : Maasto) {
   
   def onAuto = this.auto.isDefined
   
-  def poistaAuto = this.auto = None
+  def poistaAuto() = this.auto = None
   
   def lisaaAuto(auto: Auto) = this.auto = Some(auto)
   
