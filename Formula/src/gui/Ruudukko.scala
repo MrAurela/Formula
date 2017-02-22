@@ -23,13 +23,18 @@ class Ruudukko(vaakaRuudut: Int, pystyRuudut: Int) extends Panel {
     for (pysty <- 0 to pystyRuudut) g.drawLine(0, pysty * ruudunKoko, vaakaRuudut * ruudunKoko, pysty * ruudunKoko)
   }
   private def drawTerrains(g: Graphics2D) = {
-    val maastot = Peli.pelitilanne.get.pelilauta.maastot
+    val ruudut = Peli.pelitilanne.get.pelilauta.ruudut
     for (vaaka <- 0 until vaakaRuudut; pysty <- 0 until pystyRuudut) {
-      maastot(vaaka)(pysty) match {
+      ruudut(vaaka)(pysty).maasto match {
         case Rata => g.setColor(Color.BLACK)
         case Reuna => g.setColor(Color.WHITE)
       }
       g.fillRect(vaaka * ruudunKoko, pysty * ruudunKoko, ruudunKoko, ruudunKoko)
+      if (ruudut(vaaka)(pysty).onAuto) {
+        g.setColor(Color.BLUE)
+        g.fillOval(((vaaka + 0.25) * ruudunKoko).toInt , ((pysty + 0.25) * ruudunKoko).toInt,
+            (0.5*ruudunKoko).toInt, (0.5*ruudunKoko).toInt)
+      }
     }
   }
 }
