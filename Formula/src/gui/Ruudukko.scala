@@ -6,6 +6,11 @@ import pelikomponentit._
 import scala.swing._
 import java.awt.Color
 
+/* Lähteet:
+ * Samoja lähteitä kuin Ikkunassa.
+ * 
+ */
+
 class Ruudukko(vaakaRuudut: Int, pystyRuudut: Int) extends Panel {
   
   var ruudunKoko = 50

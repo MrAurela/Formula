@@ -4,6 +4,7 @@ package gui
 import peli.Peli
 
 import scala.swing._
+import scala.swing.event._
 import javax.swing._
 
 
@@ -21,6 +22,8 @@ object Ikkuna extends SimpleSwingApplication {
   
   val leveys = 1000
   val korkeus = 800
+  
+  val ruudukko = new Ruudukko(5,5)
   
   val vaihteenVaihto = new BoxPanel(Orientation.Horizontal) {
   
@@ -45,7 +48,6 @@ object Ikkuna extends SimpleSwingApplication {
   
   
   val vasenPuoli = new BoxPanel(Orientation.Vertical) {
-    var ruudukko = new Ruudukko(5, 5)
     this.contents += ruudukko
     this.contents += vaihteenVaihto
   }
@@ -56,6 +58,8 @@ object Ikkuna extends SimpleSwingApplication {
     layout(vasenPuoli) = c
   }
   
+
+  
   def top = new MainFrame {
     title = "Formula"
     preferredSize = new Dimension(leveys, korkeus)
@@ -63,6 +67,13 @@ object Ikkuna extends SimpleSwingApplication {
     contents = ikkunanSisalto
     //Tarvitaan vain jos käytetään näppäimistöä
     //gameScreen.requestFocus
+    
+    listenTo(ruudukko.mouse.clicks)
+    reactions += {
+      case MouseClicked(ruudukko, sijainti, _, _, _) => {
+        println("moi")
+      }
+    }
   }
     
     
