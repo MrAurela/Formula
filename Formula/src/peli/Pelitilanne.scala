@@ -3,6 +3,7 @@ package peli
 
 import pelikomponentit.Pelilauta
 import siirrot.Koordinaatti
+import  pelikomponentit._
 
 class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
   
@@ -10,6 +11,8 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
   val pelilauta = lauta
   
   var vuorossa = pelaajaLista(0)
+  
+  def eiVuorossa = pelaajaLista.find(_ != vuorossa)
   
   def siirraAutoa(kohde: Koordinaatti) {
     val siirtoOnnistui = this.pelilauta.siirraAutoa(vuorossa.auto, kohde)
@@ -21,4 +24,11 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
     else vuorossa = pelaajat(0)
   }
   
+}
+
+object Pelitilanne {
+  
+  def apply() = new Pelitilanne(new Pelilauta(Vector(Vector())),
+                              Vector(new Pelaaja(new Auto()), new Pelaaja(new Auto())))
+      
 }

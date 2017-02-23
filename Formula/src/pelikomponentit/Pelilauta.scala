@@ -10,29 +10,35 @@ class Pelilauta(maastot: Vector[Vector[Maasto]]) {
   val leveys = ruudut.flatten.length / korkeus //Suorakaiteen mallisen radan leveys saadaan jakamalla
                                                //koko pinta-ala korkeudella.
   
-  def alustaAutot() = {
+  def alustaAutot(autot: Vector[Auto]) = {
     for (pystySuorat <- ruudut; ruutu <- pystySuorat) {
       if (ruutu.maasto == AloitusRuutu1) {
-        ruutu.lisaaAuto(new Auto)
+        ruutu.lisaaAuto(autot(0))
       } else if (ruutu.maasto == AloitusRuutu2) {
-        ruutu.lisaaAuto(new Auto)
+        ruutu.lisaaAuto(autot(1))
       }
     }
   }
   
   def siirraAutoa(auto: Auto, kohde: Koordinaatti): Boolean = {
-    val lahto = this.etsiAuto(auto)
-    ruudut(kohde.y)(kohde.x).lisaaAuto(auto)
-    ruudut(lahto.y)(lahto.x).poistaAuto()
-    true //Toistaiseksi ei tarkasteta onko siirto laillinen
+    if (kohde.onLaudalla(this)) {
+      println(true)
+      val lahto = this.etsiAuto(auto)
+      ruudut(kohde.y)(kohde.x).lisaaAuto(auto)
+      ruudut(lahto.y)(lahto.x).poistaAuto()
+      true //Toistaiseksi tarkistetaan vain että siirto on laudalla
+    } else {
+      println(false)
+      false
+    }
   }
   
   private def etsiAuto(auto: Auto): Koordinaatti = {
-    var koordinaatti = Koordinaatti(-1,-1)
     for (x <- 0 until leveys; y <- 0 until korkeus) {
-      if (ruudut(y)(x).auto.getOrElse(new Auto()) == auto) koordinaatti = Koordinaatti(y,x)
+      if (ruudut(y)(x).auto.getOrElse(new Auto()) == auto) 
+        return Koordinaatti(x,y)
     }
-    koordinaatti
+    throw new Exception("Funktio etsiAuto, ei löytänyt autoa.")
   }
   
 }

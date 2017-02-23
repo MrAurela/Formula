@@ -2,9 +2,9 @@ package peli
 
 import pelikomponentit.Auto
 
-class Pelaaja() {
+class Pelaaja(auto_ : Auto) {
   
-  val auto = new Auto()
+  val auto = auto_
   var tekoaly: Option[AI] = None
   
   def onPelaaja = tekoaly.isDefined

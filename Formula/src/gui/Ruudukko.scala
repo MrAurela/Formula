@@ -2,6 +2,8 @@ package gui
 
 import peli.Peli
 import pelikomponentit._
+import peli.Pelitilanne
+import siirrot.Koordinaatti
 
 import scala.swing._
 import scala.swing.event._
@@ -50,7 +52,10 @@ class Ruudukko(vaakaRuudut: Int, pystyRuudut: Int) extends Panel {
   listenTo(this.mouse.clicks)
     reactions += {
       case MouseClicked(ruudukko, sijainti, _, _, _) => {
-        println("moi")
+        val klikattuKoordinaatti = Koordinaatti(sijainti.y / ruudunKoko, sijainti.x  / ruudunKoko)
+        println(klikattuKoordinaatti)
+        Peli.pelitilanne.getOrElse(Pelitilanne()).siirraAutoa(klikattuKoordinaatti)
+        repaint()
       }
     }
 }

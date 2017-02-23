@@ -1,8 +1,7 @@
 package peli
 
 import tietojenTallennus.Rata
-
-import pelikomponentit.Pelilauta
+import pelikomponentit.{Pelilauta, Auto}
 
 object Peli {
   
@@ -14,13 +13,16 @@ object Peli {
     val lauta = new Pelilauta(rata.muoto)
     val tilanne = new Pelitilanne(lauta, pelaajat)
     
-    tilanne.pelilauta.alustaAutot()
+    tilanne.pelilauta.alustaAutot(pelaajat.map(_.auto))
     
     this.pelitilanne = Some(tilanne)
    
   }
   
-  uusiPeli(new Rata, Vector(new Pelaaja(), new Pelaaja()))
+  val auto1 = new Auto()
+  val auto2 = new Auto()
+  
+  uusiPeli(new Rata, Vector(new Pelaaja(auto1), new Pelaaja(auto2)))
   
   
 }
