@@ -68,12 +68,12 @@ object Ikkuna extends SimpleSwingApplication {
     //Tarvitaan vain jos käytetään näppäimistöä
     //gameScreen.requestFocus
     
-    listenTo(ruudukko.mouse.clicks)
+    /*listenTo(ruudukko.mouse.clicks)
     reactions += {
       case MouseClicked(ruudukko, sijainti, _, _, _) => {
         println("moi")
       }
-    }
+    }*/
   }
     
     

@@ -4,6 +4,7 @@ import peli.Peli
 import pelikomponentit._
 
 import scala.swing._
+import scala.swing.event._
 import java.awt.Color
 
 /* Lähteet:
@@ -45,4 +46,11 @@ class Ruudukko(vaakaRuudut: Int, pystyRuudut: Int) extends Panel {
       }
     }
   }
+  
+  listenTo(this.mouse.clicks)
+    reactions += {
+      case MouseClicked(ruudukko, sijainti, _, _, _) => {
+        println("moi")
+      }
+    }
 }
