@@ -1,11 +1,13 @@
 package peli
 
-import tietojenTallennus.Rata
-import pelikomponentit.{Pelilauta, Auto}
+import tietojenTallennus.{TiedostonHallinta, Rata}
+import pelikomponentit._
 
 object Peli {
   
   var pelitilanne: Option[Pelitilanne] = None
+  
+  val rataLista = TiedostonHallinta.haeRadat
   
   def peliKaynnissa = pelitilanne.isDefined
   
@@ -22,7 +24,17 @@ object Peli {
   val auto1 = new Auto()
   val auto2 = new Auto()
   
-  uusiPeli(new Rata, Vector(new Pelaaja(auto1), new Pelaaja(auto2)))
+  
+  val muoto: Vector[Vector[Maasto]] = 
+    Vector(
+      Vector(Reuna, Reuna, Reuna, Reuna, Reuna), 
+      Vector(Reuna, Tie, Tie, Tie, Reuna),
+      Vector(AloitusRuutu1, AloitusRuutu2, Reuna, Tie, Reuna),
+      Vector(Tie, Tie, Tie, Tie, Reuna),
+      Vector(Reuna, Reuna, Reuna, Reuna, Reuna)
+    )
+  
+  uusiPeli(new Rata("testi",muoto), Vector(new Pelaaja(auto1), new Pelaaja(auto2)))
   
   
 }
