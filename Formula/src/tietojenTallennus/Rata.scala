@@ -5,7 +5,6 @@ import pelikomponentit._
 class Rata(nimi: String, radanMuoto: Vector[Vector[Maasto]]) { //ennatysLista: Vector[Tuple2[String, Int]]
   
   val muoto = radanMuoto
-  
 }
 
 

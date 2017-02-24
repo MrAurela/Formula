@@ -12,6 +12,7 @@ import pelikomponentit.Maasto
 
 
 //KYSYMYS: lueRadanRivit; voiko return-rivi olla ennne finallya? Käydäänkö finally kuitenkin?
+//Miksei try-catch toimi haeRadassa? --> NullPointerException
 
 object TiedostonHallinta {
   
@@ -19,11 +20,29 @@ object TiedostonHallinta {
   private val ratojenEnnatyslistat = "radat/enntatykset"
   
   def haeRadat: Vector[Rata] = {
-    val rataTiedostot = new File(rataKansio).listFiles().map(_.getName).toVector //Haetaan kaikkien kansion tiedostojen nimet.
-    val ratojenMuodot = rataTiedostot.map(this.lueRata(_)).toVector //Haetaan ratojen sisällöt samassa järjestyksessä.
-    val tiedot = rataTiedostot.zip(ratojenMuodot).filter(_._2.isDefined) //Poistetaan yhdistelmät, joissa rata on None.
-    val valmis = tiedot.unzip._1.zip(tiedot.unzip._2.map(_.get)) //Poistetaaan Some-kääreet
-    valmis.map(monikko => Rata(monikko._1, monikko._2)) //Luodaan lopullinen ratalista
+    try {
+      val rataTiedostot = new File(rataKansio).listFiles().map(_.getName).toVector //Haetaan kaikkien kansion tiedostojen nimet.
+      val ratojenMuodot = rataTiedostot.map(this.lueRata(_)).toVector //Haetaan ratojen sisällöt samassa järjestyksessä.
+      val tiedot = rataTiedostot.zip(ratojenMuodot).filter(_._2.isDefined) //Poistetaan yhdistelmät, joissa rata on None.
+      val valmis = tiedot.unzip._1.zip(tiedot.unzip._2.map(_.get)) //Poistetaaan Some-kääreet
+      valmis.map(monikko => Rata(monikko._1, monikko._2)) //Luodaan lopullinen ratalista
+    } catch {
+      case virheIlmoitus: FileNotFoundException => { //Tänne päädytäään jos kansio puuttuu.
+        println(virheIlmoitus)
+        println("Kansiota "+rataKansio+" ei löytynyt.")
+        Vector()
+      }
+      case virheIlmoitus : NullPointerException => { //Hallitsee nullpointer exceptionin.
+        println(virheIlmoitus)
+        println("NullPointerException tapahtui yrittäessa lukea tiedostoa "+rataKansio+".")
+        Vector()
+      }
+      case virheIlmoitus : Throwable => { //Hallitsee kaikki muut virheet paitsi kansion puuttumisen.
+        println(virheIlmoitus)
+        println("Odottamaton virhe tapahtui yrittäessa avata kansiota "+rataKansio+".")
+        Vector()
+      }
+    }
   }
   
   private def lueRata(rataTiedosto: String): Option[Vector[String]] = {
