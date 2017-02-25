@@ -20,8 +20,8 @@ import javax.swing._
 object Ikkuna extends SimpleSwingApplication {
   UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
   
-  //val leveys = 1000
-  //val korkeus = 800
+  val leveys = 1000
+  val korkeus = 800
   
   println(Peli.pelitilanne.get.pelilauta.leveys, Peli.pelitilanne.get.pelilauta.korkeus)
   val ruudukko = new Ruudukko(Peli.pelitilanne.get.pelilauta.leveys, Peli.pelitilanne.get.pelilauta.korkeus)
@@ -63,7 +63,7 @@ object Ikkuna extends SimpleSwingApplication {
   
   def top = new MainFrame {
     title = "Formula"
-    //preferredSize = new Dimension(leveys, korkeus)
+    preferredSize = new Dimension(leveys, korkeus)
     
     contents = ikkunanSisalto
     //Tarvitaan vain jos käytetään näppäimistöä

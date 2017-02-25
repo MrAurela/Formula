@@ -34,7 +34,7 @@ object Peli {
       Vector(Reuna, Reuna, Reuna, Reuna, Reuna)
     )
   
-  uusiPeli(rataLista(0), Vector(new Pelaaja(auto1), new Pelaaja(auto2)))
+  uusiPeli(rataLista(1), Vector(new Pelaaja(auto1), new Pelaaja(auto2)))
   
   
 }
