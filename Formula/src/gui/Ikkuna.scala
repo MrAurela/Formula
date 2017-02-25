@@ -34,6 +34,7 @@ object Ikkuna extends SimpleSwingApplication {
     val vaihdeAlas = new Button {
       preferredSize = new Dimension(100,100)
       text = "<-"
+      enabled = false //Alussa ei voi vaihtaa vaihdetta alaspäin
     }
     val vaihdeLuku = new Button {
       preferredSize = new Dimension(100,100)
@@ -44,6 +45,14 @@ object Ikkuna extends SimpleSwingApplication {
     this.contents += vaihdeLuku
     this.contents += vaihdeYlos
     
+    listenTo(vaihdeYlos, vaihdeAlas)
+    reactions += {
+      case ButtonClicked(nappula) => {
+        if (nappula == vaihdeYlos) VaihteenHallinta.nostaVaihdetta() //Kutsutaan auton vaihteen vaihto
+        if (nappula == vaihdeAlas) VaihteenHallinta.laskeVaihdetta()
+        VaihteenHallinta.paivita()
+      }
+    }
 
   }
   

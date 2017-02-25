@@ -58,6 +58,9 @@ class Ruudukko(vaakaRuudut_ : Int, pystyRuudut_ : Int) extends Panel {
         println(klikattuKoordinaatti)
         Peli.pelitilanne.getOrElse(Pelitilanne()).siirraAutoa(klikattuKoordinaatti)
         repaint()
+        
+        //Jos siirto onnistui ja vuoro vaihtui, päivitetään vaihdelaatikon teksti
+        VaihteenHallinta.paivita()
       }
     }
   

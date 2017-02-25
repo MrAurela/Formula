@@ -11,7 +11,7 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
   val pelilauta = lauta
   
   var vuorossa = pelaajaLista(0)
-  
+ 
   def eiVuorossa = pelaajaLista.find(_ != vuorossa)
   
   def siirraAutoa(kohde: Koordinaatti) {
@@ -22,6 +22,7 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
   private def vaihdaVuoroa() = {
     if (pelaajat(0) == vuorossa) vuorossa = pelaajat(1)
     else vuorossa = pelaajat(0)
+    vuorossa.auto.aloitaVuoro()
   }
   
 }
