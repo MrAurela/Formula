@@ -7,7 +7,9 @@ class Ruutu(maasto_ : Maasto) {
   
   override def toString = maasto.toString + ", " + auto.getOrElse("Ei autoa")
   
+  
   def onAuto = this.auto.isDefined
+  def eiAutoa = !this.onAuto
   
   def poistaAuto() = this.auto = None
   

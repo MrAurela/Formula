@@ -10,6 +10,10 @@ class Pelilauta(maastot: Vector[Vector[Maasto]]) {
   val korkeus = ruudut.length
   val leveys = ruudut(0).length
   
+  def apply(koordinaatti: Koordinaatti) = {
+    ruudut(koordinaatti.y)(koordinaatti.x)
+  }
+  
   def alustaAutot(autot: Vector[Auto]) = {
     for (pystySuorat <- ruudut; ruutu <- pystySuorat) {
       if (ruutu.maasto == AloitusRuutu1) {
@@ -21,7 +25,7 @@ class Pelilauta(maastot: Vector[Vector[Maasto]]) {
   }
   
   def siirraAutoa(auto: Auto, kohde: Koordinaatti): Boolean = {
-    if (kohde.onLaudalla(this)) {
+    if (kohde.onLaudalla(this) && this(kohde).eiAutoa && this(kohde).maasto!=Reuna) {
       println(true)
       val lahto = this.etsiAuto(auto)
       ruudut(kohde.y)(kohde.x).lisaaAuto(auto)
