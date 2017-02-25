@@ -20,7 +20,7 @@ class Ruudukko(vaakaRuudut_ : Int, pystyRuudut_ : Int) extends Panel {
   val vaakaRuudut = vaakaRuudut_
   val pystyRuudut = pystyRuudut_
   
-  preferredSize = new Dimension(vaakaRuudut * ruudunKoko, pystyRuudut * ruudunKoko)
+  preferredSize = new Dimension(vaakaRuudut * ruudunKoko +1, pystyRuudut * ruudunKoko +1) //+1, jottei reunimmaisimmat viivat leikkaudu pois.
   
   override def paintComponent(g: Graphics2D) = {
     this.piirraMaastotJaAutot(g)

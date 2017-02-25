@@ -21,6 +21,8 @@ object Peli {
    
   }
   
+  
+  //KUULUU TESTAUKSEEN
   val auto1 = new Auto()
   val auto2 = new Auto()
   
@@ -33,7 +35,7 @@ object Peli {
       Vector(Tie, Tie, Tie, Tie, Reuna),
       Vector(Reuna, Reuna, Reuna, Reuna, Reuna)
     )
-  
+
   uusiPeli(rataLista(1), Vector(new Pelaaja(auto1), new Pelaaja(auto2)))
   
   

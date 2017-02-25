@@ -23,7 +23,6 @@ object Ikkuna extends SimpleSwingApplication {
   val leveys = 1000
   val korkeus = 800
   
-  println(Peli.pelitilanne.get.pelilauta.leveys, Peli.pelitilanne.get.pelilauta.korkeus)
   val ruudukko = new Ruudukko(Peli.pelitilanne.get.pelilauta.leveys, Peli.pelitilanne.get.pelilauta.korkeus)
   
   val vaihteenVaihto = new BoxPanel(Orientation.Horizontal) {

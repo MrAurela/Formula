@@ -3,7 +3,8 @@ package pelikomponentit
 import siirrot.Koordinaatti
 
 class Pelilauta(maastot: Vector[Vector[Maasto]]) {
-    
+  require(maastot.forall(_.length == maastot(0).length)) //Taulukon pitää olla suorakaide.
+  
   val ruudut = maastot.map(_.map(new Ruutu(_))) //Vaihdetaan maastot vastaavaan ruutuun
   
   val korkeus = ruudut.length
@@ -39,7 +40,5 @@ class Pelilauta(maastot: Vector[Vector[Maasto]]) {
     }
     throw new Exception("Funktio etsiAuto, ei löytänyt autoa.")
   }
-  
-  maastot.foreach(lista => println(lista.mkString(" ")))
   
 }
