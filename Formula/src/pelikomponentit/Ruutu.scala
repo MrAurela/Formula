@@ -5,6 +5,8 @@ class Ruutu(maasto_ : Maasto) {
   val maasto =  maasto_
   var auto: Option[Auto] = None
   
+  override def toString = maasto.toString + ", " + auto.getOrElse("Ei autoa")
+  
   def onAuto = this.auto.isDefined
   
   def poistaAuto() = this.auto = None

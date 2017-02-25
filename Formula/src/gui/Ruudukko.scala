@@ -16,7 +16,9 @@ import java.awt.Color
 
 class Ruudukko(vaakaRuudut: Int, pystyRuudut: Int) extends Panel {
   
-  var ruudunKoko = 50
+  var ruudunKoko = 20
+  println(vaakaRuudut)
+  println(pystyRuudut)
   
   preferredSize = new Dimension(pystyRuudut * ruudunKoko + 1, vaakaRuudut * ruudunKoko + 1 )
   
@@ -34,14 +36,15 @@ class Ruudukko(vaakaRuudut: Int, pystyRuudut: Int) extends Panel {
   private def piirraMaastotJaAutot(g: Graphics2D) = { //Piirtää maastoruudut eri väreillä sekä autot
     val ruudut = Peli.pelitilanne.get.pelilauta.ruudut
     for (vaaka <- 0 until vaakaRuudut; pysty <- 0 until pystyRuudut) {
-      ruudut(vaaka)(pysty).maasto match { //Valitaan maaston väri
+      println(vaaka, pysty)
+      ruudut(pysty)(vaaka).maasto match { //Valitaan maaston väri
         case Tie => g.setColor(Color.WHITE)
         case Reuna => g.setColor(Color.BLACK)
         case Maali(_) => g.setColor(Color.GRAY)
       }
       g.fillRect(vaaka * ruudunKoko, pysty * ruudunKoko, ruudunKoko, ruudunKoko) //Piirretään maastoruutu
       
-      if (ruudut(vaaka)(pysty).onAuto) { //Jos ruudussa on auto
+      if (ruudut(pysty)(vaaka).onAuto) { //Jos ruudussa on auto
         g.setColor(Color.BLUE)
         g.fillOval(((vaaka + 0.25) * ruudunKoko).toInt , ((pysty + 0.25) * ruudunKoko).toInt, //Piirretään auto
             (0.5*ruudunKoko).toInt, (0.5*ruudunKoko).toInt)
@@ -52,10 +55,12 @@ class Ruudukko(vaakaRuudut: Int, pystyRuudut: Int) extends Panel {
   listenTo(this.mouse.clicks)
     reactions += {
       case MouseClicked(ruudukko, sijainti, _, _, _) => {
-        val klikattuKoordinaatti = Koordinaatti(sijainti.y / ruudunKoko, sijainti.x  / ruudunKoko)
+        val klikattuKoordinaatti = Koordinaatti(sijainti.x / ruudunKoko, sijainti.y  / ruudunKoko)
         println(klikattuKoordinaatti)
         Peli.pelitilanne.getOrElse(Pelitilanne()).siirraAutoa(klikattuKoordinaatti)
         repaint()
       }
     }
+  
+  
 }

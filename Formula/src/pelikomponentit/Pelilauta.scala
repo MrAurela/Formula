@@ -6,9 +6,8 @@ class Pelilauta(maastot: Vector[Vector[Maasto]]) {
     
   val ruudut = maastot.map(_.map(new Ruutu(_))) //Vaihdetaan maastot vastaavaan ruutuun
   
-  val korkeus = ruudut(0).length
-  val leveys = ruudut.flatten.length / korkeus //Suorakaiteen mallisen radan leveys saadaan jakamalla
-                                               //koko pinta-ala korkeudella.
+  val korkeus = ruudut.length
+  val leveys = ruudut(0).length
   
   def alustaAutot(autot: Vector[Auto]) = {
     for (pystySuorat <- ruudut; ruutu <- pystySuorat) {
@@ -40,5 +39,7 @@ class Pelilauta(maastot: Vector[Vector[Maasto]]) {
     }
     throw new Exception("Funktio etsiAuto, ei löytänyt autoa.")
   }
+  
+  maastot.foreach(lista => println(lista.mkString(" ")))
   
 }

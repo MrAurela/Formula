@@ -4,7 +4,9 @@ package pelikomponentit
  * O1-kurssin tehtävän Chess luokka Piece
  */
 
-sealed abstract class Maasto(maastonTunnus: Char)
+sealed abstract class Maasto(maastonTunnus: Char) {
+  override def toString = maastonTunnus.toString
+}
 
 case object Tie extends Maasto(Maasto.tie)
 case object Reuna extends Maasto(Maasto.reuna)
@@ -28,7 +30,7 @@ object Maasto {
   
   def apply(maastonTunnus: Char): Maasto = {
     maastonTunnus match {
-      case this.tie => Reuna
+      case this.reuna => Reuna
       case this.maaliviiva => Maaliviiva
       case this.aloitusruutu1 => AloitusRuutu1
       case this.aloitusruutu2 => AloitusRuutu2

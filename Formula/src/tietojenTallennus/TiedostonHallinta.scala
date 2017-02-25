@@ -21,7 +21,8 @@ object TiedostonHallinta {
   
   def haeRadat: Vector[Rata] = {
     try {
-      val rataTiedostot = new File(rataKansio).listFiles().map(_.getName).toVector //Haetaan kaikkien kansion tiedostojen nimet.
+      val kansio = new File(rataKansio)
+      val rataTiedostot = kansio.listFiles().map(kansio.getName+"/"+_.getName).toVector //Haetaan kaikkien kansion tiedostojen nimet.
       val ratojenMuodot = rataTiedostot.map(this.lueRata(_)).toVector //Haetaan ratojen sisällöt samassa järjestyksessä.
       val tiedot = rataTiedostot.zip(ratojenMuodot).filter(_._2.isDefined) //Poistetaan yhdistelmät, joissa rata on None.
       val valmis = tiedot.unzip._1.zip(tiedot.unzip._2.map(_.get)) //Poistetaaan Some-kääreet
