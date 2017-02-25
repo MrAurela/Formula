@@ -14,13 +14,15 @@ import java.awt.Color
  * 
  */
 
-class Ruudukko(vaakaRuudut: Int, pystyRuudut: Int) extends Panel {
+class Ruudukko(vaakaRuudut_ : Int, pystyRuudut_ : Int) extends Panel {
   
   var ruudunKoko = 20
-  println(vaakaRuudut)
-  println(pystyRuudut)
+  val vaakaRuudut = vaakaRuudut_
+  val pystyRuudut = pystyRuudut_
   
-  preferredSize = new Dimension(pystyRuudut * ruudunKoko + 1, vaakaRuudut * ruudunKoko + 1 )
+  //println(vaakaRuudut, pystyRuudut, ruudunKoko)
+  //println(pystyRuudut*ruudunKoko, vaakaRuudut*ruudunKoko)
+  preferredSize = new Dimension(240, 620 )
   
   override def paintComponent(g: Graphics2D) = {
     this.piirraMaastotJaAutot(g)
@@ -36,7 +38,6 @@ class Ruudukko(vaakaRuudut: Int, pystyRuudut: Int) extends Panel {
   private def piirraMaastotJaAutot(g: Graphics2D) = { //Piirtää maastoruudut eri väreillä sekä autot
     val ruudut = Peli.pelitilanne.get.pelilauta.ruudut
     for (vaaka <- 0 until vaakaRuudut; pysty <- 0 until pystyRuudut) {
-      println(vaaka, pysty)
       ruudut(pysty)(vaaka).maasto match { //Valitaan maaston väri
         case Tie => g.setColor(Color.WHITE)
         case Reuna => g.setColor(Color.BLACK)

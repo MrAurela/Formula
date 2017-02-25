@@ -20,16 +20,17 @@ import javax.swing._
 object Ikkuna extends SimpleSwingApplication {
   UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
   
-  val leveys = 1000
-  val korkeus = 800
+  //val leveys = 1000
+  //val korkeus = 800
   
-  val ruudukko = new Ruudukko(Peli.pelitilanne.get.pelilauta.leveys,Peli.pelitilanne.get.pelilauta.korkeus)
+  println(Peli.pelitilanne.get.pelilauta.leveys, Peli.pelitilanne.get.pelilauta.korkeus)
+  val ruudukko = new Ruudukko(Peli.pelitilanne.get.pelilauta.leveys, Peli.pelitilanne.get.pelilauta.korkeus)
   
   val vaihteenVaihto = new BoxPanel(Orientation.Horizontal) {
   
     val vaihdeYlos = new Button {
       preferredSize = new Dimension(100,100)
-      text = "->"
+      text = "->" 
     }
     val vaihdeAlas = new Button {
       preferredSize = new Dimension(100,100)
@@ -44,8 +45,8 @@ object Ikkuna extends SimpleSwingApplication {
     this.contents += vaihdeLuku
     this.contents += vaihdeYlos
     
+
   }
-  
   
   val vasenPuoli = new BoxPanel(Orientation.Vertical) {
     this.contents += ruudukko
@@ -62,7 +63,7 @@ object Ikkuna extends SimpleSwingApplication {
   
   def top = new MainFrame {
     title = "Formula"
-    preferredSize = new Dimension(leveys, korkeus)
+    //preferredSize = new Dimension(leveys, korkeus)
     
     contents = ikkunanSisalto
     //Tarvitaan vain jos käytetään näppäimistöä
