@@ -4,23 +4,24 @@ import Math._
 
 class Siirto(lahto: Koordinaatti, kohde: Koordinaatti) {
   
-  val xLiike = kohde.x - lahto.x
-  val yLiike = kohde.y - lahto.y
+  val xLiike: Int = kohde.x - lahto.x
+  val yLiike: Int = kohde.y - lahto.y
+  val liike: Double = sqrt(pow(xLiike,2)+pow(yLiike,2))
   
   val vaihde = max(xLiike, yLiike) //Liike on aina vähintään toiseen suuntaan tasan vaihteen mittainen
-  val kulma: Option[Double] = if (xLiike == 0) None
-                              else Some ( atan( yLiike.toDouble / xLiike ) )
-  
+  val kulma: Double = if (xLiike > 0 && yLiike <= 0) asin(abs( yLiike / liike )) //Kulma radiaaneissa 0-2PI
+                      else if (xLiike <= 0 && yLiike < 0) PI - asin(abs( yLiike / liike ))
+                      else if (xLiike < 0 && yLiike >= 0) PI + asin(abs( yLiike / liike ))
+                      else 2*PI - asin(abs( yLiike / liike ))
+  val kulmaAsteina: Double = (this.kulma*360)/(2*Math.PI)
   
   def muutaSuunnaksi = Suunta( Koordinaatti(this.xLiike, this.yLiike) ) // Siirtovektori siirrettynä alkamaan origosta.
   
   def samaSuunta(vaihde: Int): Suunta = {
     if (vaihde < 1 || vaihde > 5) Suunta(Koordinaatti(0,0)) //Virheellisellä vaihteella saadaan 0-suunta.
     else if (vaihde == this.vaihde) this.muutaSuunnaksi     //Jos vaihde on sama, jatketaan täsmälleen samaan suuntaan.
-    else {
-      
-    }
-    ???
+    else Suunta(vaihde, this.kulma)                         //Luo Suunnan annetulla vaihteella mahdollisimman lähellä
+                                                            //annettua kulmaa.
   }
   
   //VOISI EHKÄ YKSINKERTAISTAA YHDISTÄMÄLLÄ EHTOJA
