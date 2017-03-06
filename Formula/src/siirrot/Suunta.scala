@@ -4,7 +4,7 @@ import scala.collection.mutable.Buffer
 
 case class Suunta(kohde: Koordinaatti) extends Siirto(Koordinaatti(0,0), kohde) {
   
-  def muutaSiirroksi(lahto: Koordinaatti) = new Siirto(lahto, this.kohde)
+  def muutaSiirroksi(lahto: Koordinaatti) = new Siirto(lahto, lahto+this.kohde)
   
   override def toString() = this.kohde.toString()
 }

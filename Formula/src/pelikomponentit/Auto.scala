@@ -1,7 +1,7 @@
 package pelikomponentit
 
 import scala.collection.mutable.Buffer
-import siirrot.{Siirto, Koordinaatti}
+import siirrot.{Siirto, Suunta, Koordinaatti}
 
 class Auto {
   
@@ -9,16 +9,30 @@ class Auto {
   var vaihdeVuoronAlussa = 1
   
   val siirrot = Buffer[Siirto]()
-
-  //var kuljettuReitti = 
   
   def aloitaVuoro() = {
     vaihdeVuoronAlussa = vaihde
   }
   
-  def vaihdettaVoiNostaa = vaihde <= vaihdeVuoronAlussa && vaihde < 5
+  def sallitutSuunnat: Vector[Suunta] = {
+    if (tehdytSiirrot > 0) {
+      val viimeSiirto = siirrot.last
+      val samaanSuuntaan = viimeSiirto.samaSuunta(vaihde)
+      val myotapaivainenSuunta = samaanSuuntaan.myotapaivaNaapuri.muutaSuunnaksi
+      val vastapaivainenSuunta = samaanSuuntaan.vastapaivaNaapuri.muutaSuunnaksi
+      Vector(vastapaivainenSuunta, samaanSuuntaan, myotapaivainenSuunta)
+    } else {
+      val lahtoSuunta = Suunta(1, Math.PI)
+      val myotapaivainenSuunta = lahtoSuunta.myotapaivaNaapuri.muutaSuunnaksi
+      val vastapaivainenSuunta = lahtoSuunta.vastapaivaNaapuri.muutaSuunnaksi
+      Vector(vastapaivainenSuunta, lahtoSuunta, myotapaivainenSuunta)
+    }
+  }
   
-  def vaihdettaVoiLaskea = vaihde >= vaihdeVuoronAlussa && vaihde > 1
+  //Vaihdetta ei voi vaihtaa ensimmäisellä kierroksella
+  def vaihdettaVoiNostaa = vaihde <= vaihdeVuoronAlussa && vaihde < 5 && tehdytSiirrot > 0
+  
+  def vaihdettaVoiLaskea = vaihde >= vaihdeVuoronAlussa && vaihde > 1 && tehdytSiirrot > 0
   
   def nostaVaihdetta() = {
     if (vaihdettaVoiNostaa) vaihde += 1
@@ -31,6 +45,8 @@ class Auto {
   def merkitseSiirto(lahto: Koordinaatti, kohde: Koordinaatti) {
     siirrot.append(new Siirto(lahto, kohde))
   }
+  
+  def tehdytSiirrot = this.siirrot.length
   
 
   

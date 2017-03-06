@@ -1,6 +1,6 @@
 package pelikomponentit
 
-import siirrot.Koordinaatti
+import siirrot.{Koordinaatti, Siirto, Suunta}
 
 class Pelilauta(maastot: Vector[Vector[Maasto]]) {
   require(maastot.forall(_.length == maastot(0).length)) //Taulukon pitää olla suorakaide.
@@ -25,19 +25,25 @@ class Pelilauta(maastot: Vector[Vector[Maasto]]) {
   }
   
   def siirraAutoa(auto: Auto, kohde: Koordinaatti): Boolean = {
-    if (kohde.onLaudalla(this) && this(kohde).eiAutoa && this(kohde).maasto!=Reuna) {
+    if (kohde.onLaudalla(this) && this(kohde).eiAutoa && this(kohde).maasto!=Reuna &&
+        this.mahdollisetSuunnat(auto).contains( (new Siirto(this.etsiAuto(auto), kohde)).muutaSuunnaksi )) {//TÄMÄ 
       println(true)
       val lahto = this.etsiAuto(auto)
-      ruudut(kohde.y)(kohde.x).lisaaAuto(auto)
-      ruudut(lahto.y)(lahto.x).poistaAuto()
-      true //Toistaiseksi tarkistetaan vain että siirto on laudalla
+      ruudut(kohde.y)(kohde.x).lisaaAuto(auto) //Lisätään auto uuteen ruutun
+      ruudut(lahto.y)(lahto.x).poistaAuto() //Poistetaan vanhasta
+      auto.merkitseSiirto(lahto, kohde) //Merkitään siirto auton muistiin.
+      true
     } else {
       println(false)
       false
     }
   }
   
-  private def etsiAuto(auto: Auto): Koordinaatti = {
+  def mahdollisetSuunnat(auto: Auto): Vector[Suunta] = {
+    auto.sallitutSuunnat
+  }
+  
+  def etsiAuto(auto: Auto): Koordinaatti = {
     for (x <- 0 until leveys; y <- 0 until korkeus) {
       if (ruudut(y)(x).auto.getOrElse(new Auto()) == auto) 
         return Koordinaatti(x,y)

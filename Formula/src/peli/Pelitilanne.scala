@@ -2,7 +2,7 @@
 package peli
 
 import pelikomponentit.Pelilauta
-import siirrot.Koordinaatti
+import siirrot.{Koordinaatti, Siirto}
 import  pelikomponentit._
 
 class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
@@ -18,6 +18,7 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
     val siirtoOnnistui = this.pelilauta.siirraAutoa(vuorossa.auto, kohde)
     if (siirtoOnnistui) vaihdaVuoroa()
   }
+
   
   private def vaihdaVuoroa() = {
     if (pelaajat(0) == vuorossa) vuorossa = pelaajat(1)

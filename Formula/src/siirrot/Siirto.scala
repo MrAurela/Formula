@@ -4,6 +4,9 @@ import Math._
 
 class Siirto(lahto: Koordinaatti, kohde: Koordinaatti) {
   
+  val lahtoKoordinaatti = lahto
+  val kohdeKoordinaatti = kohde
+  
   val xLiike: Int = kohde.x - lahto.x
   val yLiike: Int = kohde.y - lahto.y
   val liike: Double = sqrt(pow(xLiike,2)+pow(yLiike,2))

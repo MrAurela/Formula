@@ -32,11 +32,12 @@ object Ikkuna extends SimpleSwingApplication {
     val vaihdeYlos = new Button {
       preferredSize = new Dimension(100,100)
       text = "->" 
+      enabled = false //Alussa ei voi vaihtaa vaihdetta
     }
     val vaihdeAlas = new Button {
       preferredSize = new Dimension(100,100)
       text = "<-"
-      enabled = false //Alussa ei voi vaihtaa vaihdetta alaspäin
+      enabled = false //Alussa ei voi vaihtaa vaihdetta
     }
     val vaihdeLuku = new Button {
       preferredSize = new Dimension(100,100)
