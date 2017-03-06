@@ -22,7 +22,7 @@ class Auto {
       val vastapaivainenSuunta = samaanSuuntaan.vastapaivaNaapuri.muutaSuunnaksi
       Vector(vastapaivainenSuunta, samaanSuuntaan, myotapaivainenSuunta)
     } else {
-      val lahtoSuunta = Suunta(1, Math.PI)
+      val lahtoSuunta = Suunta(1, Math.PI) //Alkuperäinen suunta, suoraan vasemmalle
       val myotapaivainenSuunta = lahtoSuunta.myotapaivaNaapuri.muutaSuunnaksi
       val vastapaivainenSuunta = lahtoSuunta.vastapaivaNaapuri.muutaSuunnaksi
       Vector(vastapaivainenSuunta, lahtoSuunta, myotapaivainenSuunta)

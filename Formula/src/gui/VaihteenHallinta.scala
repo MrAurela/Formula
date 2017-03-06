@@ -6,14 +6,18 @@ object VaihteenHallinta {
   
   val vaihdeYlos = Ikkuna.vaihteenVaihto.vaihdeYlos
   val vaihdeAlas = Ikkuna.vaihteenVaihto.vaihdeAlas
+  val ruudukko = Ikkuna.ruudukko
   
   def nostaVaihdetta() = Peli.pelitilanne.get.vuorossa.auto.nostaVaihdetta()
   
-  def laskeVaihdetta() = Peli.pelitilanne.get.vuorossa.auto.laskeVaihdetta()
+  def laskeVaihdetta() = {
+    Peli.pelitilanne.get.vuorossa.auto.laskeVaihdetta()
+  }
   
   def paivita() = {
     paivitaNappulat()
     paivitaVaihde()
+    ruudukko.repaint()
   }
   
   private def paivitaNappulat() {

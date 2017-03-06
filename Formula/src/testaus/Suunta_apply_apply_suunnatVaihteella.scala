@@ -27,4 +27,13 @@ object Suunta_apply_apply_suunnatVaihteella extends App {
     println("Vaihde: "+vaihde+"\n"+Suunta.suunnatVaihteella(vaihde).mkString(", ") )
   }
   
+  
+  //Tällä testillä löydettiin virhe samaSuunta funktiossa. Funktio Suunta.apply toimii, jota samaSuunta kutsuu
+  //toimii oikein, mutta itse samaSuunta ei toimi. Olisiko vika ehtolauseissa?
+  //EDIT: Saatiin korjattua, virhe löytyi ehtolauseessa käytettävästä siirto.vaihde funktiosta, joka ei toiminut oikein.
+  println()
+  val siirto = new Siirto(Koordinaatti(7,5), Koordinaatti(5,6))
+  println(siirto+" ----> "+siirto.samaSuunta(1))
+  println(siirto+" ----> "+Suunta(1, siirto.kulma))
+  
 }

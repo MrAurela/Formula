@@ -17,4 +17,6 @@ object siirto_samaSuunta extends App {
     println("Siirto: "+siirrot(i)+", vaihde "+vaihteet(i)+" => "+siirrot(i).samaSuunta(vaihteet(i)))
   }
   
+  
+  
 }
