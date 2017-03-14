@@ -7,6 +7,7 @@ class Ruutu(maasto_ : Maasto) {
   
   override def toString = maasto.toString + ", " + auto.getOrElse("Ei autoa")
   
+  def voiAjaa = maasto != Reuna //Voiko ruutuun tai sen läpi ajaa
   
   def onAuto = this.auto.isDefined
   def eiAutoa = !this.onAuto

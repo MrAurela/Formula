@@ -15,10 +15,11 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
   def eiVuorossa = pelaajaLista.find(_ != vuorossa)
   
   def siirraAutoa(kohde: Koordinaatti) {
-    val siirtoOnnistui = this.pelilauta.siirraAutoa(vuorossa.auto, kohde)
+    val siirtoOnnistui = this.pelilauta.siirraAutoa(vuorossa.auto, kohde) //Siirtää autoa, jos siirto on laillinen
     if (siirtoOnnistui) vaihdaVuoroa()
   }
 
+  def sallitutSiirrot = pelilauta.sallitutSiirrot(vuorossa.auto)
   
   private def vaihdaVuoroa() = {
     if (pelaajat(0) == vuorossa) vuorossa = pelaajat(1)

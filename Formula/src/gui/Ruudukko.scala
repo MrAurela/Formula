@@ -62,12 +62,13 @@ class Ruudukko(vaakaRuudut_ : Int, pystyRuudut_ : Int) extends Panel {
   private def piirraVaihtoehdot(g: Graphics2D) = {
     val lauta = Peli.pelitilanne.get.pelilauta
     val autoVuorossa = Peli.pelitilanne.get.vuorossa.auto
+    val pelitilanne = Peli.pelitilanne.get // OLETTAA ETTÄ PELI ON KÄYNNISSÄ
     
-    if ( autoVuorossa == Peli.pelitilanne.get.pelaajat(0).auto ) g.setColor(Color.BLUE)
-        else g.setColor(Color.RED)
+    if ( autoVuorossa == pelitilanne.pelaajat(0).auto ) g.setColor(Color.BLUE)
+    else g.setColor(Color.RED)
     
-    for (suunta <- lauta.mahdollisetSuunnat(autoVuorossa) ) {
-      val koordinaatti = suunta.muutaSiirroksi(lauta.etsiAuto(autoVuorossa)).kohdeKoordinaatti
+    for (siirto <- pelitilanne.sallitutSiirrot ) {
+      val koordinaatti = siirto.kohdeKoordinaatti
       g.fillRect(((koordinaatti.x + 0.25)*ruudunKoko).toInt, ((koordinaatti.y + 0.25)*ruudunKoko).toInt,
           (0.5*ruudunKoko).toInt, (0.5*ruudunKoko).toInt)
     }
@@ -77,7 +78,6 @@ class Ruudukko(vaakaRuudut_ : Int, pystyRuudut_ : Int) extends Panel {
     reactions += {
       case MouseClicked(ruudukko, sijainti, _, _, _) => {
         val klikattuKoordinaatti = Koordinaatti(sijainti.x / ruudunKoko, sijainti.y  / ruudunKoko)
-        println(klikattuKoordinaatti)
         Peli.pelitilanne.getOrElse(Pelitilanne()).siirraAutoa(klikattuKoordinaatti)
         repaint()
         

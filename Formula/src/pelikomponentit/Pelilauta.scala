@@ -25,25 +25,36 @@ class Pelilauta(maastot: Vector[Vector[Maasto]]) {
   }
   
   def siirraAutoa(auto: Auto, kohde: Koordinaatti): Boolean = {
-    if (kohde.onLaudalla(this) && this(kohde).eiAutoa && this(kohde).maasto!=Reuna &&
-        this.mahdollisetSuunnat(auto).contains( (new Siirto(this.etsiAuto(auto), kohde)).muutaSuunnaksi )) {//TÄMÄ 
-      println(true)
+    if (this.sallitutKoordinaatit(auto).contains(kohde)) { //Jos siirto kuuluu laillisiin siirtoihin.
       val lahto = this.etsiAuto(auto)
       ruudut(kohde.y)(kohde.x).lisaaAuto(auto) //Lisätään auto uuteen ruutun
       ruudut(lahto.y)(lahto.x).poistaAuto() //Poistetaan vanhasta
       auto.merkitseSiirto(lahto, kohde) //Merkitään siirto auton muistiin.
       true
     } else {
-      println(false)
       false
     }
   }
   
+  //Ottaa huomioon vaihteen ja suunnan
   def mahdollisetSuunnat(auto: Auto): Vector[Suunta] = {
     auto.sallitutSuunnat
   }
   
-  def etsiAuto(auto: Auto): Koordinaatti = {
+  //Ottaa vaihteen ja suunnan lisäksi huomioon toisen auton sijainnin ja laudan reunat
+  def sallitutSiirrot(auto: Auto): Vector[Siirto] = {
+    val lahto = this.etsiAuto(auto)
+    val suunnat = this.mahdollisetSuunnat(auto).filter{ suunta: Suunta =>
+      val kohde = suunta.muutaSiirroksi(lahto).kohdeKoordinaatti
+      kohde.onLaudalla(this) && this(kohde).eiAutoa && this(kohde).voiAjaa
+    }
+    suunnat.map(_.muutaSiirroksi(lahto))
+  }
+  
+  //Koordinaatit, joihin on mahdollista siirtyä.
+  def sallitutKoordinaatit(auto: Auto) = this.sallitutSiirrot(auto).map(_.kohdeKoordinaatti)
+  
+  private def etsiAuto(auto: Auto): Koordinaatti = {
     for (x <- 0 until leveys; y <- 0 until korkeus) {
       if (ruudut(y)(x).auto.getOrElse(new Auto()) == auto) 
         return Koordinaatti(x,y)
