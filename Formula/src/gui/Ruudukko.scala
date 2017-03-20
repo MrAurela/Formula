@@ -82,7 +82,7 @@ class Ruudukko(vaakaRuudut_ : Int, pystyRuudut_ : Int) extends Panel {
         repaint()
         
         //Jos siirto onnistui ja vuoro vaihtui, päivitetään vaihdelaatikon teksti
-        VaihteenHallinta.paivita()
+        NappuloidenHallinta.paivita()
       }
     }
   

@@ -2,6 +2,7 @@ package pelikomponentit
 
 import siirrot.{Koordinaatti, Siirto, Suunta}
 
+
 class Pelilauta(maastot: Vector[Vector[Maasto]]) {
   require(maastot.forall(_.length == maastot(0).length)) //Taulukon pitää olla suorakaide.
   
@@ -24,18 +25,26 @@ class Pelilauta(maastot: Vector[Vector[Maasto]]) {
     }
   }
   
-  def siirraAutoa(auto: Auto, kohde: Koordinaatti): Boolean = {
+  def siirraAutoaLaillisesti(auto: Auto, kohde: Koordinaatti): Boolean = {
     if (this.sallitutKoordinaatit(auto).contains(kohde)) { //Jos siirto kuuluu laillisiin siirtoihin.
-      val lahto = this.etsiAuto(auto)
-      ruudut(kohde.y)(kohde.x).lisaaAuto(auto) //Lisätään auto uuteen ruutun
-      ruudut(lahto.y)(lahto.x).poistaAuto() //Poistetaan vanhasta
-      auto.merkitseSiirto(lahto, kohde) //Merkitään siirto auton muistiin.
+      this.siirraAutoaPakolla(auto, kohde, true)
       true
     } else {
       false
     }
   }
   
+  def siirraAutoaPakolla(auto: Auto, kohde: Koordinaatti, merkitseSiirto: Boolean) = {
+    val lahto = this.etsiAuto(auto)
+    ruudut(kohde.y)(kohde.x).lisaaAuto(auto) //Lisätään auto uuteen ruutun
+    ruudut(lahto.y)(lahto.x).poistaAuto() //Poistetaan vanhasta
+    if (merkitseSiirto) auto.merkitseSiirto(lahto, kohde) //Merkitään siirto auton muistiin.
+  }
+  /*
+  def siirraAutoaSuuntaan(auto: Auto, suunta: Suunta): Boolean = {
+    val kohde = ( suunta.muutaSiirroksi(this.etsiAuto(auto)) ).kohdeKoordinaatti
+    siirraAutoa(auto, kohde)
+  }*/
   //Ottaa huomioon vaihteen ja suunnan
   def mahdollisetSuunnat(auto: Auto): Vector[Suunta] = {
     auto.sallitutSuunnat
@@ -53,6 +62,7 @@ class Pelilauta(maastot: Vector[Vector[Maasto]]) {
   
   //Koordinaatit, joihin on mahdollista siirtyä.
   def sallitutKoordinaatit(auto: Auto) = this.sallitutSiirrot(auto).map(_.kohdeKoordinaatti)
+  
   
   private def etsiAuto(auto: Auto): Koordinaatti = {
     for (x <- 0 until leveys; y <- 0 until korkeus) {

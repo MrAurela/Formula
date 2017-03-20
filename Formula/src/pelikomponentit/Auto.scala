@@ -8,7 +8,8 @@ class Auto {
   var vaihde = 1
   var vaihdeVuoronAlussa = 1
   
-  val siirrot = Buffer[Siirto]()
+  private val siirtoLista = Buffer[Siirto]()
+  def siirrot = this.siirtoLista.toVector
   
   def aloitaVuoro() = {
     vaihdeVuoronAlussa = vaihde
@@ -43,10 +44,16 @@ class Auto {
   }
   
   def merkitseSiirto(lahto: Koordinaatti, kohde: Koordinaatti) {
-    siirrot.append(new Siirto(lahto, kohde))
+    this.siirtoLista.append(new Siirto(lahto, kohde))
   }
   
+  def poistaEdellinenSiirto() = if (this.liikkunut) this.siirtoLista.remove(tehdytSiirrot-1)
+  def palautaEdellinenVaihde() = if (this.liikkunut) vaihde = this.siirrot(this.tehdytSiirrot-1).vaihde //Vaihde on edellisen siirron vaihde
+  
   def tehdytSiirrot = this.siirrot.length
+  def edellinenSiirto = if (this.liikkunut) Some(this.siirrot(tehdytSiirrot-1)) else None
+  
+  def liikkunut = this.tehdytSiirrot > 0
   
 
   
