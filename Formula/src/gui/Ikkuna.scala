@@ -16,7 +16,7 @@ import javax.swing.{UIManager}
  * 
  * case match ongelma korjattu: http://alvinalexander.com/scala/scala-unreachable-code-due-to-variable-pattern-message
  */
-//
+
 
 
 object Ikkuna extends SimpleSwingApplication {
