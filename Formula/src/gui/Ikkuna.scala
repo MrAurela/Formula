@@ -1,4 +1,9 @@
 
+//MUISTA 
+// for ( i <- 10 to 0 by -1)
+
+
+
 package gui
 
 import peli.Peli
@@ -18,11 +23,10 @@ import javax.swing.{UIManager}
  */
 
 
-
 object Ikkuna extends SimpleSwingApplication {
   UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
   
-  val leveys = 1000
+  val leveys = 1000  
   val korkeus = 800
   
   val ruudukko = new Ruudukko(Peli.pelitilanne.get.pelilauta.leveys, Peli.pelitilanne.get.pelilauta.korkeus)

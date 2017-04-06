@@ -60,94 +60,51 @@ class Siirto(lahto: Koordinaatti, kohde: Koordinaatti) {
     } 
   }
   
-  /* Laskee koordinaatit, joiden läpi kulkee suora, joka lähtee auton lähtöruudun keskipisteestä
-   * ja päättyy auton kohderuudun keskipisteeseen.
-   */
   def lapimentavatKoordinaatit: Vector[Koordinaatti] = {
     
-    val koordinaatit = Buffer[Koordinaatti]()
-    def lisaaKoordinaattiJosUusi(koordinaatti: Koordinaatti) { //Apufunktio listaan lisäämiselle
-      if ( !koordinaatit.contains(koordinaatti) ) {
-        koordinaatit.append(koordinaatti)
-        println(koordinaatti+" lisättiin.")
-      } else println(koordinaatti+" ei lisätty.")
-    }
+    var koordinaatit = Buffer[Koordinaatti]()
     
-    var leveaSuunta = 0 //Alustetaan muuttujat
-    var kapeaSuunta = 0
-    var posSuunta = 1 // Kuljetaanko x/y -suuntaa positiiviseen vai negatiivisesn suuntaan, 1 tai -1
-    var xSuunta = false
-    var vinoSuora = false //45 asteen kulmassa kulkeva suora on erikoistapaus, joka tarkastellaan erikseen.
+    val leveys = this.xLiike.toDouble
+    val korkeus = this.yLiike.toDouble
     
-    if (abs(this.xLiike) >= abs(this.yLiike)) {
-      leveaSuunta = this.xLiike
-      kapeaSuunta = this.yLiike
-      xSuunta = true
-      if (this.xLiike > 0) posSuunta = 1
-      else posSuunta = -1
-    } else if (abs(this.xLiike) < abs(this.yLiike)){
-      leveaSuunta = this.yLiike
-      kapeaSuunta = this.xLiike
-      xSuunta = false //Tämä vain selkeyden vuoksi tässä
-      if (this.yLiike > 0) posSuunta = 1
-      else posSuunta = -1
-    } else {
-      vinoSuora = true
-      println("POIKKEUSTAPAUS: EI VIELÄ TOTEUTETTU")
-    }
-
-    val kulmakerroin: Double = kapeaSuunta.toDouble / leveaSuunta.toDouble
-    def suoranFunktio(muuttuja: Double): (Int, Boolean) = {
-      println("Funktio: "+ (kulmakerroin * muuttuja - 0.5*(kulmakerroin-1) ) )
-      var tulos = kulmakerroin * muuttuja - 0.5*(kulmakerroin-1)
-      if (tulos < 0) tulos -= 1 //vähennetään yksi, jotta -0.4 pyöristettäisiin -1:teen (-0.4-1 = -1.4 = -1)
-      val onkoTasan = tulos.toInt == tulos
-      (tulos.toInt, onkoTasan)
-    }
+    //Hallitaan erikoistapaus, jossa siirron kulmakerronta laskettaessa pitäisi jakaa nollalla.
+    if ( leveys == 0 ) { 
+      val lahtoY = this.lahtoKoordinaatti.y
+      val lahtoX = this.lahtoKoordinaatti.x
+      for ( y <- lahtoY to lahtoY + korkeus.toInt) koordinaatit.append(Koordinaatti(lahtoX, y) )
+    } 
     
-    println(this.lahtoKoordinaatti+" => "+this.kohdeKoordinaatti)
-    //println(kulmakerroin)
+    //Kaikki muut tapaukset käsitellään laskemalla siirron kulmakerroin ja käymällä sitten suoraa läpi
+    //siirron alkupisteestä sen loppupisteeseen.
+    else{ 
 
-
-    if (xSuunta) {
-      var levea = posSuunta
-      while (levea != leveaSuunta+posSuunta) { //Käydään jokainen alkava ruutu läpi
-        println(levea)
-        val funktionArvo = suoranFunktio(levea)._1
-        val onkoTasan = suoranFunktio(levea)._2
-        if ( !onkoTasan ) //Jos funktion arvo on tasaluku, ollaan menty kulman läpi. Tällöin ensimmäisen läpi ei kuljeta.
-          lisaaKoordinaattiJosUusi( this.lahtoKoordinaatti + Koordinaatti(levea-posSuunta, funktionArvo) )
-        lisaaKoordinaattiJosUusi( this.lahtoKoordinaatti + Koordinaatti(levea, funktionArvo) )
-        levea += posSuunta //Edetään tiettyyn suuntaan (koko ajan eteen tai taakse)
+      val kulmakerroin: Double = korkeus / leveys
+      
+      //Apufunktio, joka laskee suoran y-koordinaatin x-koordinaatin perusteella.
+      def suoranFunktio(muuttuja: Double): Double = kulmakerroin * muuttuja - 0.5*(kulmakerroin-1)
+      
+      //Apufunktio koordinaattien lisäämiselle.
+      //Muuttaa desimaaliluvut kokonaisluvuiksi ja lisää koordinaatin vain jos se on uusi.
+      def lisaaKoordinaatti(xDouble: Double, yDouble: Double) = { 
+        var xInt = if (xDouble < 0) (xDouble - 1).toInt //vähennetään yksi, jotta -0.4 pyöristettäisiin -1:teen (-0.4-1 = -1.4 = -1)
+                else xDouble.toInt
+        var yInt = if (yDouble < 0) (yDouble - 1).toInt
+                else yDouble.toInt                                            //Laskussa siirto alkaa aina koordinaatista (0,0)
+        val koordinaatti = Koordinaatti(xInt, yInt) + this.lahtoKoordinaatti  //Vaihdetaan alkamaan lahtoKoordinaatista koordinaattien(vektorien) summalla.
+        if ( !koordinaatit.contains(koordinaatti) ) {                        
+          koordinaatit.append(koordinaatti)
+        }
       }
-    } else {
-      var levea = posSuunta
-      while (levea != leveaSuunta+posSuunta) { //Käydään jokainen alkava ruutu läpi
-        println(levea)
-        val funktionArvo = suoranFunktio(levea)._1
-        val onkoTasan = suoranFunktio(levea)._2
-        if ( !onkoTasan ) //Jos funktion arvo on tasaluku, ollaan menty kulman läpi. Tällöin ensimmäisen läpi ei kuljeta.
-          lisaaKoordinaattiJosUusi( this.lahtoKoordinaatti + Koordinaatti(funktionArvo, levea-posSuunta) )
-        lisaaKoordinaattiJosUusi( this.lahtoKoordinaatti + Koordinaatti(funktionArvo, levea ) )
-        levea += posSuunta //Edetään tiettyyn suuntaan (koko ajan eteen tai taakse)
+      
+      //Edetään suoraa pitkin ja lisätään listaan kaikki ruudut, joissa käydään.
+      for ( x <- 0.5 to leveys+0.5 by Math.signum(leveys)*0.01 ) {
+        lisaaKoordinaatti( x, suoranFunktio(x) )
       }
-    }
-    
-
-   
-    koordinaatit.toVector
-    /* aiempi yritys
-    var edellinenY = this.lahtoKoordinaatti.y
-    for (x <- this.lahtoKoordinaatti.x to this.kohdeKoordinaatti.x) {
-      for ( y <- edellinenY to funktio(x) ) {
-        println(x+", "+y)
-        koordinaatit.append( Koordinaatti(x,y) )
-      }
-      edellinenY = funktio(x)
+      
     }
     
     koordinaatit.toVector
-    */
+    
   }
   
   override def toString() = this.lahto.toString() + " => " + this.kohde.toString()
