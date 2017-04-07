@@ -21,44 +21,55 @@ object TiedostonHallinta {
   private val profiiliKansio = "profiilit"
   
   def haeRadat: Vector[Rata] = {
+    this.haeTiedostoista(rataKansio).map(monikko => Rata(monikko._1, monikko._2)) //Luodaan ratalista
+  }
+  
+  def haeProfiilit: Vector[Profiili] = {
+    this.haeTiedostoista(profiiliKansio).map(monikko => Profiili(monikko._1, monikko._2)) // Luodaan profiililista
+  }
+  
+  private def haeTiedostoista(kansionNimi: String): Vector[(String,Vector[String])] = {
     try {
-      val kansio = new File(rataKansio)
-      val rataTiedostot = kansio.listFiles().map(kansio.getName+"/"+_.getName).toVector //Haetaan kaikkien kansion tiedostojen nimet.
-      val ratojenMuodot = rataTiedostot.map(this.lueTiedosto(_, rataKansio)).toVector //Haetaan ratojen sisällöt samassa järjestyksessä.
-      val tiedot = rataTiedostot.zip(ratojenMuodot).filter(_._2.isDefined) //Poistetaan yhdistelmät, joissa rata on None.
+      val kansio = new File(kansionNimi)
+      val kansionTiedostot = kansio.listFiles().toVector //Haetaan kaikki kansion tiedostot.
+      val tiedostojenNimet = kansionTiedostot.map(_.getName) //Otetaan talteen tiedostojen nimet.
+      val ratojenNimet = tiedostojenNimet.map(_.takeWhile(_!='.')) //Radan/profiilin nimi saadaan suoraan tiedoston nimestä.
+      val tiedostojenKokoNimet = tiedostojenNimet.map(kansionNimi+"/"+_).toVector // -> kansio/tiedostonNimi.txt
+      
+      val ratojenMuodot = tiedostojenKokoNimet.map(this.lueTiedosto(_)).toVector //Haetaan tiedostojen rivit samassa järjestyksessä.
+      val tiedot = ratojenNimet.zip(ratojenMuodot).filter(_._2.isDefined) //Yhdistetään ratojen/profiilien nimet ja hyväksytyt tiedot (!= None)
       val valmis = tiedot.unzip._1.zip(tiedot.unzip._2.map(_.get)) //Poistetaaan Some-kääreet
-      valmis.map(monikko => Rata(monikko._1, monikko._2)) //Luodaan lopullinen ratalista
+      
+      valmis // Palautetaan radan/profiilin nimet yhdistettynä niiden sisältöön.
     } catch {
       case virheIlmoitus: FileNotFoundException => { //Tänne päädytäään jos kansio puuttuu.
         println(virheIlmoitus)
-        println("Kansiota "+rataKansio+" ei löytynyt.")
+        println("Kansiota "+kansionNimi+" ei löytynyt.")
         Vector()
       }
       case virheIlmoitus : NullPointerException => { //Hallitsee nullpointer exceptionin.
         println(virheIlmoitus)
-        println("NullPointerException tapahtui yrittäessa lukea tiedostoa "+rataKansio+".")
+        println("NullPointerException tapahtui yrittäessa lukea tiedostoa "+kansionNimi+".")
         Vector()
       }
       case virheIlmoitus : Throwable => { //Hallitsee kaikki muut virheet paitsi kansion puuttumisen.
         println(virheIlmoitus)
-        println("Odottamaton virhe tapahtui yrittäessa avata kansiota "+rataKansio+".")
+        println("Odottamaton virhe tapahtui yrittäessa avata kansiota "+kansionNimi+".")
         Vector()
       }
     }
   }
   
   //Kansio josta luetaan määrä sen, ohjataanko tiedostonjen käsittely lueRatatiedosto vai lueProfiilitiedosto -funktiolle.
-  private def lueTiedosto(tiedostonNimi: String, luettavaKansio: String): Option[Vector[String]] = {
+  private def lueTiedosto(tiedostonNimi: String): Option[Vector[String]] = {
     try {
       val tiedosto = new FileReader(tiedostonNimi) //Yritetään avata tiedosto
       val riviTiedosto = new BufferedReader(tiedosto)
-      if (luettavaKansio == rataKansio) this.lueRataTiedosto(tiedosto, riviTiedosto, tiedostonNimi) //Luetaan tiedosto ratasyntaksilla
-      else if (luettavaKansio == profiiliKansio) this.lueProfiiliTiedosto(tiedosto, riviTiedosto, tiedostonNimi) // profiilisyntaksilla
-      else None
+      this.lueRivit(tiedosto, riviTiedosto, tiedostonNimi)
     } catch {
       case virheIlmoitus: FileNotFoundException => { //Tätä ei pitäisi tapahtua, jos lueRata, kutsutaan tarkoituksenmukaisesti.
         println(virheIlmoitus)
-        println("Tiedostoa "+tiedostonNimi+" ei löytynyt kansiosta "+luettavaKansio+".")
+        println("Tiedostoa "+tiedostonNimi+" ei löytynyt.")
         None
       }
       case virheIlmoitus : Throwable => { //Hallitsee kaikki muut virheet paitsi tiedoston puuttumisen.
@@ -69,7 +80,7 @@ object TiedostonHallinta {
     }
   }
   
-  private def lueRataTiedosto(tiedosto: FileReader, rivit: BufferedReader, tiedostonNimi: String): Option[Vector[String]] = {
+  private def lueRivit(tiedosto: FileReader, rivit: BufferedReader, tiedostonNimi: String): Option[Vector[String]] = {
     try {
       val riviLista = Buffer[String]()
       var rivi = rivit.readLine()
@@ -88,16 +99,6 @@ object TiedostonHallinta {
       tiedosto.close()
       rivit.close()
     }
-  }
-  
-  def haeProfiilit(): Vector[Profiili] = {
-    val kansio = new File(profiiliKansio)
-    val profiiliTiedostot = kansio.listFiles().map(kansio.getName+"/"+_.getName).toVector //Haetaan kaikkien kansion tiedostojen nimet.
-    ???
-  }
-  
-  private def lueProfiiliTiedosto(tiedosto: FileReader, rivit: BufferedReader, tiedostonNimi: String) = {
-    ???
   }
   
   def paivitaProfiili(voitot: Map[String,Int], kaikkiPelit: Map[String,Int], ennatykset: Map[String,Int]) = {

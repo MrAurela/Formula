@@ -8,6 +8,15 @@ object Peli {
   var pelitilanne: Option[Pelitilanne] = None
   
   val rataLista = TiedostonHallinta.haeRadat
+  val profiiliLista = TiedostonHallinta.haeProfiilit
+  
+  println(rataLista.size)
+  rataLista.foreach(println(_))
+  println("Radat tulostettu")
+  
+  println(profiiliLista.size)
+  profiiliLista.foreach(println(_))
+  println("Profiilit tulostettu!")
   
   def peliKaynnissa = pelitilanne.isDefined
   

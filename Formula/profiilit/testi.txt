@@ -1,0 +1,18 @@
+
+#pelit
+testi1 7
+rata1 10
+
+eiolemassa 16
+
+#ei mikaan
+rata1 3
+
+#voitot
+rata1 9
+testi1 30
+
+#ennatykset
+testi1 22
+eiolemassatamakaan 2
+
