@@ -28,7 +28,6 @@ class Siirto(lahto: Koordinaatti, kohde: Koordinaatti) {
   def muutaSuunnaksi = Suunta( Koordinaatti(this.xLiike, this.yLiike) ) // Siirtovektori siirrettynä alkamaan origosta.
   
   def samaSuunta(vaihde: Int): Suunta = {
-    println(vaihde)
     if (vaihde < 1 || vaihde > 5) Suunta(Koordinaatti(0,0)) //Virheellisellä vaihteella saadaan 0-suunta.
     else if (vaihde == this.vaihde) this.muutaSuunnaksi     //Jos vaihde on sama, jatketaan täsmälleen samaan suuntaan.
     else Suunta(vaihde, this.kulma)                         //Luo Suunnan annetulla vaihteella mahdollisimman lähellä
@@ -71,7 +70,7 @@ class Siirto(lahto: Koordinaatti, kohde: Koordinaatti) {
     if ( leveys == 0 ) { 
       val lahtoY = this.lahtoKoordinaatti.y
       val lahtoX = this.lahtoKoordinaatti.x
-      for ( y <- lahtoY to lahtoY + korkeus.toInt) koordinaatit.append(Koordinaatti(lahtoX, y) )
+      for ( y <- lahtoY to lahtoY + korkeus.toInt by signum(korkeus).toInt) koordinaatit.append(Koordinaatti(lahtoX, y) )
     } 
     
     //Kaikki muut tapaukset käsitellään laskemalla siirron kulmakerroin ja käymällä sitten suoraa läpi
@@ -103,6 +102,7 @@ class Siirto(lahto: Koordinaatti, kohde: Koordinaatti) {
       
     }
     
+    if (koordinaatit.size > 1) koordinaatit = koordinaatit.tail //Korjaa "empty.tail" bugin
     koordinaatit.toVector
     
   }

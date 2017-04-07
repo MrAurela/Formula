@@ -6,6 +6,10 @@ package pelikomponentit
 
 sealed abstract class Maasto(maastonTunnus: Char) {
   override def toString = maastonTunnus.toString
+  def onMaali = this match {
+    case Maali(_) => true
+    case _ => false
+  }
 }
 
 case object Tie extends Maasto(Maasto.tie)

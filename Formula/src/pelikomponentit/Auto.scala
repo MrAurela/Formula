@@ -7,6 +7,8 @@ class Auto {
   
   var vaihde = 1
   var vaihdeVuoronAlussa = 1
+  var kierrokset = 0
+  val aloitusSuunta = Suunta(Koordinaatti(-1, 0)) //Alkuperäinen suunta, suoraan vasemmalle
   
   private val siirtoLista = Buffer[Siirto]()
   def siirrot = this.siirtoLista.toVector
@@ -23,7 +25,7 @@ class Auto {
       val vastapaivainenSuunta = samaanSuuntaan.vastapaivaNaapuri.muutaSuunnaksi
       Vector(vastapaivainenSuunta, samaanSuuntaan, myotapaivainenSuunta)
     } else {
-      val lahtoSuunta = Suunta(1, Math.PI) //Alkuperäinen suunta, suoraan vasemmalle
+      val lahtoSuunta = aloitusSuunta
       val myotapaivainenSuunta = lahtoSuunta.myotapaivaNaapuri.muutaSuunnaksi
       val vastapaivainenSuunta = lahtoSuunta.vastapaivaNaapuri.muutaSuunnaksi
       Vector(vastapaivainenSuunta, lahtoSuunta, myotapaivainenSuunta)
@@ -46,6 +48,9 @@ class Auto {
   def merkitseSiirto(lahto: Koordinaatti, kohde: Koordinaatti) {
     this.siirtoLista.append(new Siirto(lahto, kohde))
   }
+  
+  //Lisää, vähentää tai pitää kierroksen samana syötteen (1,0,-1) perusteella.
+  def lisaaKierros(lisays: Int) = this.kierrokset += Math.signum(lisays).toInt
   
   def poistaEdellinenSiirto() = if (this.liikkunut) this.siirtoLista.remove(tehdytSiirrot-1)
   def palautaEdellinenVaihde() = if (this.liikkunut) vaihde = this.siirrot(this.tehdytSiirrot-1).vaihde //Vaihde on edellisen siirron vaihde

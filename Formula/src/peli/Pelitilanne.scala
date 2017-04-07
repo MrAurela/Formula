@@ -11,12 +11,14 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
   val pelilauta = lauta
   
   var vuorossa = pelaajaLista(0)
+  val vaadittavatKierrokset = 1
+  var peliKaynnissa = true
  
   def eiVuorossa = if (this.vuorossa == pelaajat(0)) pelaajat(1) else pelaajat(0)
   
   def siirraAutoa(kohde: Koordinaatti) = {
     val siirtoOnnistui = this.pelilauta.siirraAutoaLaillisesti(vuorossa.auto, kohde) //Siirtää autoa, jos siirto on laillinen
-    if (siirtoOnnistui) vaihdaVuoroa()
+    if (siirtoOnnistui) uusiVuoro()
   }
   
   def peruSiirto() = {
@@ -31,6 +33,11 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
   }
 
   def sallitutSiirrot = pelilauta.sallitutSiirrot(vuorossa.auto)
+  
+  private def uusiVuoro() = {
+    if (vuorossa.auto.kierrokset >= vaadittavatKierrokset) peliKaynnissa = false
+    else vaihdaVuoroa()
+  }
   
   private def vaihdaVuoroa() = {
     if (pelaajat(0) == vuorossa) vuorossa = pelaajat(1)

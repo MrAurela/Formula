@@ -1,6 +1,7 @@
 package gui
 
-import peli.Peli
+import peli.{Peli, Pelitilanne}
+import siirrot.Koordinaatti
 import scala.swing._
 
 object NappuloidenHallinta {
@@ -18,7 +19,13 @@ object NappuloidenHallinta {
   def paivita() = {
     paivitaNappulat()
     paivitaVaihde()
-
+  }
+  
+  //Tekee siirron ja palauttaa tiedon siitä, jatkuuko peli edelleen.
+  def teeSiirto(koordinaatti: Koordinaatti): Boolean = {
+    val pelitilanne = Peli.pelitilanne.getOrElse(Pelitilanne())
+    pelitilanne.siirraAutoa(koordinaatti)
+    pelitilanne.peliKaynnissa
   }
   
   private def paivitaNappulat() {

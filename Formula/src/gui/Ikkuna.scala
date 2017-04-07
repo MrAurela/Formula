@@ -137,6 +137,8 @@ object Ikkuna extends SimpleSwingApplication {
       this.repaint()
     }
     
+    def vaihdaIkkunanSisaltoMenuun() = this.vaihdaIkkunanSisalto(menu)
+    
     //Tarvitaan vain jos käytetään näppäimistöä
     //gameScreen.requestFocus
     

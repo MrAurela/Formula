@@ -77,8 +77,8 @@ class Ruudukko(vaakaRuudut_ : Int, pystyRuudut_ : Int) extends Panel {
   listenTo(this.mouse.clicks)
     reactions += {
       case MouseClicked(ruudukko, sijainti, _, _, _) => {
-        val klikattuKoordinaatti = Koordinaatti(sijainti.x / ruudunKoko, sijainti.y  / ruudunKoko)
-        Peli.pelitilanne.getOrElse(Pelitilanne()).siirraAutoa(klikattuKoordinaatti)
+        val peliJatkuu = NappuloidenHallinta.teeSiirto(Koordinaatti(sijainti.x / ruudunKoko, sijainti.y  / ruudunKoko))
+        if ( !peliJatkuu ) Ikkuna.top.vaihdaIkkunanSisaltoMenuun()
         repaint()
         
         //Jos siirto onnistui ja vuoro vaihtui, päivitetään vaihdelaatikon teksti
