@@ -1,18 +1,5 @@
 
-#pelit
-testi1 7
-rata1 10
-
-eiolemassa 16
-
-#ei mikaan
-rata1 3
-
-#voitot
-rata1 9
-testi1 30
-
-#ennatykset
-testi1 22
-eiolemassatamakaan 2
-
+testi1 7 9 22
+rata1 2 7 21
+olematon 7 8 8
+jotain muuta 83 9
