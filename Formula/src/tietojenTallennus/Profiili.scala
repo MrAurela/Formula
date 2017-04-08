@@ -18,7 +18,7 @@ class Profiili(nimi: String) {
     this.pelatutOttelut += rata -> (this.pelatutOttelut.getOrElse(rata, 0) + 1)
     if (voitti) this.voitetutOttelut += rata -> (this.voitetutOttelut.getOrElse(rata, 0) + 1)
     this.ennatysajat += rata -> Math.min( this.ennatysajat.getOrElse(rata, kierrosaika+1), kierrosaika ) //Parempi aika jää voimaan.
-    TiedostonHallinta.paivitaProfiili(voitetutOttelut.toMap, pelatutOttelut.toMap, ennatysajat.toMap) //Päivitettän myös tiedostoon.
+    TiedostonHallinta.paivitaProfiili(nimi, voitetutOttelut.toMap, pelatutOttelut.toMap, ennatysajat.toMap) //Päivitettän myös tiedostoon.
   }
   
   override def toString() = nimi +
@@ -51,7 +51,6 @@ object Profiili {
       rivi match {
         case riviMalli(radanNimi, voitotRadalla, pelitRadalla, ennatys)
          if ( radat.map(_.nimi).contains(radanNimi) && voitotRadalla.toInt <= pelitRadalla.toInt)  => {
-          println("TÄÄLLTÄ")
           voitot += radanNimi -> voitotRadalla.toInt
           pelit += radanNimi -> pelitRadalla.toInt
           ennatykset += radanNimi -> ennatys.toInt

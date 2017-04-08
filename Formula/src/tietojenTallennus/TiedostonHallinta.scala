@@ -8,6 +8,7 @@ import pelikomponentit.Maasto
  * A+ -materiaali, erityisesti sivu: https://plus.cs.hut.fi/studio_2/2017/k15/osa03/
  * Tiedostojen lukeminen ja hallinta, sekä listFiles()-komento
  * Vastaus ongelmaan map-komennon kanssa sivulta http://www.scala-lang.org/old/node/12090.html
+ * Tiedostojen kirjoittaminen: http://alvinalexander.com/scala/how-to-write-text-files-in-scala-printwriter-filewriter
  */
 
 
@@ -101,13 +102,46 @@ object TiedostonHallinta {
     }
   }
   
-  def paivitaProfiili(voitot: Map[String,Int], kaikkiPelit: Map[String,Int], ennatykset: Map[String,Int]) = {
-    ???
+  def paivitaProfiili(nimi: String, voitot: Map[String,Int], kaikkiPelit: Map[String,Int], ennatykset: Map[String,Int]) = {
+    var teksti = ""
+    for (rata <- voitot.keys) {
+      if (kaikkiPelit.keys.toVector.contains(rata) && ennatykset.keys.toVector.contains(rata)) { //Radan tiedot täytyy löytyä jokaisesta.
+        teksti += rata + " " + voitot(rata) + " " + kaikkiPelit(rata) + " " + ennatykset(rata) + "\n" //Muutetaan haluttuun muotoon.
+      }
+    }
+    val tiedosto = profiiliKansio + "/" + nimi + ".txt"
+    this.kirjoitaTiedostoon(tiedosto, teksti)
   }
   
   def uusiProfiili(nimi: String) = {
-    val profiili = new Profiili(nimi)
+    val profiili = Profiili(nimi)
     ???
+  }
+  
+  def kirjoitaTiedostoon(tiedostonNimi: String, sisalto: String) = {
+    try { //Yritetään avata tiedosto
+      val tiedosto = new File(tiedostonNimi)
+      val  kirjoittaja = new BufferedWriter( new FileWriter(tiedosto) )
+      try { //Yritetään kirjoittaa tiedostoon. 
+        kirjoittaja.write(sisalto)
+      } catch {
+        case virheIlmoitus : Throwable => { //Jos mikä tahansa virhe tiedoston kirjoittamisen aikana.
+          println(virheIlmoitus)
+          println("Tiedostoon " + tiedostonNimi + " ei pystytty kirjoittamaan.")
+        }
+      } finally { //Joka tapauksessa suljetaan tiedosto.
+        kirjoittaja.close()
+      }
+    } catch {
+      case virheIlmoitus: IOException => { //Jos IOEXception tapahtuu.
+        println(virheIlmoitus)
+        println("Tiedostoon " + tiedostonNimi + " ei pystytty avaamaan.")
+      }
+      case virheIlmoitus: Throwable => { //Jos joku muu virhe tapahtuu.
+        println(virheIlmoitus)
+        println("Tiedostoa " + tiedostonNimi + " avattaessa tapahtui odottamaton virhe.")
+      }
+    }
   }
     
   
