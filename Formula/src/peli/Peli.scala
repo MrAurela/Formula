@@ -8,8 +8,8 @@ object Peli {
   
   var pelitilanne: Option[Pelitilanne] = None
   
-  val rataLista = TiedostonHallinta.haeRadat
-  val profiiliLista = TiedostonHallinta.haeProfiilit
+  var rataLista = TiedostonHallinta.haeRadat
+  var profiiliLista = TiedostonHallinta.haeProfiilit
   
   def peliKaynnissa = pelitilanne.isDefined
   
@@ -26,6 +26,12 @@ object Peli {
     
     tilanne
    
+  }
+  
+  def uusiProfiili(profiili: Profiili) {
+    val profiiliList: List[Profiili] = profiiliLista.toList 
+    profiiliLista = (profiiliList ++ List(profiili)).toVector //Päivitetään oma lista
+    tietojenTallennus.TiedostonHallinta.uusiProfiili(profiili) //Päivitetään tiedostoon tallennettu lista
   }
   
 }

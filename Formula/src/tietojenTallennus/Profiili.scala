@@ -22,13 +22,18 @@ class Profiili(_nimi: String) {
     TiedostonHallinta.paivitaProfiili(nimi, voitetutOttelut.toMap, pelatutOttelut.toMap, ennatysajat.toMap) //Päivitettän myös tiedostoon.
   }
   
-  override def toString() = nimi +
-                            "\nVoitetut ottelut:\n" +
-                            voitetutOttelut.mkString("\n") +
-                            "\nPelatut ottelut:\n" +
-                            pelatutOttelut.mkString("\n") + 
-                            "\nEnnätysajat:\n" +
-                            ennatysajat.mkString("\n")
+  //Radat, joista tallessa täysi informaatio
+  def radat = 
+    voitetutOttelut.keys.toVector.filter{rata => pelatutOttelut.keys.toVector.contains(rata) && ennatysajat.keys.toVector.contains(rata)}
+  
+  private def ratatiedotTekstiksi(rata: String) = {
+    rata + ": " + voitetutOttelut.getOrElse(rata, "-") + ", " +
+                  pelatutOttelut.getOrElse(rata, "-") + ", " +
+                  ennatysajat.getOrElse(rata, "-")
+  }
+  
+  def tiedot = radat.map(this.ratatiedotTekstiksi(_))
+                            
 }
 
 object Profiili {

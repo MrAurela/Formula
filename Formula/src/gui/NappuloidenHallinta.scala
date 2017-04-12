@@ -2,7 +2,11 @@ package gui
 
 import peli.{Peli, Pelitilanne, Pelaaja}
 import siirrot.Koordinaatti
+import tietojenTallennus.Profiili
 import scala.swing._
+import javax.swing.JOptionPane
+
+//dialog input: http://stackoverflow.com/questions/19603403/how-to-collect-input-from-user-with-dialog-box
 
 object NappuloidenHallinta {
   
@@ -32,24 +36,12 @@ object NappuloidenHallinta {
   
   def uusiPeli(): Unit = {
     val valikko = Ikkuna.paaValikko
-    val rata = valikko.tasovalinta.radat
-                      .get(valikko.tasovalinta.menulista //Otetaan rata Option muodossa
-                        .find(_.selected) //Valittu teksti
-                        .getOrElse(new RadioMenuItem("")) //Jos mitään rataa ei ole valittu (ei tosin pitäisi olla mahdollista)
-                      )
-    val profiili1 = valikko.pelaaja1.profiilit
-                      .get(valikko.pelaaja1.menulista
-                        .find(_.selected)
-                        .getOrElse(new RadioMenuItem(""))
-                      )
-    val profiili2 = valikko.pelaaja2.profiilit
-                      .get(valikko.pelaaja2.menulista
-                        .find(_.selected)
-                        .getOrElse(new RadioMenuItem(""))
-                      )
+    val rata = valikko.tasovalinta.valittu
+    val profiili1 = valikko.pelaaja1.valittu
+    val profiili2 = valikko.pelaaja2.valittu
     if (rata.isDefined) { //Kunhan rata on määritelty. Profiili voi olla myös None, jos "EI PROFIILIA" vaihtoehto on valittu.
       val uusiPeli = Peli.uusiPeli(rata.get, Vector(profiili1, profiili2))
-      Ikkuna.paaIkkuna.vaihdaIkkunanSisalto(Ikkuna.peliIkkuna(uusiPeli))
+      Ikkuna.paaIkkuna    .vaihdaIkkunanSisalto(Ikkuna.peliIkkuna(uusiPeli))
     }
   }
   
@@ -76,5 +68,27 @@ object NappuloidenHallinta {
       Ikkuna.vaihteenVaihto.vaihdeLuku.text = Peli.pelitilanne.get.vuorossa.auto.vaihde.toString
     }
   }
+  
+  def paivitaProfiilienHallinta(profiili: Profiili) {
+    Ikkuna.paaIkkuna.contents = Ikkuna.profiilienHallinta(profiili)
+  }
+  
+  //Seuraavaksi tämä pitää kehittää päivittämäään menut aina kun uusi profiili luodaan.
+  def paivitaMenut() {
+    ???
+  }
+  
+  def luoUusiProfiili() {
+    val nimi = JOptionPane.showInputDialog("Valitse profiilin nimi:")
+    Peli.uusiProfiili(Profiili(nimi))
+    
+  }
+  
+  //Tämän funktion ainut tarkoitus on kiertää rekursiivinen viittaus, joka olisi syntynyt, jos 
+  //profiilivalikossa olisi kutsuttu alla olevaa metodia.
+  def palaaMenuun() {
+    Ikkuna.paaIkkuna.vaihdaIkkunanSisaltoMenuun()
+  }
+  
   
 }

@@ -7,6 +7,7 @@
 package gui
 
 import peli.{Peli, Pelitilanne}
+import tietojenTallennus.Profiili
 
 import scala.swing._
 import scala.swing.event._
@@ -20,7 +21,7 @@ import javax.swing.{UIManager}
  * BoxPanel(Orientation.Vertical) löydetty: http://stackoverflow.com/questions/13380701/scala-swing-component-alignment
  * 
  * case match ongelma korjattu: http://alvinalexander.com/scala/scala-unreachable-code-due-to-variable-pattern-message
- */
+ *///http://alvinalexander.com/java/jwarehouse/scala/src/swing/scala/swing/test/UIDemo.scala.shtml
 
 
 object Ikkuna extends SimpleSwingApplication {
@@ -118,9 +119,37 @@ object Ikkuna extends SimpleSwingApplication {
   }
   //(menu)---------------------------------------------------------------------------------------------
   
+  //Profiilienhallinta-------------------------------------------------------------------------------------
+  def profiilienHallinta(profiili: Profiili) = new GridBagPanel {
+    val c = new Constraints
+    c.gridx = 0
+    c.gridy = 0
+    c.ipady = 25
+    val tiedot = profiili.tiedot.toList
+    val alku = 
+      if (tiedot.isEmpty) List(profiili.nimi, "", "Ei ole pelannut yhtään peliä.")
+      else List(profiili.nimi, "", "Rata | Voitot | Pelit | Ennätysaika")
+
+    val kaikki = (alku ++ tiedot).toVector
+    for (rivi <- kaikki) {
+      c.gridy += 1
+      layout(new Label{text=rivi; font=new Font("Arial",0,40)}) = c
+    }
+  }
   
-  
-  //PELAAJIEN LISÄÄMINEN MENUUN SEN MUKAAN KUINKA MONTA PROFIILIA ON MÄÄRITELTY. VAIN YHDEN PELAAJAN VOI VALITA
+  val profiiliValikko = new MenuBar {
+    contents += new Menu("Menu") {
+      contents += new MenuItem(Action("Uusi profiili")(NappuloidenHallinta.luoUusiProfiili()))
+      contents += new MenuItem(Action("Palaa päävalikkoon")(NappuloidenHallinta.palaaMenuun())) //Kts.kyseinen funktio
+    }
+    contents += new Menu("Profiilien tiedot") {
+      val menulista: Vector[MenuItem] = Peli.profiiliLista.map(profiili => 
+        new MenuItem(Action(profiili.nimi)(NappuloidenHallinta.paivitaProfiilienHallinta(profiili)) ) )
+      menulista.foreach(contents += _) //Lisätään kaikki profiilit menuun
+    }
+  }
+  //(profiilienhallina)--------------------------------------------------------------------------------------
+      
   val paaValikko = new MenuBar {
     val pelaaja1 = new PelaajaMenu("Pelaaja1")
     val pelaaja2 = new PelaajaMenu("Pelaaja2")
@@ -134,6 +163,8 @@ object Ikkuna extends SimpleSwingApplication {
     title = "Formula"
     preferredSize = new Dimension(leveys, korkeus)
 
+    resizable = false
+    
     menuBar = paaValikko
     contents = menu
 
@@ -145,11 +176,14 @@ object Ikkuna extends SimpleSwingApplication {
     def vaihdaIkkunanSisaltoMenuun() = {
       this.menuBar = paaValikko
       this.vaihdaIkkunanSisalto(menu)
-    }
-    
+    } 
     def vaihdaIkkunanSisaltoPeliin() = {
       this.menuBar = new MenuBar()
       NappuloidenHallinta.uusiPeli()
+    }
+    def vaihdaIkkunanSisaltoProfiilienHallintaan() = {
+      this.menuBar = profiiliValikko
+      this.vaihdaIkkunanSisalto(new GridBagPanel)
     }
     
     //Tarvitaan vain jos käytetään näppäimistöä
@@ -165,7 +199,7 @@ object Ikkuna extends SimpleSwingApplication {
         else if (nappula == oikeaPuoli.peruSiirto) NappuloidenHallinta.peruEdellinenSiirto()
         else if (nappula == oikeaPuoli.palaaMenuun) this.vaihdaIkkunanSisaltoMenuun
         else if (nappula == menu.uusiPeli) this.vaihdaIkkunanSisaltoPeliin()
-        else if (nappula == menu.profiilit) println("Profiilin hallintaaa ei ole toteutettu vielä.")
+        else if (nappula == menu.profiilit) this.vaihdaIkkunanSisaltoProfiilienHallintaan()
         else if (nappula == menu.rataeditori) println("Rataeditoria ei ole toteutettu vielä.")
         else if (nappula == menu.lopetaPeli) this.dispose()
         NappuloidenHallinta.paivita() //Nappuloiden painamisen jälkeen päivitetään nappuoiden tekstit ja repaintataan ruutu

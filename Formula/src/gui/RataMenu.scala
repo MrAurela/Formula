@@ -2,11 +2,12 @@ package gui
 
 import peli.Peli
 import scala.swing._
+import tietojenTallennus.Rata
 
 //Menu (radiobutton) - http://alvinalexander.com/java/jwarehouse/scala/src/swing/scala/swing/test/UIDemo.scala.shtml
 // -||- https://lampsvn.epfl.ch/trac/scala/browser/scala/trunk/src/swing/scala/swing/test/Dialogs.scala?rev=25699#L54
 
-case class RataMenu(nimi: String) extends Menu(nimi) {
+class RataMenu(nimi: String) extends Menu(nimi) {
   
 
   val menulista = Peli.rataLista.map(rata => new RadioMenuItem(rata.nimi))
@@ -18,6 +19,10 @@ case class RataMenu(nimi: String) extends Menu(nimi) {
   contents ++= vaihtoehdot.buttons //Lisätään menuun vaihtoehdot
   
   if ( !menulista.isEmpty) vaihtoehdot.select(menulista(0))
+  
+  def valittu: Option[Rata] = {
+    this.radat.get( this.menulista.find(_.selected).getOrElse(new RadioMenuItem("")) )
+  }
   
 }
 

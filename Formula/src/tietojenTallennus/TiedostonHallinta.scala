@@ -113,8 +113,7 @@ object TiedostonHallinta {
     this.kirjoitaTiedostoon(tiedosto, teksti)
   }
   
-  def uusiProfiili(nimi: String) = {
-    val profiili = Profiili(nimi)
+  def uusiProfiili(profiili: Profiili) = {
     this.paivitaProfiili(profiili.nimi, profiili.voitetutOttelut.toMap, profiili.pelatutOttelut.toMap, profiili.ennatysajat.toMap)
   }
   
