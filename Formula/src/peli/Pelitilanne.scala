@@ -46,10 +46,3 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
   }
   
 }
-
-object Pelitilanne {
-  
-  def apply() = new Pelitilanne(new Pelilauta(Vector(Vector())),
-                              Vector(new Pelaaja(new Auto()), new Pelaaja(new Auto())))
-      
-}

@@ -76,10 +76,6 @@ class Pelilauta(maastot: Vector[Vector[Maasto]]) {
     koordinaatit.map( this(_) )
   }
   
-  
-  ////YLÖSPÄIN SIIRTO EI TOIMI. EI LASKE YHTÄÄN LÄPÄISTÄVÄÄ KOORDINAATTIA.
-  
-  
   //Palauttaa -1, 0 tai 1 riippuen, onko maaliruutua saavutettu tai ohitettu siirrolla.
   //1 kuvaa maalin läpimenoa oikeaan kiertosuuntaan (vasemmalla) ja -1 taas maalin läpäisyä väärään suuntaan (oikealle)
   //0 on siirto, joka ei kulje maaliruutujen läpi tai liikkuu maaliruuduissa 
@@ -91,7 +87,7 @@ class Pelilauta(maastot: Vector[Vector[Maasto]]) {
   
   private def etsiAuto(auto: Auto): Koordinaatti = {
     for (x <- 0 until leveys; y <- 0 until korkeus) {
-      if (ruudut(y)(x).auto.getOrElse(new Auto()) == auto) 
+      if (ruudut(y)(x).auto.getOrElse(new Auto) == auto) 
         return Koordinaatti(x,y)
     }
     throw new Exception("Funktio etsiAuto, ei löytänyt autoa.")

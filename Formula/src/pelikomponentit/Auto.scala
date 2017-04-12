@@ -3,8 +3,8 @@ package pelikomponentit
 import scala.collection.mutable.Buffer
 import siirrot.{Siirto, Suunta, Koordinaatti}
 
-class Auto {
-  
+class Auto() {
+
   var vaihde = 1
   var vaihdeVuoronAlussa = 1
   var kierrokset = 0

@@ -8,8 +8,9 @@ import scala.collection.mutable.Buffer
 import peli.Peli
 
 
-class Profiili(nimi: String) {
+class Profiili(_nimi: String) {
   
+  val nimi = this._nimi
   var voitetutOttelut = Map[String, Int]() //Radat ja jokaisessa voitetut ottelut
   var pelatutOttelut = Map[String, Int]()  //Radat ja jokaisella pelatut ottelut
   var ennatysajat = Map[String,Int]()      //Radat ja jokaisen ennätysaika

@@ -14,11 +14,11 @@ import java.awt.Color
  * 
  */
 
-class Ruudukko(vaakaRuudut_ : Int, pystyRuudut_ : Int) extends Panel {
+class Ruudukko(pelitilanne: Pelitilanne) extends Panel {
   
   var ruudunKoko = 20
-  val vaakaRuudut = vaakaRuudut_
-  val pystyRuudut = pystyRuudut_
+  val vaakaRuudut = pelitilanne.pelilauta.leveys
+  val pystyRuudut = pelitilanne.pelilauta.korkeus
   
   preferredSize = new Dimension(vaakaRuudut * ruudunKoko +1, pystyRuudut * ruudunKoko +1) //+1, jottei reunimmaisimmat viivat leikkaudu pois.
   
@@ -36,7 +36,7 @@ class Ruudukko(vaakaRuudut_ : Int, pystyRuudut_ : Int) extends Panel {
   }
   
   private def piirraMaastot(g: Graphics2D) = { //Piirtää maastoruudut eri väreillä
-    val ruudut = Peli.pelitilanne.get.pelilauta.ruudut
+    val ruudut = pelitilanne.pelilauta.ruudut
     for (vaaka <- 0 until vaakaRuudut; pysty <- 0 until pystyRuudut) {
       ruudut(pysty)(vaaka).maasto match { //Valitaan maaston väri
         case Tie => g.setColor(Color.WHITE)
@@ -48,10 +48,10 @@ class Ruudukko(vaakaRuudut_ : Int, pystyRuudut_ : Int) extends Panel {
   }
   
   private def piirraAutot(g: Graphics2D) = { //Piirtää autot, tällä hetkellä ympyröillä
-    val ruudut = Peli.pelitilanne.get.pelilauta.ruudut
+    val ruudut = pelitilanne.pelilauta.ruudut
     for (vaaka <- 0 until vaakaRuudut; pysty <- 0 until pystyRuudut) {
-      if (ruudut(pysty)(vaaka).onAuto) { //Jos ruudussa on auto
-          if ( ruudut(pysty)(vaaka).auto.get == Peli.pelitilanne.get.pelaajat(0).auto ) g.setColor(Color.BLUE)
+      if (ruudut(pysty)(vaaka).onAuto) { //Jos ruudussa on auto 
+          if ( ruudut(pysty)(vaaka).auto.get == pelitilanne.pelaajat(0).auto ) g.setColor(Color.BLUE) //Voidaan käyttä get
           else g.setColor(Color.RED)
           g.fillOval(((vaaka + 0.25) * ruudunKoko).toInt , ((pysty + 0.25) * ruudunKoko).toInt, //Piirretään auto
               (0.5*ruudunKoko).toInt, (0.5*ruudunKoko).toInt)
@@ -60,9 +60,8 @@ class Ruudukko(vaakaRuudut_ : Int, pystyRuudut_ : Int) extends Panel {
   }
   
   private def piirraVaihtoehdot(g: Graphics2D) = {
-    val lauta = Peli.pelitilanne.get.pelilauta
-    val autoVuorossa = Peli.pelitilanne.get.vuorossa.auto
-    val pelitilanne = Peli.pelitilanne.get // OLETTAA ETTÄ PELI ON KÄYNNISSÄ
+    val lauta = pelitilanne.pelilauta
+    val autoVuorossa = pelitilanne.vuorossa.auto
     
     if ( autoVuorossa == pelitilanne.pelaajat(0).auto ) g.setColor(Color.BLUE)
     else g.setColor(Color.RED)

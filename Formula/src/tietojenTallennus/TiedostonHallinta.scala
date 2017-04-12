@@ -115,7 +115,7 @@ object TiedostonHallinta {
   
   def uusiProfiili(nimi: String) = {
     val profiili = Profiili(nimi)
-    ???
+    this.paivitaProfiili(profiili.nimi, profiili.voitetutOttelut.toMap, profiili.pelatutOttelut.toMap, profiili.ennatysajat.toMap)
   }
   
   def kirjoitaTiedostoon(tiedostonNimi: String, sisalto: String) = {

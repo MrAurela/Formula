@@ -6,7 +6,7 @@
 
 package gui
 
-import peli.Peli
+import peli.{Peli, Pelitilanne}
 
 import scala.swing._
 import scala.swing.event._
@@ -29,8 +29,7 @@ object Ikkuna extends SimpleSwingApplication {
   val leveys = 1000  
   val korkeus = 800
   
-  val ruudukko = new Ruudukko(Peli.pelitilanne.get.pelilauta.leveys, Peli.pelitilanne.get.pelilauta.korkeus)
-  
+  //PeliIkkuna-------------------------------------------------------------------
   val vaihteenVaihto = new BoxPanel(Orientation.Horizontal) {
   
     val vaihdeYlos = new Button {
@@ -52,8 +51,8 @@ object Ikkuna extends SimpleSwingApplication {
 
   }
   
-  val vasenPuoli = new BoxPanel(Orientation.Vertical) {
-    this.contents += ruudukko
+  def vasenPuoli(pelitilanne: Pelitilanne) = new BoxPanel(Orientation.Vertical) {
+    this.contents += new Ruudukko(pelitilanne)
     this.contents += vaihteenVaihto
   }
   
@@ -72,16 +71,17 @@ object Ikkuna extends SimpleSwingApplication {
 
   }
   
-  val peliIkkuna = new GridBagPanel {
+  def peliIkkuna(pelitilanne: Pelitilanne) = new GridBagPanel {
     val c = new Constraints
     c.insets = new Insets(50,50,50,50)
-    layout(vasenPuoli) = c
+    layout(vasenPuoli(pelitilanne)) = c
     c.gridx = 1
     layout(oikeaPuoli) = c
   }
+  //(peliIkkuna)-----------------------------------------------------
   
   
-  //Menu
+  //Menu-----------------------------------------------------------------------
   val menu = new GridBagPanel {
     val uusiPeli = new Button {
       preferredSize = new Dimension(200,200)
@@ -120,16 +120,21 @@ object Ikkuna extends SimpleSwingApplication {
   
   
   
-  /*val paaValikko = new MenuBar {
-    contents += new Menu("Menu") {
-      contents += new MenuItem(Action("Uusi peli")(newGame))
-    }
-  }*/
+  //PELAAJIEN LISÄÄMINEN MENUUN SEN MUKAAN KUINKA MONTA PROFIILIA ON MÄÄRITELTY. VAIN YHDEN PELAAJAN VOI VALITA
+  val paaValikko = new MenuBar {
+    val pelaaja1 = new PelaajaMenu("Pelaaja1")
+    val pelaaja2 = new PelaajaMenu("Pelaaja2")
+    val tasovalinta = new RataMenu("Rata")
+    contents += pelaaja1
+    contents += pelaaja2
+    contents += tasovalinta
+  }
 
   val paaIkkuna = new MainFrame {
     title = "Formula"
     preferredSize = new Dimension(leveys, korkeus)
 
+    menuBar = paaValikko
     contents = menu
 
     def vaihdaIkkunanSisalto(sisalto: GridBagPanel) = {
@@ -137,7 +142,15 @@ object Ikkuna extends SimpleSwingApplication {
       this.repaint()
     }
     
-    def vaihdaIkkunanSisaltoMenuun() = this.vaihdaIkkunanSisalto(menu)
+    def vaihdaIkkunanSisaltoMenuun() = {
+      this.menuBar = paaValikko
+      this.vaihdaIkkunanSisalto(menu)
+    }
+    
+    def vaihdaIkkunanSisaltoPeliin() = {
+      this.menuBar = new MenuBar()
+      NappuloidenHallinta.uusiPeli()
+    }
     
     //Tarvitaan vain jos käytetään näppäimistöä
     //gameScreen.requestFocus
@@ -150,8 +163,8 @@ object Ikkuna extends SimpleSwingApplication {
         if (nappula == vaihteenVaihto.vaihdeYlos) NappuloidenHallinta.nostaVaihdetta()
         else if (nappula == vaihteenVaihto.vaihdeAlas) NappuloidenHallinta.laskeVaihdetta()
         else if (nappula == oikeaPuoli.peruSiirto) NappuloidenHallinta.peruEdellinenSiirto()
-        else if (nappula == oikeaPuoli.palaaMenuun) this.vaihdaIkkunanSisalto(menu)
-        else if (nappula == menu.uusiPeli) this.vaihdaIkkunanSisalto(peliIkkuna)
+        else if (nappula == oikeaPuoli.palaaMenuun) this.vaihdaIkkunanSisaltoMenuun
+        else if (nappula == menu.uusiPeli) this.vaihdaIkkunanSisaltoPeliin()
         else if (nappula == menu.profiilit) println("Profiilin hallintaaa ei ole toteutettu vielä.")
         else if (nappula == menu.rataeditori) println("Rataeditoria ei ole toteutettu vielä.")
         else if (nappula == menu.lopetaPeli) this.dispose()
