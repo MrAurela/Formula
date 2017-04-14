@@ -2,6 +2,7 @@ package pelikomponentit
 
 import scala.collection.mutable.Buffer
 import siirrot.{Siirto, Suunta, Koordinaatti}
+import peli.Peli
 
 class Auto() {
 
@@ -30,6 +31,26 @@ class Auto() {
       val vastapaivainenSuunta = lahtoSuunta.vastapaivaNaapuri.muutaSuunnaksi
       Vector(vastapaivainenSuunta, lahtoSuunta, myotapaivainenSuunta)
     }
+  }
+  
+  def kaikkiSallitutSuunnat: Vector[Suunta] = {
+    val suoraan = this.sallitutSuunnat(1)
+    val kaikkiSuunnat = this.sallitutSuunnat.toBuffer
+    if (vaihdettaVoiNostaa) {
+      val isompiSuoraan = suoraan.samaSuunta(this.vaihde+1)
+      kaikkiSuunnat.append(isompiSuoraan.vastapaivaNaapuri.muutaSuunnaksi, isompiSuoraan, isompiSuoraan.myotapaivaNaapuri.muutaSuunnaksi)
+    }
+    if (vaihdettaVoiLaskea) {
+      val pienempiSuoraan = suoraan.samaSuunta(this.vaihde-1)
+      kaikkiSuunnat.append(pienempiSuoraan.vastapaivaNaapuri.muutaSuunnaksi, pienempiSuoraan, pienempiSuoraan.myotapaivaNaapuri.muutaSuunnaksi)
+    }
+    kaikkiSuunnat.toVector
+  }
+  
+  def eiVoiLiikkua: Boolean = {
+    val optionPelitilanne = Peli.pelitilanne //Jos isDefined = false, ei loppuehtoa tarkasteta ja get-komentoa suoriteta.
+    if (optionPelitilanne.isDefined && !optionPelitilanne.get.kaikkiSallitutSiirrot.isEmpty) false
+    else true
   }
   
   //Vaihdetta ei voi vaihtaa ensimmäisellä kierroksella

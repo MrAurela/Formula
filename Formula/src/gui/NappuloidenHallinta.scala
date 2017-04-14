@@ -26,22 +26,21 @@ object NappuloidenHallinta {
   }
   
   //Tekee siirron ja palauttaa tiedon siitä, jatkuuko peli edelleen.
-  def teeSiirto(koordinaatti: Koordinaatti): Boolean = {
+  def teeSiirto(koordinaatti: Koordinaatti) = {
     val pelitilanne = Peli.pelitilanne
     if (pelitilanne.isDefined) { //Funktiota kutsutaan vain kun pelitilanne on määritelty. Varmuuden vuoksi tarkistetaan asia.
       pelitilanne.get.siirraAutoa(koordinaatti)
-      pelitilanne.get.peliKaynnissa
-    } else true
+    }
   }
   
   def uusiPeli(): Unit = {
-    val valikko = Ikkuna.paaValikko
+    val valikko = this.paaValikko
     val rata = valikko.tasovalinta.valittu
     val profiili1 = valikko.pelaaja1.valittu
     val profiili2 = valikko.pelaaja2.valittu
     if (rata.isDefined) { //Kunhan rata on määritelty. Profiili voi olla myös None, jos "EI PROFIILIA" vaihtoehto on valittu.
       val uusiPeli = Peli.uusiPeli(rata.get, Vector(profiili1, profiili2))
-      Ikkuna.paaIkkuna    .vaihdaIkkunanSisalto(Ikkuna.peliIkkuna(uusiPeli))
+      Ikkuna.paaIkkuna.vaihdaIkkunanSisalto(Ikkuna.peliIkkuna(uusiPeli))
     }
   }
   
@@ -69,25 +68,52 @@ object NappuloidenHallinta {
     }
   }
   
-  def paivitaProfiilienHallinta(profiili: Profiili) {
-    Ikkuna.paaIkkuna.contents = Ikkuna.profiilienHallinta(profiili)
+  val paaValikko = new MenuBar {
+    val pelaaja1 = new PelaajaMenu("Pelaaja1: Sininen")
+    val pelaaja2 = new PelaajaMenu("Pelaaja2: Punainen")
+    val tasovalinta = new RataMenu("Rata")
+    contents += pelaaja1
+    contents += pelaaja2
+    contents += tasovalinta
+  }
+
+  
+  def profiiliValikko: MenuBar= new MenuBar {
+    contents += new Menu("Menu") {
+      contents += new MenuItem(Action("Uusi profiili"){NappuloidenHallinta.luoUusiProfiili()})
+      contents += new MenuItem(Action("Palaa päävalikkoon")(NappuloidenHallinta.palaaMenuun())) //Kts.kyseinen funktio
+    }
+    def profiiliMenu = new Menu("Profiilien tiedot") {
+      val menulista: Vector[MenuItem] = Peli.profiiliLista.map(profiili => 
+        new MenuItem(Action(profiili.nimi)(NappuloidenHallinta.haeProfiilienHallinta(profiili)) ) )
+      menulista.foreach(contents += _) //Lisätään kaikki profiilit menuun
+    }
+    contents += profiiliMenu
   }
   
-  //Seuraavaksi tämä pitää kehittää päivittämäään menut aina kun uusi profiili luodaan.
-  def paivitaMenut() {
-    ???
+  def haeProfiilienHallinta(profiili: Profiili) {
+    Ikkuna.paaIkkuna.contents = Ikkuna.profiilienHallinta(profiili)
   }
   
   def luoUusiProfiili() {
     val nimi = JOptionPane.showInputDialog("Valitse profiilin nimi:")
     Peli.uusiProfiili(Profiili(nimi))
-    
   }
   
   //Tämän funktion ainut tarkoitus on kiertää rekursiivinen viittaus, joka olisi syntynyt, jos 
   //profiilivalikossa olisi kutsuttu alla olevaa metodia.
   def palaaMenuun() {
     Ikkuna.paaIkkuna.vaihdaIkkunanSisaltoMenuun()
+  }
+
+  def tallenaProfiilienTiedot(pelitilanne: Pelitilanne) = {
+    val voittaja = pelitilanne.tarkistaVoitto._1
+    if (voittaja.isDefined) {
+      pelitilanne.pelaajat.foreach { pelaaja => 
+        if (pelaaja == voittaja) pelaaja.profiili.foreach(_.paivita(true, pelitilanne.pelilauta.radanNimi, pelaaja.auto.tehdytSiirrot))
+        else pelaaja.profiili.foreach(_.paivita(false, pelitilanne.pelilauta.radanNimi, pelaaja.auto.tehdytSiirrot))
+      }
+    }
   }
   
   

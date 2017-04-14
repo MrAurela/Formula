@@ -1,8 +1,4 @@
 
-//MUISTA 
-// for ( i <- 10 to 0 by -1)
-
-
 
 package gui
 
@@ -136,36 +132,15 @@ object Ikkuna extends SimpleSwingApplication {
       layout(new Label{text=rivi; font=new Font("Arial",0,40)}) = c
     }
   }
-  
-  val profiiliValikko = new MenuBar {
-    contents += new Menu("Menu") {
-      contents += new MenuItem(Action("Uusi profiili")(NappuloidenHallinta.luoUusiProfiili()))
-      contents += new MenuItem(Action("Palaa päävalikkoon")(NappuloidenHallinta.palaaMenuun())) //Kts.kyseinen funktio
-    }
-    contents += new Menu("Profiilien tiedot") {
-      val menulista: Vector[MenuItem] = Peli.profiiliLista.map(profiili => 
-        new MenuItem(Action(profiili.nimi)(NappuloidenHallinta.paivitaProfiilienHallinta(profiili)) ) )
-      menulista.foreach(contents += _) //Lisätään kaikki profiilit menuun
-    }
-  }
   //(profiilienhallina)--------------------------------------------------------------------------------------
       
-  val paaValikko = new MenuBar {
-    val pelaaja1 = new PelaajaMenu("Pelaaja1")
-    val pelaaja2 = new PelaajaMenu("Pelaaja2")
-    val tasovalinta = new RataMenu("Rata")
-    contents += pelaaja1
-    contents += pelaaja2
-    contents += tasovalinta
-  }
-
   val paaIkkuna = new MainFrame {
     title = "Formula"
     preferredSize = new Dimension(leveys, korkeus)
 
     resizable = false
     
-    menuBar = paaValikko
+    menuBar = NappuloidenHallinta.paaValikko
     contents = menu
 
     def vaihdaIkkunanSisalto(sisalto: GridBagPanel) = {
@@ -174,15 +149,15 @@ object Ikkuna extends SimpleSwingApplication {
     }
     
     def vaihdaIkkunanSisaltoMenuun() = {
-      this.menuBar = paaValikko
+      this.menuBar = NappuloidenHallinta.paaValikko
       this.vaihdaIkkunanSisalto(menu)
     } 
     def vaihdaIkkunanSisaltoPeliin() = {
+      NappuloidenHallinta.uusiPeli() //Menua ei voi vaihtaa ennen kuin pelin tiedot on ladattu.
       this.menuBar = new MenuBar()
-      NappuloidenHallinta.uusiPeli()
     }
     def vaihdaIkkunanSisaltoProfiilienHallintaan() = {
-      this.menuBar = profiiliValikko
+      this.menuBar = NappuloidenHallinta.profiiliValikko
       this.vaihdaIkkunanSisalto(new GridBagPanel)
     }
     
@@ -209,7 +184,6 @@ object Ikkuna extends SimpleSwingApplication {
   }
   
   def top = paaIkkuna
-  NappuloidenHallinta.paivita()
     
 }
 

@@ -12,13 +12,12 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
   
   var vuorossa = pelaajaLista(0)
   val vaadittavatKierrokset = 1
-  var peliKaynnissa = true
  
   def eiVuorossa = if (this.vuorossa == pelaajat(0)) pelaajat(1) else pelaajat(0)
   
   def siirraAutoa(kohde: Koordinaatti) = {
     val siirtoOnnistui = this.pelilauta.siirraAutoaLaillisesti(vuorossa.auto, kohde) //Siirtää autoa, jos siirto on laillinen
-    if (siirtoOnnistui) uusiVuoro()
+    if (siirtoOnnistui) vaihdaVuoroa()
   }
   
   def peruSiirto() = {
@@ -32,11 +31,19 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
     }
   }
 
-  def sallitutSiirrot = pelilauta.sallitutSiirrot(vuorossa.auto)
+  def sallitutSiirrot = pelilauta.sallitutSiirrot(vuorossa.auto, true) //True => tietyllä vaihteella sallitut siirrot
   
-  private def uusiVuoro() = {
-    if (vuorossa.auto.kierrokset >= vaadittavatKierrokset) peliKaynnissa = false
-    else vaihdaVuoroa()
+  def kaikkiSallitutSiirrot = pelilauta.sallitutSiirrot(vuorossa.auto, false) //False => sallittujen vaihteiden kaikki siirrot
+  
+  def tarkistaVoitto: (Option[Pelaaja], String) =  {
+    if (pelaajat(0).auto.tehdytSiirrot == pelaajat(1).auto.tehdytSiirrot) {
+      if (pelaajat(1).auto.kierrokset >= vaadittavatKierrokset) (Some(pelaajat(1)), "Rata kierretty.") //Tasatilanteessa voittaa toisena siirtävä pelaaja.
+      else if (pelaajat(0).auto.kierrokset >= vaadittavatKierrokset) (Some(pelaajat(0)), "Rata kierretty.")
+      else if (pelaajat(1).auto.eiVoiLiikkua) (Some(pelaajat(0)), "Ulosajo.") //Jos ei voi liikkua laillisesti, häviää
+      else if (pelaajat(0).auto.eiVoiLiikkua) (Some(pelaajat(1)), "Ulosajo.")
+      else (None, "")
+    } else (None, "")
+    
   }
   
   private def vaihdaVuoroa() = {

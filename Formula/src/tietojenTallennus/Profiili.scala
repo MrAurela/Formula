@@ -10,6 +10,8 @@ import peli.Peli
 
 class Profiili(_nimi: String) {
   
+  override def toString() = nimi
+  
   val nimi = this._nimi
   var voitetutOttelut = Map[String, Int]() //Radat ja jokaisessa voitetut ottelut
   var pelatutOttelut = Map[String, Int]()  //Radat ja jokaisella pelatut ottelut

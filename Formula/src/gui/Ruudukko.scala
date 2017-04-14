@@ -8,10 +8,11 @@ import siirrot.Koordinaatti
 import scala.swing._
 import scala.swing.event._
 import java.awt.Color
+import scala.swing.Dialog
 
 /* Lähteet:
  * Samoja lähteitä kuin Ikkunassa.
- * 
+ * http://www.scala-lang.org/api/rc2/scala/swing/Dialog$.html
  */
 
 class Ruudukko(pelitilanne: Pelitilanne) extends Panel {
@@ -76,8 +77,17 @@ class Ruudukko(pelitilanne: Pelitilanne) extends Panel {
   listenTo(this.mouse.clicks)
     reactions += {
       case MouseClicked(ruudukko, sijainti, _, _, _) => {
-        val peliJatkuu = NappuloidenHallinta.teeSiirto(Koordinaatti(sijainti.x / ruudunKoko, sijainti.y  / ruudunKoko))
-        if ( !peliJatkuu ) Ikkuna.top.vaihdaIkkunanSisaltoMenuun()
+        NappuloidenHallinta.teeSiirto(Koordinaatti(sijainti.x / ruudunKoko, sijainti.y  / ruudunKoko))
+        if ( pelitilanne.tarkistaVoitto._1.isDefined ) {
+          val voittaja = pelitilanne.tarkistaVoitto._1.get
+          val tulos = pelitilanne.tarkistaVoitto._2
+          val vastaus = Dialog.showConfirmation(null, tulos+"\nPelin voitti: "+voittaja, "Peli päättyi", Dialog.Options.OkCancel, Dialog.Message.Info)
+          if (vastaus == Dialog.Result.Ok) {
+            NappuloidenHallinta.tallenaProfiilienTiedot(pelitilanne)// Sulje peli jos ja tallenna tiedot jos OK.
+            Ikkuna.top.vaihdaIkkunanSisaltoMenuun() 
+          }
+          else pelitilanne.peruSiirto()
+        }
         repaint()
         
         //Jos siirto onnistui ja vuoro vaihtui, päivitetään vaihdelaatikon teksti

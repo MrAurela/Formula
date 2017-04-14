@@ -3,8 +3,10 @@ package pelikomponentit
 import siirrot.{Koordinaatti, Siirto, Suunta}
 
 
-class Pelilauta(maastot: Vector[Vector[Maasto]]) {
+class Pelilauta(nimi: String, maastot: Vector[Vector[Maasto]]) {
   require(maastot.forall(_.length == maastot(0).length)) //Taulukon pitää olla suorakaide.
+  
+  val radanNimi = nimi
   
   val ruudut = maastot.map(_.map(new Ruutu(_))) //Vaihdetaan maastot vastaavaan ruutuun
   
@@ -40,7 +42,7 @@ class Pelilauta(maastot: Vector[Vector[Maasto]]) {
     ruudut(lahto.y)(lahto.x).poistaAuto() //Poistetaan vanhasta
     if (merkitseSiirto) auto.merkitseSiirto(lahto, kohde) //Merkitään siirto auton muistiin.
     auto.lisaaKierros(
-        this.siirtoMaaliin( auto.edellinenSiirto.getOrElse( new Siirto(Koordinaatti(0,0), Koordinaatti(0,0)) ) )
+        this.siirtoMaaliin( new Siirto(lahto, kohde) )
     )
   }
   /*
@@ -53,11 +55,16 @@ class Pelilauta(maastot: Vector[Vector[Maasto]]) {
   def mahdollisetSuunnat(auto: Auto): Vector[Suunta] = {
     auto.sallitutSuunnat
   }
+  def kaikkiMahdollisetSuunnat(auto: Auto): Vector[Suunta] = {
+    auto.kaikkiSallitutSuunnat
+  }
   
-  //Ottaa vaihteen ja suunnan lisäksi huomioon toisen auton sijainnin ja laudan reunat
-  def sallitutSiirrot(auto: Auto): Vector[Siirto] = {
+  //Ottaa vaihteen ja suunnan lisäksi huomioon toisen auton sijainnin ja laudan reunat.
+  //vainVaihteella arvo ilmaisee, palautetaanko kaikki auton siirtovaihtoehdot (sisältää vaihteenvaihdon), vai vaan nykyisen vaihteen siirrot.
+  def sallitutSiirrot(auto: Auto, vainVaihteella: Boolean): Vector[Siirto] = {
     val lahto = this.etsiAuto(auto)
-    val suunnat = this.mahdollisetSuunnat(auto)
+    val suunnat = if (vainVaihteella) this.mahdollisetSuunnat(auto)
+                  else this.kaikkiMahdollisetSuunnat(auto)
     val siirrot = suunnat.map(_.muutaSiirroksi(lahto))
     siirrot.filter{ siirto: Siirto =>
       val kohde = siirto.kohdeKoordinaatti
@@ -67,7 +74,7 @@ class Pelilauta(maastot: Vector[Vector[Maasto]]) {
   
   //Koordinaatit, joihin on mahdollista siirtyä.
   def sallitutKoordinaatit(auto: Auto) = {
-    this.sallitutSiirrot(auto).map(_.kohdeKoordinaatti)
+    this.sallitutSiirrot(auto, true).map(_.kohdeKoordinaatti)
   }
   
   //Palauttaa listan ruuduista, joiden läpi siirrytään.
@@ -79,7 +86,7 @@ class Pelilauta(maastot: Vector[Vector[Maasto]]) {
   //Palauttaa -1, 0 tai 1 riippuen, onko maaliruutua saavutettu tai ohitettu siirrolla.
   //1 kuvaa maalin läpimenoa oikeaan kiertosuuntaan (vasemmalla) ja -1 taas maalin läpäisyä väärään suuntaan (oikealle)
   //0 on siirto, joka ei kulje maaliruutujen läpi tai liikkuu maaliruuduissa 
-  def siirtoMaaliin(siirto: Siirto) = {
+  def siirtoMaaliin(siirto: Siirto): Int = {
     if (lapimentavatRuudut(siirto).exists(_.onMaali) && siirto.xLiike > 0) -1
     else if (lapimentavatRuudut(siirto).exists(_.onMaali) && siirto.xLiike < 0) 1
     else 0
