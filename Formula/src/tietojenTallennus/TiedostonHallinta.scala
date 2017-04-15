@@ -107,7 +107,7 @@ object TiedostonHallinta {
     for (rata <- kaikkiPelit.keys) {
       if (voitot.keys.toVector.contains(rata)) { //Radan tiedot täytyy löytyä aina kahdesta ensimmäisestä
         teksti += rata + " " + voitot.getOrElse(rata, "-") + " " +
-                  kaikkiPelit.getOrElse(rata, "-") + " " + ennatykset.getOrElse(rata, "-") + "\n" //Muutetaan haluttuun muotoon.
+                  kaikkiPelit.getOrElse(rata, "-") + " " + ennatykset.getOrElse(rata, Some("-")).getOrElse("-") + "\n" //Muutetaan haluttuun muotoon.
       }
     }
     val tiedosto = profiiliKansio + "/" + nimi + ".txt"

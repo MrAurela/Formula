@@ -122,6 +122,7 @@ object Ikkuna extends SimpleSwingApplication {
     c.gridy = 0
     c.ipady = 25
     val tiedot = profiili.tiedot.toList
+    println(tiedot)
     val alku = 
       if (tiedot.isEmpty) List(profiili.nimi, "", "Ei ole pelannut yhtään peliä.")
       else List(profiili.nimi, "", "Rata | Voitot | Pelit | Ennätysaika")
@@ -177,8 +178,8 @@ object Ikkuna extends SimpleSwingApplication {
         else if (nappula == menu.profiilit) this.vaihdaIkkunanSisaltoProfiilienHallintaan()
         else if (nappula == menu.rataeditori) println("Rataeditoria ei ole toteutettu vielä.")
         else if (nappula == menu.lopetaPeli) this.dispose()
-        NappuloidenHallinta.paivita() //Nappuloiden painamisen jälkeen päivitetään nappuoiden tekstit ja repaintataan ruutu
-        this.repaint()
+        NappuloidenHallinta.paivita() //Nappuloiden painamisen jälkeen päivitetään nappuoiden tekstit (oleellista lähinnä pelin aikana)
+        this.repaint() // ja repaintataan ruutu
       }
     }
   }

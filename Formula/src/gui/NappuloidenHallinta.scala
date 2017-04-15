@@ -81,17 +81,17 @@ object NappuloidenHallinta {
   def profiiliValikko: MenuBar= new MenuBar {
     contents += new Menu("Menu") {
       contents += new MenuItem(Action("Uusi profiili"){NappuloidenHallinta.luoUusiProfiili()})
-      contents += new MenuItem(Action("Palaa päävalikkoon")(NappuloidenHallinta.palaaMenuun())) //Kts.kyseinen funktio
+      contents += new MenuItem(Action("Palaa päävalikkoon")(NappuloidenHallinta.palaaMenuun()))
     }
     def profiiliMenu = new Menu("Profiilien tiedot") {
       val menulista: Vector[MenuItem] = Peli.profiiliLista.map(profiili => 
-        new MenuItem(Action(profiili.nimi)(NappuloidenHallinta.haeProfiilienHallinta(profiili)) ) )
+        new MenuItem(Action(profiili.nimi)(NappuloidenHallinta.haeProfiilienTiedot(profiili)) ) )
       menulista.foreach(contents += _) //Lisätään kaikki profiilit menuun
     }
     contents += profiiliMenu
   }
   
-  def haeProfiilienHallinta(profiili: Profiili) {
+  def haeProfiilienTiedot(profiili: Profiili) {
     Ikkuna.paaIkkuna.contents = Ikkuna.profiilienHallinta(profiili)
   }
   
@@ -112,7 +112,7 @@ object NappuloidenHallinta {
     if (voittaja.isDefined) {
       pelitilanne.pelaajat.foreach { pelaaja => 
         if (pelaaja == voittaja.get) pelaaja.profiili.foreach(_.paivita(true, pelitilanne.pelilauta.radanNimi, pelaaja.auto.tehdytSiirrot,selitys))
-        else pelaaja.profiili.foreach(_.paivita(false, pelitilanne.pelilauta.radanNimi, pelaaja.auto.tehdytSiirrot,selitys))
+        else pelaaja.profiili.foreach(_.paivita(false, pelitilanne.pelilauta.radanNimi, pelaaja.auto.tehdytSiirrot, selitys))
       }
     }
   }

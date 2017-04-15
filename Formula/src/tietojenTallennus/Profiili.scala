@@ -24,12 +24,11 @@ class Profiili(_nimi: String) {
     if (pelinPaattyminen!="Ulosajo." && voitti) this.ennatysajat += rata -> //Parempi aika jää voimaan. Määrittämätön aika on aina huonompi.
       Some( Math.min( this.ennatysajat.getOrElse(rata, Some(kierrosaika+1)).getOrElse(kierrosaika+1), kierrosaika ) )
     TiedostonHallinta.paivitaProfiili(nimi, voitetutOttelut.toMap, pelatutOttelut.toMap, ennatysajat.toMap) //Päivitettän myös tiedostoon.
-    println(tiedot)
   }
   
   //Radat, joista tallessa täysi informaatio
   def radat = 
-    voitetutOttelut.keys.toVector.filter{rata => pelatutOttelut.keys.toVector.contains(rata) && ennatysajat.keys.toVector.contains(rata)}
+    voitetutOttelut.keys.toVector.filter{rata => pelatutOttelut.keys.toVector.contains(rata)}
   
   private def ratatiedotTekstiksi(rata: String) = {
     rata + ": " + voitetutOttelut.getOrElse(rata, "-") + ", " +
