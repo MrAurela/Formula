@@ -15,13 +15,16 @@ class Profiili(_nimi: String) {
   val nimi = this._nimi
   var voitetutOttelut = Map[String, Int]() //Radat ja jokaisessa voitetut ottelut
   var pelatutOttelut = Map[String, Int]()  //Radat ja jokaisella pelatut ottelut
-  var ennatysajat = Map[String,Int]()      //Radat ja jokaisen ennätysaika
+  var ennatysajat = Map[String,Option[Int]]() //Radat ja jokaisen mahdollinen ennätysaika
   
-  def paivita(voitti: Boolean, rata: String, kierrosaika: Int) = {
+  def paivita(voitti: Boolean, rata: String, kierrosaika: Int, pelinPaattyminen: String) = {
     this.pelatutOttelut += rata -> (this.pelatutOttelut.getOrElse(rata, 0) + 1)
     if (voitti) this.voitetutOttelut += rata -> (this.voitetutOttelut.getOrElse(rata, 0) + 1)
-    this.ennatysajat += rata -> Math.min( this.ennatysajat.getOrElse(rata, kierrosaika+1), kierrosaika ) //Parempi aika jää voimaan.
+    else this.voitetutOttelut += rata -> 0
+    if (pelinPaattyminen!="Ulosajo." && voitti) this.ennatysajat += rata -> //Parempi aika jää voimaan. Määrittämätön aika on aina huonompi.
+      Some( Math.min( this.ennatysajat.getOrElse(rata, Some(kierrosaika+1)).getOrElse(kierrosaika+1), kierrosaika ) )
     TiedostonHallinta.paivitaProfiili(nimi, voitetutOttelut.toMap, pelatutOttelut.toMap, ennatysajat.toMap) //Päivitettän myös tiedostoon.
+    println(tiedot)
   }
   
   //Radat, joista tallessa täysi informaatio
@@ -31,7 +34,7 @@ class Profiili(_nimi: String) {
   private def ratatiedotTekstiksi(rata: String) = {
     rata + ": " + voitetutOttelut.getOrElse(rata, "-") + ", " +
                   pelatutOttelut.getOrElse(rata, "-") + ", " +
-                  ennatysajat.getOrElse(rata, "-")
+                  ennatysajat.getOrElse(rata, Some("-")).getOrElse("-") //Jos joko ei määritelty ennatysajassa tai määritelty Noneksi -> "-"
   }
   
   def tiedot = radat.map(this.ratatiedotTekstiksi(_))
@@ -47,11 +50,11 @@ object Profiili {
   //Hyväksyy tiedot vain muodossa: radanNimi voitotRadalla kaikkiPelitRadalla ennatysaikaRadalla.
   def apply(nimi: String, tiedot: Vector[String]): Profiili = {
     
-    val riviMalli = """([a-zA-Z0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)""".r
+    val riviMalli = """([a-zA-Z0-9]+) ([0-9]+) ([0-9]+) ([0-9-]+)""".r //TÄNNE EI LADATA VIIVOJA!!!!
     val radat = Peli.rataLista
     val voitot = Map[String,Int]()
     val pelit = Map[String,Int]()
-    val ennatykset = Map[String,Int]()
+    val ennatykset = Map[String,Option[Int]]()
     
     var virheellisetRivit = Buffer[String]() //Ottaa talteen virheelliset rivit. EI TÄLLÄ HETKELLÄ KÄYTETÄ MIHINKÄÄN.
     
@@ -61,7 +64,8 @@ object Profiili {
          if ( radat.map(_.nimi).contains(radanNimi) && voitotRadalla.toInt <= pelitRadalla.toInt)  => {
           voitot += radanNimi -> voitotRadalla.toInt
           pelit += radanNimi -> pelitRadalla.toInt
-          ennatykset += radanNimi -> ennatys.toInt
+          if (ennatys=="-") ennatykset += radanNimi -> None //Jos ennätystä ei ole määritelty 
+          else ennatykset += radanNimi -> Some(ennatys.toInt)
         }
         case _ => virheellisetRivit.append(rivi)
       }

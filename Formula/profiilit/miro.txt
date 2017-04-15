@@ -1,2 +1,2 @@
-rata1 100 108 1
-testi1 3 23 1
+testi1 0 43 Some(1)
+rata1 100 108 Some(1)

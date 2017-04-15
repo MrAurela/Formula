@@ -108,10 +108,11 @@ object NappuloidenHallinta {
 
   def tallenaProfiilienTiedot(pelitilanne: Pelitilanne) = {
     val voittaja = pelitilanne.tarkistaVoitto._1
+    val selitys = pelitilanne.tarkistaVoitto._2
     if (voittaja.isDefined) {
       pelitilanne.pelaajat.foreach { pelaaja => 
-        if (pelaaja == voittaja) pelaaja.profiili.foreach(_.paivita(true, pelitilanne.pelilauta.radanNimi, pelaaja.auto.tehdytSiirrot))
-        else pelaaja.profiili.foreach(_.paivita(false, pelitilanne.pelilauta.radanNimi, pelaaja.auto.tehdytSiirrot))
+        if (pelaaja == voittaja.get) pelaaja.profiili.foreach(_.paivita(true, pelitilanne.pelilauta.radanNimi, pelaaja.auto.tehdytSiirrot,selitys))
+        else pelaaja.profiili.foreach(_.paivita(false, pelitilanne.pelilauta.radanNimi, pelaaja.auto.tehdytSiirrot,selitys))
       }
     }
   }

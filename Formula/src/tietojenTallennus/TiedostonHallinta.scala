@@ -102,15 +102,17 @@ object TiedostonHallinta {
     }
   }
   
-  def paivitaProfiili(nimi: String, voitot: Map[String,Int], kaikkiPelit: Map[String,Int], ennatykset: Map[String,Int]) = {
+  def paivitaProfiili(nimi: String, voitot: Map[String,Int], kaikkiPelit: Map[String,Int], ennatykset: Map[String,Option[Int]]) = {
     var teksti = ""
-    for (rata <- voitot.keys) {
-      if (kaikkiPelit.keys.toVector.contains(rata) && ennatykset.keys.toVector.contains(rata)) { //Radan tiedot täytyy löytyä jokaisesta.
-        teksti += rata + " " + voitot(rata) + " " + kaikkiPelit(rata) + " " + ennatykset(rata) + "\n" //Muutetaan haluttuun muotoon.
+    for (rata <- kaikkiPelit.keys) {
+      if (voitot.keys.toVector.contains(rata)) { //Radan tiedot täytyy löytyä aina kahdesta ensimmäisestä
+        teksti += rata + " " + voitot.getOrElse(rata, "-") + " " +
+                  kaikkiPelit.getOrElse(rata, "-") + " " + ennatykset.getOrElse(rata, "-") + "\n" //Muutetaan haluttuun muotoon.
       }
     }
     val tiedosto = profiiliKansio + "/" + nimi + ".txt"
     this.kirjoitaTiedostoon(tiedosto, teksti)
+    println(teksti)
   }
   
   def uusiProfiili(profiili: Profiili) = {
