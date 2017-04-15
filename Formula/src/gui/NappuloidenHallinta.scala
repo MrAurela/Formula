@@ -33,15 +33,27 @@ object NappuloidenHallinta {
     }
   }
   
-  def uusiPeli(): Unit = {
+  //Aloittaa uuden pelin, jos asetukset ovat sallitut. Palauttaa virheilmoituksen Option-kääreessä.
+  def uusiPeli(): Option[String] = {
     val valikko = this.paaValikko
     val rata = valikko.tasovalinta.valittu
     val profiili1 = valikko.pelaaja1.valittu
     val profiili2 = valikko.pelaaja2.valittu
-    if (rata.isDefined) { //Kunhan rata on määritelty. Profiili voi olla myös None, jos "EI PROFIILIA" vaihtoehto on valittu.
+    if ( !rata.isDefined) { //Ei pitäisi tapahtua, mutta varmuuden vuoksi tässä.
+      Some("Rata pitää valita ennen pelin aloittamista.")
+    } else if (profiili1.getOrElse(Profiili("eiOlemassa1")) == profiili2.getOrElse(Profiili("eiOlemassa2"))) { //Kaksi Nonea kelpaa.
+      Some("Käytettävät profiilit eivät voi olla samat.") 
+    } else { //Kunhan rata on määritelty ja profiilit erit
       val uusiPeli = Peli.uusiPeli(rata.get, Vector(profiili1, profiili2))
       Ikkuna.paaIkkuna.vaihdaIkkunanSisalto(Ikkuna.peliIkkuna(uusiPeli))
+      None
     }
+  }
+  
+  def lopetaPeli() {
+    val vastaus = Dialog.showConfirmation(null, "Pelin tiedot menetetään, jos se keskeytetään. \n Oletko varma, että haluat lopettaa?",
+                                          "Varoitus", Dialog.Options.YesNo, Dialog.Message.Warning)
+    if (vastaus == Dialog.Result.Yes) Ikkuna.paaIkkuna.vaihdaIkkunanSisaltoMenuun()
   }
   
   
@@ -95,9 +107,31 @@ object NappuloidenHallinta {
     Ikkuna.paaIkkuna.contents = Ikkuna.profiilienHallinta(profiili)
   }
   
+  //Kysyy käyttää syöttämään luotavan profiilin nimen. Ei hyväksy erikoismerkkejä sisältäviä nimiä eikä aiemmin luodun profiilin nimeä.
   def luoUusiProfiili() {
     val nimi = JOptionPane.showInputDialog("Valitse profiilin nimi:")
-    Peli.uusiProfiili(Profiili(nimi))
+    val malli = """([a-zA-Z0-9]+)""".r
+    if (nimi != null) {
+      if (Peli.profiiliLista.map(_.nimi).contains(nimi)) {
+        Dialog.showMessage(null, "Nimi "+nimi+ " on jo käytössä. Valitse toinen nimi.",
+                           "Virhe profiilia luodessa", Dialog.Message.Error)
+        luoUusiProfiili()
+      } else {
+        nimi match {
+          case malli(nimi) => {
+            Peli.uusiProfiili(Profiili(nimi))
+            Dialog.showMessage(null, "Uusi profiili "+nimi+ " luotiin onnistuneesti.\n"+
+                        "Voit kuitenkin joutua käynnistämään peli-ikkunnan uudestaan, "+
+                        "jotta muutokset päivittyvät", "Uusi pelaaja luotiin", Dialog.Message.Info)
+          }
+          case _ => {
+            Dialog.showMessage(null, "Nimeä "+nimi+ " ei voida hyväksyä. Nimi saa sisältää vain aakkosia (a-z) ja numeroita.",
+                           "Virhe profiilia luodessa", Dialog.Message.Error)
+            luoUusiProfiili()
+          }           
+        }
+      }
+    }
   }
   
   //Tämän funktion ainut tarkoitus on kiertää rekursiivinen viittaus, joka olisi syntynyt, jos 
@@ -106,14 +140,20 @@ object NappuloidenHallinta {
     Ikkuna.paaIkkuna.vaihdaIkkunanSisaltoMenuun()
   }
 
-  def tallenaProfiilienTiedot(pelitilanne: Pelitilanne) = {
+  def tallenaPelinTiedot(pelitilanne: Pelitilanne) = {
     val voittaja = pelitilanne.tarkistaVoitto._1
     val selitys = pelitilanne.tarkistaVoitto._2
-    if (voittaja.isDefined) {
+    var kierrosajat = Map[String, Option[Int]]()
+    if (voittaja.isDefined) { //Jos peli on päättynyt
       pelitilanne.pelaajat.foreach { pelaaja => 
-        if (pelaaja == voittaja.get) pelaaja.profiili.foreach(_.paivita(true, pelitilanne.pelilauta.radanNimi, pelaaja.auto.tehdytSiirrot,selitys))
-        else pelaaja.profiili.foreach(_.paivita(false, pelitilanne.pelilauta.radanNimi, pelaaja.auto.tehdytSiirrot, selitys))
+        pelaaja.profiili.foreach{ profiili => 
+          val voitti = pelaaja == voittaja.get
+          val siirrot = if (pelitilanne.onkoMaalissa(pelaaja)) Some(pelaaja.auto.tehdytSiirrot) else None
+          profiili.paivita(voitti, pelitilanne.pelilauta.nimi, siirrot)
+          kierrosajat += (profiili.nimi -> siirrot)
+        }
       }
+      pelitilanne.pelilauta.rata.paivita(kierrosajat)
     }
   }
   

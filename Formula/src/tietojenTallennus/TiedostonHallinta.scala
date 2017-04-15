@@ -112,11 +112,19 @@ object TiedostonHallinta {
     }
     val tiedosto = profiiliKansio + "/" + nimi + ".txt"
     this.kirjoitaTiedostoon(tiedosto, teksti)
-    println(teksti)
   }
   
   def uusiProfiili(profiili: Profiili) = {
     this.paivitaProfiili(profiili.nimi, profiili.voitetutOttelut.toMap, profiili.pelatutOttelut.toMap, profiili.ennatysajat.toMap)
+  }
+  
+  def paivitaRata(nimi: String, radanMuoto: Vector[String], ennatykset: Vector[(String, Int)]) = {
+    var teksti = ""
+    radanMuoto.foreach(teksti += _+"\n") //Ensin radan muotoa kuvaavat tiedot.
+    ennatykset.foreach{pari: (String, Int) => teksti += pari._1 + " " + pari._2 + "\n"} //Sitten ennätyslista
+    
+    val tiedosto = rataKansio + "/" + nimi + ".txt"
+    this.kirjoitaTiedostoon(tiedosto, teksti)
   }
   
   def kirjoitaTiedostoon(tiedostonNimi: String, sisalto: String) = {

@@ -1,12 +1,17 @@
 package pelikomponentit
 
 import siirrot.{Koordinaatti, Siirto, Suunta}
+import tietojenTallennus.Rata
 
 
-class Pelilauta(nimi: String, maastot: Vector[Vector[Maasto]]) {
-  require(maastot.forall(_.length == maastot(0).length)) //Taulukon pitää olla suorakaide.
+class Pelilauta(radanTiedot: Rata) {
   
-  val radanNimi = nimi
+  val rata = radanTiedot
+  val nimi = rata.nimi
+  val maastot = rata.muoto
+  
+  require(maastot.forall(_.length == maastot(0).length)) //Taulukon pitää olla suorakaide.
+  require(maastot.length > 0)
   
   val ruudut = maastot.map(_.map(new Ruutu(_))) //Vaihdetaan maastot vastaavaan ruutuun
   

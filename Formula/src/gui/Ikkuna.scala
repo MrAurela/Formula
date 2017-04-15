@@ -154,8 +154,9 @@ object Ikkuna extends SimpleSwingApplication {
       this.vaihdaIkkunanSisalto(menu)
     } 
     def vaihdaIkkunanSisaltoPeliin() = {
-      NappuloidenHallinta.uusiPeli() //Menua ei voi vaihtaa ennen kuin pelin tiedot on ladattu.
-      this.menuBar = new MenuBar()
+      val virheIlmoitus = NappuloidenHallinta.uusiPeli() //Menua ei voi vaihtaa ennen kuin pelin tiedot on ladattu.
+      if (virheIlmoitus.isDefined) Dialog.showMessage(null, virheIlmoitus.get, "Virhe asetuksissa", Dialog.Message.Error)
+      else this.menuBar = new MenuBar()
     }
     def vaihdaIkkunanSisaltoProfiilienHallintaan() = {
       this.menuBar = NappuloidenHallinta.profiiliValikko
@@ -173,7 +174,7 @@ object Ikkuna extends SimpleSwingApplication {
         if (nappula == vaihteenVaihto.vaihdeYlos) NappuloidenHallinta.nostaVaihdetta()
         else if (nappula == vaihteenVaihto.vaihdeAlas) NappuloidenHallinta.laskeVaihdetta()
         else if (nappula == oikeaPuoli.peruSiirto) NappuloidenHallinta.peruEdellinenSiirto()
-        else if (nappula == oikeaPuoli.palaaMenuun) this.vaihdaIkkunanSisaltoMenuun
+        else if (nappula == oikeaPuoli.palaaMenuun) NappuloidenHallinta.lopetaPeli()
         else if (nappula == menu.uusiPeli) this.vaihdaIkkunanSisaltoPeliin()
         else if (nappula == menu.profiilit) this.vaihdaIkkunanSisaltoProfiilienHallintaan()
         else if (nappula == menu.rataeditori) println("Rataeditoria ei ole toteutettu vielä.")

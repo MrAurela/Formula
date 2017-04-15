@@ -43,8 +43,9 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
       else if (pelaajat(0).auto.eiVoiLiikkua) (Some(pelaajat(1)), "Ulosajo.")
       else (None, "")
     } else (None, "")
-    
   }
+  
+  def onkoMaalissa(pelaaja: Pelaaja): Boolean = pelaaja.auto.kierrokset >= vaadittavatKierrokset
   
   private def vaihdaVuoroa() = {
     if (pelaajat(0) == vuorossa) vuorossa = pelaajat(1)

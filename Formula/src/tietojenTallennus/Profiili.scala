@@ -17,13 +17,20 @@ class Profiili(_nimi: String) {
   var pelatutOttelut = Map[String, Int]()  //Radat ja jokaisella pelatut ottelut
   var ennatysajat = Map[String,Option[Int]]() //Radat ja jokaisen mahdollinen ennätysaika
   
-  def paivita(voitti: Boolean, rata: String, kierrosaika: Int, pelinPaattyminen: String) = {
+  def paivita(voitti: Boolean, rata: String, optionKierrosaika: Option[Int]) = {
     this.pelatutOttelut += rata -> (this.pelatutOttelut.getOrElse(rata, 0) + 1)
     if (voitti) this.voitetutOttelut += rata -> (this.voitetutOttelut.getOrElse(rata, 0) + 1)
     else this.voitetutOttelut += rata -> 0
-    if (pelinPaattyminen!="Ulosajo." && voitti) this.ennatysajat += rata -> //Parempi aika jää voimaan. Määrittämätön aika on aina huonompi.
-      Some( Math.min( this.ennatysajat.getOrElse(rata, Some(kierrosaika+1)).getOrElse(kierrosaika+1), kierrosaika ) )
+    this.ennatysajat += (rata -> minOption(this.ennatysajat.getOrElse(rata,None), optionKierrosaika)) //Parempi aika jää voimaan. Määrittämätön aika on aina huonompi.
     TiedostonHallinta.paivitaProfiili(nimi, voitetutOttelut.toMap, pelatutOttelut.toMap, ennatysajat.toMap) //Päivitettän myös tiedostoon.
+    
+    def minOption(o1: Option[Int], o2: Option[Int]): Option[Int] = {
+      if (o1.isEmpty && o2.isEmpty) None
+      else if (o1.isEmpty) o2
+      else if (o2.isEmpty) o1
+      else if (o1.get > o2.get) o2 //Get voidaan käyttää, sillä kumpikaan ei ole tyhjä jos suoritus jatkuu tänne.
+      else o1
+    }
   }
   
   //Radat, joista tallessa täysi informaatio
@@ -49,7 +56,7 @@ object Profiili {
   //Hyväksyy tiedot vain muodossa: radanNimi voitotRadalla kaikkiPelitRadalla ennatysaikaRadalla.
   def apply(nimi: String, tiedot: Vector[String]): Profiili = {
     
-    val riviMalli = """([a-zA-Z0-9]+) ([0-9]+) ([0-9]+) ([0-9-]+)""".r //TÄNNE EI LADATA VIIVOJA!!!!
+    val riviMalli = """([a-zA-Z0-9]+) ([0-9]+) ([0-9]+) ([0-9-]+)""".r
     val radat = Peli.rataLista
     val voitot = Map[String,Int]()
     val pelit = Map[String,Int]()

@@ -17,7 +17,7 @@ object Peli {
   def uusiPeli(rata: Rata, profiilit: Vector[Option[Profiili]] ): Pelitilanne = {
     
     val pelaajat = profiilit.map(Pelaaja(_)) //Luodaan pelaajat profiilien perusteella.
-    val lauta = new Pelilauta(rata.nimi, rata.muoto)
+    val lauta = new Pelilauta(rata)
     val tilanne = new Pelitilanne(lauta, pelaajat)
     
     tilanne.pelilauta.alustaAutot(pelaajat.map(_.auto))

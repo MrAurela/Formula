@@ -83,7 +83,7 @@ class Ruudukko(pelitilanne: Pelitilanne) extends Panel {
           val tulos = pelitilanne.tarkistaVoitto._2
           val vastaus = Dialog.showConfirmation(null, tulos+"\nPelin voitti: "+voittaja, "Peli päättyi", Dialog.Options.OkCancel, Dialog.Message.Info)
           if (vastaus == Dialog.Result.Ok) {
-            NappuloidenHallinta.tallenaProfiilienTiedot(pelitilanne)// Sulje peli jos ja tallenna tiedot jos OK.
+            NappuloidenHallinta.tallenaPelinTiedot(pelitilanne)// Sulje peli jos ja tallenna tiedot jos OK.
             Ikkuna.top.vaihdaIkkunanSisaltoMenuun() 
           }
           else pelitilanne.peruSiirto()
