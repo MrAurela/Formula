@@ -9,7 +9,7 @@ class Auto() {
   var vaihde = 1
   var vaihdeVuoronAlussa = 1
   var kierrokset = 0
-  val aloitusSuunta = Suunta(Koordinaatti(-1, 0)) //Alkuperäinen suunta, suoraan vasemmalle
+  var aloitusSuunta = Suunta(Koordinaatti(0,-1)) //Oletussuunta. Oikea suunta asetetaan kun auto alustetaan Pelilauta.alustaAutot -funktiossa.
   
   private val siirtoLista = Buffer[Siirto]()
   def siirrot = this.siirtoLista.toVector
@@ -64,6 +64,13 @@ class Auto() {
   
   def merkitseSiirto(lahto: Koordinaatti, kohde: Koordinaatti) {
     this.siirtoLista.append(new Siirto(lahto, kohde))
+  }
+  
+  def asetaAloitusSuunta(ruutu: Maasto) = ruutu match {
+    case MaaliYlos => this.aloitusSuunta = Suunta(Koordinaatti(0,-1))
+    case MaaliAlas => this.aloitusSuunta = Suunta(Koordinaatti(0,1))
+    case MaaliOikea => this.aloitusSuunta = Suunta(Koordinaatti(1,0))
+    case _ => this.aloitusSuunta = Suunta(Koordinaatti(-1,0)) //Oletusvaihtoehto
   }
   
   //Lisää, vähentää tai pitää kierroksen samana syötteen (1,0,-1) perusteella.

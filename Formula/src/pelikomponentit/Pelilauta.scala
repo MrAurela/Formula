@@ -2,6 +2,9 @@ package pelikomponentit
 
 import siirrot.{Koordinaatti, Siirto, Suunta}
 import tietojenTallennus.Rata
+import pelikomponentit._
+
+import scala.util.Random
 
 
 class Pelilauta(radanTiedot: Rata) {
@@ -22,6 +25,7 @@ class Pelilauta(radanTiedot: Rata) {
     ruudut(koordinaatti.y)(koordinaatti.x)
   }
   
+  /* Alkuperäinen autojen alustus tapahtui valitut ruudun perusteella. Vaihdettiin tehtävänannon mukaiseen satunnaisuuteen.
   def alustaAutot(autot: Vector[Auto]) = {
     for (pystySuorat <- ruudut; ruutu <- pystySuorat) {
       if (ruutu.maasto == AloitusRuutu1) {
@@ -30,7 +34,19 @@ class Pelilauta(radanTiedot: Rata) {
         ruutu.lisaaAuto(autot(1))
       }
     }
-  }
+  }*/
+  def alustaAutot(autot: Vector[Auto]) = {
+    val vaihtoehdot = ruudut.flatten.filter(_.onMaali).toBuffer
+    require(vaihtoehdot.size >= autot.size)
+    val r = new Random
+    
+    autot.foreach { auto =>
+      val valinta = r.nextInt(vaihtoehdot.size)
+      vaihtoehdot(valinta).lisaaAuto(auto) //Lisätäään auto satunnaiseen ruutuun
+      auto.asetaAloitusSuunta(vaihtoehdot(valinta).maasto.tyyppi)
+      vaihtoehdot.remove(valinta) //Poistetaan ruutu valikoimasta
+    }
+  }  
   
   def siirraAutoaLaillisesti(auto: Auto, kohde: Koordinaatti): Boolean = {
     if (this.sallitutKoordinaatit(auto).contains(kohde)) { //Jos siirto kuuluu laillisiin siirtoihin.
@@ -92,9 +108,28 @@ class Pelilauta(radanTiedot: Rata) {
   //1 kuvaa maalin läpimenoa oikeaan kiertosuuntaan (vasemmalla) ja -1 taas maalin läpäisyä väärään suuntaan (oikealle)
   //0 on siirto, joka ei kulje maaliruutujen läpi tai liikkuu maaliruuduissa 
   def siirtoMaaliin(siirto: Siirto): Int = {
-    if (lapimentavatRuudut(siirto).exists(_.onMaali) && siirto.xLiike > 0) -1
-    else if (lapimentavatRuudut(siirto).exists(_.onMaali) && siirto.xLiike < 0) 1
-    else 0
+    val maaliruudut = lapimentavatRuudut(siirto).filter(_.onMaali)
+    var pisteet = 0
+    maaliruudut.foreach{ruutu =>
+      ruutu.maasto match {
+        case MaaliYlos => 
+          if (siirto.yLiike < 0) pisteet +=1 
+          else pisteet -= 1
+        case MaaliAlas => 
+          if (siirto.yLiike > 0) pisteet +=1 
+          else pisteet -= 1
+        case MaaliOikea =>
+          if (siirto.xLiike > 0) pisteet +=1 
+          else pisteet -= 1
+        case MaaliVasen =>
+          if (siirto.xLiike < 0) pisteet +=1 
+          else pisteet -= 1
+        case _ => pisteet = pisteet
+      }
+    }
+    //Vaikka kuljettaisiin "monen maaliruudun" läpi yhdellä siirrolla esimerkiksi vinottaisella siirrolla, lasketaan tämä vain yhdeksi
+    println(Math.signum(pisteet).toInt)
+    Math.signum(pisteet).toInt
   }
   
   private def etsiAuto(auto: Auto): Koordinaatti = {

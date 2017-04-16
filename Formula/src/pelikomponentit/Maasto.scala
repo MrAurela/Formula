@@ -10,15 +10,20 @@ sealed abstract class Maasto(maastonTunnus: Char) {
     case Maali(_) => true
     case _ => false
   }
+  
+  def tyyppi: Maasto = this match {
+    case maasto => maasto
+  }
 }
 
 case object Tie extends Maasto(Maasto.tie)
 case object Reuna extends Maasto(Maasto.reuna)
 sealed case class Maali(maalityyppi: Char) extends Maasto(maalityyppi)
 
-object Maaliviiva extends Maali(Maasto.maaliviiva)
-object AloitusRuutu1 extends Maali(Maasto.aloitusruutu1)
-object AloitusRuutu2 extends Maali(Maasto.aloitusruutu2)
+object MaaliYlos extends Maali(Maasto.maaliYlos)
+object MaaliAlas extends Maali(Maasto.maaliAlas)
+object MaaliOikea extends Maali(Maasto.maaliOikea)
+object MaaliVasen extends Maali(Maasto.maaliVasen)
 /*
 case object Maaliviiva extends Maasto('!')
 case object AloitusRuutu1 extends Maasto('1')
@@ -28,16 +33,18 @@ case object AloitusRuutu2 extends Maasto('2')
 object Maasto {
   val tie = ' '
   val reuna = '#'
-  val maaliviiva = '!'
-  val aloitusruutu1 = '1'
-  val aloitusruutu2 = '2'
+  val maaliYlos = '^'
+  val maaliAlas = 'v'
+  val maaliOikea = '>'
+  val maaliVasen = '<'
   
   def apply(maastonTunnus: Char): Maasto = {
     maastonTunnus match {
       case this.reuna => Reuna
-      case this.maaliviiva => Maaliviiva
-      case this.aloitusruutu1 => AloitusRuutu1
-      case this.aloitusruutu2 => AloitusRuutu2
+      case this.maaliYlos => MaaliYlos
+      case this.maaliAlas => MaaliAlas
+      case this.maaliOikea => MaaliOikea
+      case this.maaliVasen => MaaliVasen
       case _ => Tie //Tarkoitettujen teiden lisäksi, kaikki tunnistamattomat merkit tulkitaan tieksi.
     }
   }

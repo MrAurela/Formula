@@ -57,10 +57,6 @@ object Rata {
       radanMaastot(j)(i) = Maasto(radanMuoto(j)(i))
     }
     
-    println(ennatykset.mkString("\n"))
-    println()
-    println(radanMuoto.mkString("\n"))
-    
     new Rata(nimi, radanMaastot.map(_.toVector).toVector, ennatykset)
     
   }
