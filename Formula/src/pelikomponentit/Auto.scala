@@ -2,7 +2,7 @@ package pelikomponentit
 
 import scala.collection.mutable.Buffer
 import siirrot.{Siirto, Suunta, Koordinaatti}
-import peli.Peli
+import peli.{Peli, Pelitilanne}
 
 class Auto() {
 
@@ -47,11 +47,7 @@ class Auto() {
     kaikkiSuunnat.toVector
   }
   
-  def eiVoiLiikkua: Boolean = {
-    val optionPelitilanne = Peli.pelitilanne //Jos isDefined = false, ei loppuehtoa tarkasteta ja get-komentoa suoriteta.
-    if (optionPelitilanne.isDefined && !optionPelitilanne.get.kaikkiSallitutSiirrot.isEmpty) false
-    else true
-  }
+  def eiVoiLiikkua(pelitilanne: Pelitilanne): Boolean = pelitilanne.kaikkiSallitutSiirrot.isEmpty
   
   //Vaihdetta ei voi vaihtaa ensimmäisellä kierroksella
   def vaihdettaVoiNostaa = vaihde <= vaihdeVuoronAlussa && vaihde < 5 && tehdytSiirrot > 0

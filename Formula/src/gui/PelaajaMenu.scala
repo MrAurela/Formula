@@ -20,7 +20,7 @@ class PelaajaMenu(nimi: String) extends Menu(nimi) {
   
   contents ++= vaihtoehdot.buttons //Lisätään menuun vaihtoehdot
   
-  if ( !menulista.isEmpty) vaihtoehdot.select(menulista(0))
+  vaihtoehdot.select(eiProfiilia)
   
   def valittu: Option[Profiili] = {
     this.profiilit.get(this.menulista.find(_.selected).getOrElse(new RadioMenuItem("")) )
