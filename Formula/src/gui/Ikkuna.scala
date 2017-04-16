@@ -53,8 +53,7 @@ object Ikkuna extends SimpleSwingApplication {
     this.contents += vaihteenVaihto
   }
   
-  val oikeaPuoli = new BoxPanel(Orientation.Vertical) {
-    val peruSiirto = new Button {
+  val peruSiirto = new Button {
       preferredSize = new Dimension(100,50)
       text = "Peru siirto"
     }
@@ -62,7 +61,14 @@ object Ikkuna extends SimpleSwingApplication {
       preferredSize = new Dimension(100,50)
       text = "Lopeta peli" 
     }
-    
+  
+  val oikeaPuoli = new BoxPanel(Orientation.Vertical) {
+    val vuorossa = new Label{text="Vuorossa:"; font=new Font("Arial",0,24)}
+    val vari = new Label{font=new Font("Arial",0,24)}
+    val pelaaja = new Label{font=new Font("Arial",0,24)}
+    contents += vuorossa
+    contents += vari
+    contents += pelaaja
     contents += peruSiirto
     contents += palaaMenuun
 
@@ -167,14 +173,14 @@ object Ikkuna extends SimpleSwingApplication {
     //gameScreen.requestFocus
     
     listenTo(vaihteenVaihto.vaihdeYlos, vaihteenVaihto.vaihdeAlas,
-             oikeaPuoli.peruSiirto, oikeaPuoli.palaaMenuun,
+             peruSiirto, palaaMenuun,
              menu.uusiPeli, menu.profiilit, menu.rataeditori, menu.lopetaPeli)
     reactions += {
       case ButtonClicked(nappula) => {
         if (nappula == vaihteenVaihto.vaihdeYlos) NappuloidenHallinta.nostaVaihdetta()
         else if (nappula == vaihteenVaihto.vaihdeAlas) NappuloidenHallinta.laskeVaihdetta()
-        else if (nappula == oikeaPuoli.peruSiirto) NappuloidenHallinta.peruEdellinenSiirto()
-        else if (nappula == oikeaPuoli.palaaMenuun) NappuloidenHallinta.lopetaPeli()
+        else if (nappula == peruSiirto) NappuloidenHallinta.peruEdellinenSiirto()
+        else if (nappula == palaaMenuun) NappuloidenHallinta.lopetaPeli()
         else if (nappula == menu.uusiPeli) this.vaihdaIkkunanSisaltoPeliin()
         else if (nappula == menu.profiilit) this.vaihdaIkkunanSisaltoProfiilienHallintaan()
         else if (nappula == menu.rataeditori) println("Rataeditoria ei ole toteutettu vielä.")

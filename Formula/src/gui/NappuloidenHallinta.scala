@@ -12,7 +12,7 @@ object NappuloidenHallinta {
   
   val vaihdeYlos = Ikkuna.vaihteenVaihto.vaihdeYlos
   val vaihdeAlas = Ikkuna.vaihteenVaihto.vaihdeAlas
-  val peruSiirto = Ikkuna.oikeaPuoli.peruSiirto
+  val peruSiirto = Ikkuna.peruSiirto
   
   def nostaVaihdetta() = Peli.pelitilanne.get.vuorossa.auto.nostaVaihdetta()
   
@@ -23,6 +23,7 @@ object NappuloidenHallinta {
   def paivita() = {
     paivitaNappulat()
     paivitaVaihde()
+    paivitaVuorossa()
   }
   
   //Tekee siirron ja palauttaa tiedon siitä, jatkuuko peli edelleen.
@@ -78,6 +79,14 @@ object NappuloidenHallinta {
     if (Peli.pelitilanne.isDefined) { //Päivitys on tarpeellinen vain, jos peli on käynnissä
       Ikkuna.vaihteenVaihto.vaihdeLuku.text = Peli.pelitilanne.get.vuorossa.auto.vaihde.toString
     }
+  }
+  
+  private def paivitaVuorossa() {
+    if (Peli.pelitilanne.isDefined) { //Päivitys on tarpeellinen vain, jos peli on käynnissä
+      Ikkuna.oikeaPuoli.vari.text = if (Peli.pelitilanne.get.vuorossa == Peli.pelitilanne.get.pelaajat(0)) "Sininen" else "Punainen"
+      Ikkuna.oikeaPuoli.pelaaja.text = Peli.pelitilanne.get.vuorossa.toString()
+    }
+    
   }
   
   val paaValikko = new MenuBar {
