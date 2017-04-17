@@ -38,17 +38,17 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
   
   def kaikkiSallitutSiirrot = pelilauta.sallitutSiirrot(vuorossa.auto, false) //False => sallittujen vaihteiden kaikki siirrot
   
+  //ALASPÄIN SEINÄÄN TÖRMÄYS EI TOIMI, SININEN, RATA2
   def tarkistaVoitto: (Option[Pelaaja], String) =  {
     if (pelaajat(0).auto.tehdytSiirrot == pelaajat(1).auto.tehdytSiirrot) { //Maaliin pääsemisesssä annetaan "tasoittava vuoro"
       if (pelaajat(1).auto.kierrokset >= vaadittavatKierrokset) (Some(pelaajat(1)), "Rata kierretty.") //Tasatilanteessa voittaa toisena siirtävä pelaaja.
       else if (pelaajat(0).auto.kierrokset >= vaadittavatKierrokset) (Some(pelaajat(0)), "Rata kierretty.")
       else (None, "")
-    } else {
-      if (pelaajat(0).auto.eiVoiLiikkua(this)) (Some(pelaajat(1)), "Ulosajo.") //Jos ei voi liikkua laillisesti, häviää
-      else if (pelaajat(1).auto.eiVoiLiikkua(this)) (Some(pelaajat(0)), "Ulosajo.")
-      else (None, "")
     }
     
+    if (pelaajat(0).auto.eiVoiLiikkua(this)) (Some(pelaajat(1)), "Ulosajo.") //Jos ei voi liikkua laillisesti, häviää
+    else if (pelaajat(1).auto.eiVoiLiikkua(this)) (Some(pelaajat(0)), "Ulosajo.")
+    else (None, "")
 
   }
   

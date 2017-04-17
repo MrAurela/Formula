@@ -72,6 +72,11 @@ class Ruudukko(pelitilanne: Pelitilanne) extends Panel {
       g.fillRect(((koordinaatti.x + 0.25)*ruudunKoko).toInt, ((koordinaatti.y + 0.25)*ruudunKoko).toInt,
           (0.5*ruudunKoko).toInt, (0.5*ruudunKoko).toInt)
     }
+    for (siirto <- pelitilanne.pelilauta.vaihteenSiirrot(autoVuorossa)) { //Käy myös osan samoista kuin edellinen
+      val koordinaatti = siirto.kohdeKoordinaatti
+      g.fillRect(((koordinaatti.x + 0.375)*ruudunKoko).toInt, ((koordinaatti.y + 0.375)*ruudunKoko).toInt,
+          (0.25*ruudunKoko).toInt, (0.25*ruudunKoko).toInt)
+    }
   }
   
   listenTo(this.mouse.clicks)

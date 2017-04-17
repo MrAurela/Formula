@@ -80,6 +80,11 @@ class Pelilauta(radanTiedot: Rata) {
     auto.kaikkiSallitutSuunnat
   }
   
+  def vaihteenSiirrot(auto: Auto): Vector[Siirto] = {
+    val lahto = this.etsiAuto(auto)
+    this.mahdollisetSuunnat(auto).map(_.muutaSiirroksi(lahto))
+  }
+  
   //Ottaa vaihteen ja suunnan lisäksi huomioon toisen auton sijainnin ja laudan reunat.
   //vainVaihteella arvo ilmaisee, palautetaanko kaikki auton siirtovaihtoehdot (sisältää vaihteenvaihdon), vai vaan nykyisen vaihteen siirrot.
   def sallitutSiirrot(auto: Auto, vainVaihteella: Boolean): Vector[Siirto] = {
