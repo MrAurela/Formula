@@ -15,7 +15,7 @@ class Rata(radanNimi: String, radanMuoto: Vector[Vector[Maasto]], ennatykset: Ma
  
   var ennatysKierrokset = ennatykset //Mapin ansioista kaikilla ajajilla on tallessa vain paras aika.
   
-  def parhaatAjajat = ennatykset.toVector.sortWith(_._1 < _._1).sortWith(_._2 < _._2) //Ensisijaisesti tuloksen, sitten nimen mukaan.
+  def parhaatAjajat = ennatysKierrokset.toVector.sortWith(_._1 < _._1).sortWith(_._2 < _._2) //Ensisijaisesti tuloksen, sitten nimen mukaan.
   
   def parhaatAjajatTeksti = parhaatAjajat.map{pari => pari._1 +  " " + pari._2}
   
@@ -39,7 +39,7 @@ object Rata {
     var radanMuoto = Buffer[String]()
     
     //Jaetaan tiedot radan muotoon ja nopeinten kierrosten listaan.
-    val ennatysMalli = """([a-zA-Z0-9]+) ([0-9])+""".r
+    val ennatysMalli = """([a-zA-Z0-9]+) ([0-9]+)""".r
     var i = 0
     
     for (rivi <- tiedot) {

@@ -85,6 +85,7 @@ object NappuloidenHallinta {
     if (Peli.pelitilanne.isDefined) { //Päivitys on tarpeellinen vain, jos peli on käynnissä
       Ikkuna.oikeaPuoli.vari.text = if (Peli.pelitilanne.get.vuorossa == Peli.pelitilanne.get.pelaajat(0)) "Sininen" else "Punainen"
       Ikkuna.oikeaPuoli.pelaaja.text = Peli.pelitilanne.get.vuorossa.toString()
+      if (Ikkuna.oikeaPuoli.vari.text == Ikkuna.oikeaPuoli.pelaaja.text) Ikkuna.oikeaPuoli.pelaaja.text = ""
     }
     
   }

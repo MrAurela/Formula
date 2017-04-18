@@ -100,7 +100,7 @@ object Ikkuna extends SimpleSwingApplication {
     }
     val profiilit = new Button {
       preferredSize = new Dimension(200,200)
-      text = "Profiilit"
+      text = "Profiilit ja radat"
     }
     
     val c = new Constraints

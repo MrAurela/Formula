@@ -1,2 +1,3 @@
 testi2 1 2 3
+rata2 0 1 -
 testi1 0 1 -
