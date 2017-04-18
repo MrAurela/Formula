@@ -8,22 +8,28 @@ import scala.swing._
 // -||- https://lampsvn.epfl.ch/trac/scala/browser/scala/trunk/src/swing/scala/swing/test/Dialogs.scala?rev=25699#L54
 
 class PelaajaMenu(nimi: String) extends Menu(nimi) {
-
-  val menulista = Peli.profiiliLista.map(profiili => new RadioMenuItem(profiili.nimi))
-  val profiilit = menulista.zip(Peli.profiiliLista).toMap //saadaan profiili nimen perusteella
+  
+  val menulista = Peli.profiiliLista.map(profiili => new RadioMenuItem(profiili.nimi)) 
+  var profiilit = menulista.zip(Peli.profiiliLista).toMap //saadaan profiili nimen perusteella
 
   var vaihtoehdot = new ButtonGroup() //Luodaan radiobox ryhmä
   val eiProfiilia = new RadioMenuItem("EI PROFIILIA")
-  vaihtoehdot.buttons += eiProfiilia
+  val ai = new RadioMenuItem(Peli.ai.nimi)
   
+  vaihtoehdot.buttons += eiProfiilia
+  vaihtoehdot.buttons += ai
   vaihtoehdot.buttons ++= menulista
   
-  contents ++= vaihtoehdot.buttons //Lisätään menuun vaihtoehdot
+  contents += eiProfiilia//Lisätään menuun vaihtoehdot
+  contents += ai
+  contents += new Separator
+  contents ++= menulista
   
   vaihtoehdot.select(eiProfiilia)
   
   def valittu: Option[Profiili] = {
-    this.profiilit.get(this.menulista.find(_.selected).getOrElse(new RadioMenuItem("")) )
+    if (ai.selected) Some(Peli.ai)
+    else this.profiilit.get(this.menulista.find(_.selected).getOrElse(new RadioMenuItem("")) )
   }
   
 }

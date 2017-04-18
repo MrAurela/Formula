@@ -21,7 +21,11 @@ class Pelaaja(profiili_ : Option[Profiili], auto_ : Auto) {
   
   def onPelaaja = !tekoaly.isDefined
   
-  def asetaAI(ai: AI) = tekoaly = Some(ai)
+  def asetaAI(ai: AI) = {
+    tekoaly = Some(ai)
+  }
+  
+  def onTekoaly = tekoaly.isDefined
   
 }
 

@@ -1,6 +1,6 @@
 package gui
 
-import peli.{Peli, Pelitilanne, Pelaaja}
+import peli.{Peli, Pelitilanne, Pelaaja,AI}
 import siirrot.Koordinaatti
 import tietojenTallennus.{Profiili, Rata}
 import scala.swing._
@@ -43,9 +43,11 @@ object NappuloidenHallinta {
     if ( !rata.isDefined) { //Ei pitäisi tapahtua, mutta varmuuden vuoksi tässä.
       Some("Rata pitää valita ennen pelin aloittamista.")
     } else if (profiili1.getOrElse(Profiili("eiOlemassa1")) == profiili2.getOrElse(Profiili("eiOlemassa2"))) { //Kaksi Nonea kelpaa.
-      Some("Käytettävät profiilit eivät voi olla samat.") 
+      Some("Käytettävät profiilit eivät voi olla samat.")
     } else { //Kunhan rata on määritelty ja profiilit erit
       val uusiPeli = Peli.uusiPeli(rata.get, Vector(profiili1, profiili2))
+      if (profiili1.isDefined && profiili1.get.nimi == "AI") uusiPeli.pelaajat(0).asetaAI(new AI(uusiPeli)) //Luodaan AI tarvittaessa
+      else if (profiili2.isDefined && profiili2.get.nimi == "AI") uusiPeli.pelaajat(1).asetaAI(new AI(uusiPeli))
       Ikkuna.paaIkkuna.vaihdaIkkunanSisalto(Ikkuna.peliIkkuna(uusiPeli))
       None
     }
@@ -148,7 +150,7 @@ object NappuloidenHallinta {
             Dialog.showMessage(null, "Nimeä "+nimi+ " ei voida hyväksyä. Nimi saa sisältää vain aakkosia (a-z) ja numeroita.",
                            "Virhe profiilia luodessa", Dialog.Message.Error)
             luoUusiProfiili()
-          }           
+          }
         }
       }
     }
@@ -166,12 +168,12 @@ object NappuloidenHallinta {
     var kierrosajat = Map[String, Option[Int]]()
     if (voittaja.isDefined) { //Jos peli on päättynyt
       pelitilanne.pelaajat.foreach { pelaaja => 
-        pelaaja.profiili.foreach{ profiili => 
+        pelaaja.profiili.foreach{ profiili => if (profiili.nimi != Peli.ai.nimi) { //Jos profiili != Non ja != AI
           val voitti = pelaaja == voittaja.get
           val siirrot = if (pelitilanne.onkoMaalissa(pelaaja)) Some(pelaaja.auto.tehdytSiirrot) else None
           profiili.paivita(voitti, pelitilanne.pelilauta.nimi, siirrot)
           kierrosajat += (profiili.nimi -> siirrot)
-        }
+        }}
       }
       pelitilanne.pelilauta.rata.paivita(kierrosajat)
     }

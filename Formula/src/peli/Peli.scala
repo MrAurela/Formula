@@ -6,6 +6,8 @@ import tietojenTallennus.Profiili
 
 object Peli {
   
+  val ai = new Profiili("A.I.") //Nimessä on pisteitä, joten pelaaja ei voi luoda samannimistä profiilia
+  
   var pelitilanne: Option[Pelitilanne] = None
   
   var rataLista = TiedostonHallinta.haeRadat

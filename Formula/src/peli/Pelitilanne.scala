@@ -57,6 +57,8 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
     if (pelaajat(0) == vuorossa) vuorossa = pelaajat(1)
     else vuorossa = pelaajat(0)
     vuorossa.auto.aloitaVuoro()
+    
+    if (vuorossa.onTekoaly) vuorossa.tekoaly.get.siirto //LISÄÄ SIIRRÄAUTOA
   }
   
 }
