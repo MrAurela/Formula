@@ -8,15 +8,16 @@ import scala.collection.mutable.Buffer
 
 
 class Rata(radanNimi: String, radanMuoto: Vector[Vector[Maasto]], ennatykset: Map[String, Int]) {
+  override def toString = nimi + "\n" + radanMuoto.mkString("\n")
   
   val nimi = radanNimi
   val muoto = radanMuoto
  
   var ennatysKierrokset = ennatykset //Mapin ansioista kaikilla ajajilla on tallessa vain paras aika.
   
-  def parhaatAjajat = ennatykset.toVector.sortWith(_._2 < _._2)
+  def parhaatAjajat = ennatykset.toVector.sortWith(_._1 < _._1).sortWith(_._2 < _._2) //Ensisijaisesti tuloksen, sitten nimen mukaan.
   
-  override def toString = nimi + "\n" + radanMuoto.mkString("\n")
+  def parhaatAjajatTeksti = parhaatAjajat.map{pari => pari._1 +  " " + pari._2}
   
   def paivita(kierrosajat: Map[String, Option[Int]]) = {
     for (tulos <- kierrosajat) {

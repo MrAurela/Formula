@@ -36,23 +36,22 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
 
   def sallitutSiirrot = pelilauta.sallitutSiirrot(vuorossa.auto, true) //True => tietyllä vaihteella sallitut siirrot
   
-  def kaikkiSallitutSiirrot = pelilauta.sallitutSiirrot(vuorossa.auto, false) //False => sallittujen vaihteiden kaikki siirrot
+  def kaikkiSallitutSiirrot(auto: Auto) = pelilauta.sallitutSiirrot(auto, false) //False => sallittujen vaihteiden kaikki siirrot
   
-  //ALASPÄIN SEINÄÄN TÖRMÄYS EI TOIMI, SININEN, RATA2
   def tarkistaVoitto: (Option[Pelaaja], String) =  {
     if (pelaajat(0).auto.tehdytSiirrot == pelaajat(1).auto.tehdytSiirrot) { //Maaliin pääsemisesssä annetaan "tasoittava vuoro"
-      if (pelaajat(1).auto.kierrokset >= vaadittavatKierrokset) (Some(pelaajat(1)), "Rata kierretty.") //Tasatilanteessa voittaa toisena siirtävä pelaaja.
-      else if (pelaajat(0).auto.kierrokset >= vaadittavatKierrokset) (Some(pelaajat(0)), "Rata kierretty.")
-      else (None, "")
+      if (this.onkoMaalissa(pelaajat(1)) && this.onkoMaalissa(pelaajat(0))) return (Some(pelaajat(1)), "Molemmat pelaajat kiersivät radan.")
+      else if (this.onkoMaalissa(pelaajat(1))) return (Some(pelaajat(1)), "Punainen kiersi radan.") //Tasatilanteessa voittaa toisena siirtävä pelaaja.
+      else if (this.onkoMaalissa(pelaajat(0))) return (Some(pelaajat(0)), "Sininen kiersi radan.")
     }
-    
-    if (pelaajat(0).auto.eiVoiLiikkua(this)) (Some(pelaajat(1)), "Ulosajo.") //Jos ei voi liikkua laillisesti, häviää
-    else if (pelaajat(1).auto.eiVoiLiikkua(this)) (Some(pelaajat(0)), "Ulosajo.")
+    if (pelaajat(0).auto.eiVoiLiikkua(this)) (Some(pelaajat(1)), "Sininen ajaa ulos.") //Jos ei voi liikkua laillisesti, häviää
+    else if (pelaajat(1).auto.eiVoiLiikkua(this)) (Some(pelaajat(0)), "Punainen ajaa ulos.")
     else (None, "")
-
   }
   
-  def onkoMaalissa(pelaaja: Pelaaja): Boolean = pelaaja.auto.kierrokset >= vaadittavatKierrokset
+  def onkoMaalissa(pelaaja: Pelaaja): Boolean = {
+    pelaaja.auto.kierrokset >= vaadittavatKierrokset
+  }
   
   private def vaihdaVuoroa() = {
     if (pelaajat(0) == vuorossa) vuorossa = pelaajat(1)

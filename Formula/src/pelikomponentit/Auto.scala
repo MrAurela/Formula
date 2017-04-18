@@ -47,7 +47,7 @@ class Auto() {
     kaikkiSuunnat.toVector
   }
   
-  def eiVoiLiikkua(pelitilanne: Pelitilanne): Boolean = pelitilanne.kaikkiSallitutSiirrot.isEmpty
+  def eiVoiLiikkua(pelitilanne: Pelitilanne): Boolean = pelitilanne.kaikkiSallitutSiirrot(this).isEmpty
   
   //Vaihdetta ei voi vaihtaa ensimmäisellä kierroksella
   def vaihdettaVoiNostaa = vaihde <= vaihdeVuoronAlussa && vaihde < 5 && tehdytSiirrot > 0

@@ -133,7 +133,6 @@ class Pelilauta(radanTiedot: Rata) {
       }
     }
     //Vaikka kuljettaisiin "monen maaliruudun" läpi yhdellä siirrolla esimerkiksi vinottaisella siirrolla, lasketaan tämä vain yhdeksi
-    println(Math.signum(pisteet).toInt)
     Math.signum(pisteet).toInt
   }
   

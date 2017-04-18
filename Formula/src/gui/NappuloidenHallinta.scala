@@ -2,7 +2,7 @@ package gui
 
 import peli.{Peli, Pelitilanne, Pelaaja}
 import siirrot.Koordinaatti
-import tietojenTallennus.Profiili
+import tietojenTallennus.{Profiili, Rata}
 import scala.swing._
 import javax.swing.JOptionPane
 
@@ -109,11 +109,21 @@ object NappuloidenHallinta {
         new MenuItem(Action(profiili.nimi)(NappuloidenHallinta.haeProfiilienTiedot(profiili)) ) )
       menulista.foreach(contents += _) //Lisätään kaikki profiilit menuun
     }
+    def rataMenu = new Menu("Ratojen tiedot") {
+      val menulista: Vector[MenuItem] = Peli.rataLista.map(rata => 
+        new MenuItem(Action(rata.nimi)(NappuloidenHallinta.haeRadanTiedot(rata)) ) )
+      menulista.foreach(contents += _) //Lisätään kaikki profiilit menuun
+    }
     contents += profiiliMenu
+    contents += rataMenu
   }
   
   def haeProfiilienTiedot(profiili: Profiili) {
     Ikkuna.paaIkkuna.contents = Ikkuna.profiilienHallinta(profiili)
+  }
+  
+  def haeRadanTiedot(rata: Rata) {
+    Ikkuna.paaIkkuna.contents = Ikkuna.rataTiedot(rata)
   }
   
   //Kysyy käyttää syöttämään luotavan profiilin nimen. Ei hyväksy erikoismerkkejä sisältäviä nimiä eikä aiemmin luodun profiilin nimeä.

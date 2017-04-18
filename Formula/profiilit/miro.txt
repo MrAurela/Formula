@@ -1,1 +1,4 @@
+testi2 0 4 3
+rata2 0 5 -
+rata1 0 1 -
 testi1 0 2 -

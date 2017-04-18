@@ -83,13 +83,14 @@ class Ruudukko(pelitilanne: Pelitilanne) extends Panel {
     reactions += {
       case MouseClicked(ruudukko, sijainti, _, _, _) => {
         NappuloidenHallinta.teeSiirto(Koordinaatti(sijainti.x / ruudunKoko, sijainti.y  / ruudunKoko))
+
         if ( pelitilanne.tarkistaVoitto._1.isDefined ) {
           val voittaja = pelitilanne.tarkistaVoitto._1.get
           val tulos = pelitilanne.tarkistaVoitto._2
           val vastaus = Dialog.showConfirmation(null, tulos+"\nPelin voitti: "+voittaja, "Peli päättyi", Dialog.Options.OkCancel, Dialog.Message.Info)
           if (vastaus == Dialog.Result.Ok) {
             NappuloidenHallinta.tallenaPelinTiedot(pelitilanne)// Sulje peli jos ja tallenna tiedot jos OK.
-            Ikkuna.top.vaihdaIkkunanSisaltoMenuun() 
+            Ikkuna.top.vaihdaIkkunanSisaltoMenuun()
           }
           else pelitilanne.peruSiirto()
         }

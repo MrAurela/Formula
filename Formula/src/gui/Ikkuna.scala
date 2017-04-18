@@ -3,7 +3,7 @@
 package gui
 
 import peli.{Peli, Pelitilanne}
-import tietojenTallennus.Profiili
+import tietojenTallennus.{Profiili, Rata}
 
 import scala.swing._
 import scala.swing.event._
@@ -128,7 +128,6 @@ object Ikkuna extends SimpleSwingApplication {
     c.gridy = 0
     c.ipady = 25
     val tiedot = profiili.tiedot.toList
-    println(tiedot)
     val alku = 
       if (tiedot.isEmpty) List(profiili.nimi, "", "Ei ole pelannut yhtään peliä.")
       else List(profiili.nimi, "", "Rata | Voitot | Pelit | Ennätysaika")
@@ -140,7 +139,28 @@ object Ikkuna extends SimpleSwingApplication {
     }
   }
   //(profiilienhallina)--------------------------------------------------------------------------------------
-      
+  
+  
+  //SEURAAVAKSI TÄMÄ PIÄTIS TEHDÄ
+  //Ratojen tilastot-----------------------------------------------------------------------------------------
+  def rataTiedot(rata: Rata) = new GridBagPanel {
+    val c = new Constraints
+    c.gridx = 0
+    c.gridy = 0
+    c.ipady = 25
+    val tiedot = rata.parhaatAjajatTeksti
+    val alku = 
+      if (tiedot.isEmpty) List(rata.nimi, "", "Rataa ei ole läpäisty kertaakaan.")
+      else List(rata.nimi, "", "Radan ennätysajat:", "Nimi | Siirtojen määrä")
+
+    val kaikki = (alku ++ tiedot).toVector
+    for (rivi <- kaikki) {
+      c.gridy += 1
+      layout(new Label{text=rivi; font=new Font("Arial",0,40)}) = c
+    }
+  }
+  //(Ratojen tilastot)-----------------------------------------------------------------------------------------
+  
   val paaIkkuna = new MainFrame {
     title = "Formula"
     preferredSize = new Dimension(leveys, korkeus)
