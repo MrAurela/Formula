@@ -19,13 +19,14 @@ class Pelaaja(profiili_ : Option[Profiili], auto_ : Auto) {
   var tekoaly: Option[AI] = None
 
   
-  def onPelaaja = !tekoaly.isDefined
+  def onPelaaja = !this.onTekoaly
+  def onTekoaly = tekoaly.isDefined
   
   def asetaAI(ai: AI) = {
-    tekoaly = Some(ai)
+    this.tekoaly = Some(ai)
   }
   
-  def onTekoaly = tekoaly.isDefined
+  
   
 }
 

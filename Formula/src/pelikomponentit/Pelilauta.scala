@@ -136,7 +136,7 @@ class Pelilauta(radanTiedot: Rata) {
     Math.signum(pisteet).toInt
   }
   
-  private def etsiAuto(auto: Auto): Koordinaatti = {
+  def etsiAuto(auto: Auto): Koordinaatti = {
     for (x <- 0 until leveys; y <- 0 until korkeus) {
       if (ruudut(y)(x).auto.getOrElse(new Auto) == auto) 
         return Koordinaatti(x,y)

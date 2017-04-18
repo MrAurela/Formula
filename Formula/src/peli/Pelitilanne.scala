@@ -15,7 +15,7 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
  
   def eiVuorossa = if (this.vuorossa == pelaajat(0)) pelaajat(1) else pelaajat(0)
   
-  def siirraAutoa(kohde: Koordinaatti) = {
+  def siirraAutoa(kohde: Koordinaatti): Unit = {
     val siirtoOnnistui = this.pelilauta.siirraAutoaLaillisesti(vuorossa.auto, kohde) //Siirtää autoa, jos siirto on laillinen
     if (siirtoOnnistui) vaihdaVuoroa()
   }
@@ -58,7 +58,7 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
     else vuorossa = pelaajat(0)
     vuorossa.auto.aloitaVuoro()
     
-    if (vuorossa.onTekoaly) vuorossa.tekoaly.get.siirto //LISÄÄ SIIRRÄAUTOA
+    if (vuorossa.onTekoaly) this.siirraAutoa( vuorossa.tekoaly.get.siirto )//LISÄÄ SIIRRÄAUTOA
   }
   
 }

@@ -4,10 +4,12 @@ import siirrot._
 
 class AI(pelitilanne: Pelitilanne) {
   
-  def siirto = {
-    val vuorossa = pelitilanne.vuorossa
+  def siirto: Koordinaatti = {
+    val itse = pelitilanne.vuorossa
+    val sijainti = pelitilanne.pelilauta.etsiAuto(itse.auto)
     var kuviteltuTilanne = new Pelitilanne(pelitilanne.pelilauta, pelitilanne.pelaajat)
-    kuviteltuTilanne.siirraAutoa(Koordinaatti(1,1))
+    
+    itse.auto.sallitutSuunnat(1).muutaSiirroksi(sijainti).kohdeKoordinaatti
   }
   
 }

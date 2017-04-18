@@ -46,8 +46,8 @@ object NappuloidenHallinta {
       Some("Käytettävät profiilit eivät voi olla samat.")
     } else { //Kunhan rata on määritelty ja profiilit erit
       val uusiPeli = Peli.uusiPeli(rata.get, Vector(profiili1, profiili2))
-      if (profiili1.isDefined && profiili1.get.nimi == "AI") uusiPeli.pelaajat(0).asetaAI(new AI(uusiPeli)) //Luodaan AI tarvittaessa
-      else if (profiili2.isDefined && profiili2.get.nimi == "AI") uusiPeli.pelaajat(1).asetaAI(new AI(uusiPeli))
+      if (profiili1.isDefined && profiili1.get.nimi == Peli.ai.nimi) uusiPeli.pelaajat(0).asetaAI(new AI(uusiPeli)) //Luodaan AI tarvittaessa
+      else if (profiili2.isDefined && profiili2.get.nimi == Peli.ai.nimi) uusiPeli.pelaajat(1).asetaAI(new AI(uusiPeli))
       Ikkuna.paaIkkuna.vaihdaIkkunanSisalto(Ikkuna.peliIkkuna(uusiPeli))
       None
     }
