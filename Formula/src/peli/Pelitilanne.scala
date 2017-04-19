@@ -24,7 +24,7 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
     if (siirtoOnnistui) vaihdaVuoroa()
   }
   
-  def peruSiirto() = {
+  def peruSiirto(): Unit = {
     val auto = this.eiVuorossa.auto
     if (auto.edellinenSiirto.isDefined) {
       val edellinenKoordinaatti = auto.edellinenSiirto.get.lahtoKoordinaatti //get voidaan käyttää, koska se Option on määritelty
@@ -36,6 +36,11 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
       auto.palautaEdellinenVaihde()
       this.vaihdaVuoroa() //Perutun auton vuoro
     }
+    println("Peruttiin yksi auto")
+    if (vuorossa.onTekoaly) { //Jos perumisen jälkeen tietokone olisi vuorossa, perutaan myös oma siirto
+      println("Peruttiin kaksi autoa")
+      peruSiirto() 
+    }
   }
 
   def sallitutSiirrot = pelilauta.sallitutSiirrot(vuorossa.auto, true) //True => tietyllä vaihteella sallitut siirrot
@@ -43,6 +48,8 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
   def kaikkiSallitutSiirrot(auto: Auto) = pelilauta.sallitutSiirrot(auto, false) //False => sallittujen vaihteiden kaikki siirrot
   
   def tarkistaVoitto: (Option[Pelaaja], String) =  {
+    println("Tarkistetaan voittoa. KONE: "+pelaajat(0).auto.kierrokset+", PELAAJA: "+pelaajat(1).auto.kierrokset)
+    println("KONE: "+pelaajat(0).auto.siirrot.size+", PELAAJA: "+pelaajat(1).auto.siirrot.size)
     if (pelaajat(0).auto.tehdytSiirrot == pelaajat(1).auto.tehdytSiirrot) { //Maaliin pääsemisesssä annetaan "tasoittava vuoro"
       if (this.onkoMaalissa(pelaajat(1)) && this.onkoMaalissa(pelaajat(0))) return (Some(pelaajat(1)), "Molemmat pelaajat kiersivät radan.")
       else if (this.onkoMaalissa(pelaajat(1))) return (Some(pelaajat(1)), "Punainen kiersi radan.") //Tasatilanteessa voittaa toisena siirtävä pelaaja.
