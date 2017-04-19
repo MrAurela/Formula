@@ -18,29 +18,22 @@ class AI(pelitilanne_ : Pelitilanne) {
       
       if (vuorossa == itse) println(pelitilanne.pelilauta.etsiAuto(itse.auto))
       
-      val vaihtoehdot = pelitilanne.kaikkiSallitutSiirrot(vuorossa.auto).map{ siirto: Siirto => 
-        pelitilanne.pelilauta.siirraAutoaLaillisesti(vuorossa.auto, siirto.kohdeKoordinaatti) //Siirretään autoa
-        vaihdaVuoroa() //Vaihdetaan vuoroa
-        val arvostelu = arvosteleTilanne(pelitilanne, siirrot) //Tarkistetaan onko jompokumpo voittanut
-        val tulos =
-          if (Math.abs(arvostelu) == 1.0) {
-            println("Pisteet: "+arvostelu)
-            (siirrot ++ List(siirto), arvostelu)
-          }
-          else etsiParasSiirtoSarja(pelitilanne, siirrot ++ List(siirto))
-        pelitilanne.pelilauta.siirraAutoaPakolla(vuorossa.auto, siirto.lahtoKoordinaatti, false) //Otetaan siirto takaisin.
-        tulos
+      pelitilanne.kaikkiSallitutSiirrot(vuorossa.auto).foreach{ siirto: Siirto => 
+        pelitilanne.siirraAutoa(siirto.kohdeKoordinaatti)
+        val arvostelu = arvosteleTilanne(pelitilanne, siirrot) //Tarkistetaan onko jompikumpi voittanut
+        if (arvostelu == 1.0 && vuorossa == itse) {
+          println("Pisteet: "+arvostelu)
+          return (siirrot ++ List(siirto), arvostelu) //Jos löydetään voitto, tyydytään siihen.
+        } else if (arvostelu == -1.0 && vuorossa != itse) {
+          println("Pisteet: "+arvostelu)
+          return (siirrot ++ List(siirto), arvostelu) //Jos vastustaja löytää voiton, hän tyytyy siihen.
+        } else 
+          etsiParasSiirtoSarja(pelitilanne, siirrot ++ List(siirto)) //Muuten jatketaan etsimistä syvemmälle.
+        pelitilanne.peruSiirto() //Otetaan äskeinen siirto takaisin.
       }
       
-      //println(vaihtoehdot)
-      
-      val valinta =
-        if (vaihtoehdot.size > 0)
-          if (vuorossa == itse) vaihtoehdot.maxBy[Double]{pari => pari._2} else vaihtoehdot.maxBy[Double]{pari => -pari._2}
-        else {
-          println("Vaihtoehdot on tyhjä! "+pelitilanne.kaikkiSallitutSiirrot(vuorossa.auto).mkString(", "))
-          (siirrot, -1.0)}
-      valinta
+      //Jos tullaan tänne, yhtään voittoa ei löytynyt.
+      (siirrot, -1.0)
     
     }
     //Palautetaan 1.0 jos tietokone on voittanut aseman ja -1.0 jos pelaaja on voittanut aseman. 0 jos peli on kesken.
@@ -67,8 +60,13 @@ class AI(pelitilanne_ : Pelitilanne) {
     }
     
     val siirrotJaArvo = etsiParasSiirtoSarja(kuviteltuTilanne, List[Siirto]())
-    println("VALITTIIN "+siirrotJaArvo)
-    siirrotJaArvo._1(0).kohdeKoordinaatti
+    
+    if (siirrotJaArvo._1.size > 0) {
+      println("VALITTIIN "+siirrotJaArvo)
+      siirrotJaArvo._1(0).kohdeKoordinaatti
+    } else {
+      pelitilanne.sallitutSiirrot(0).kohdeKoordinaatti //Jos paremapaa ei löydetty, otetaan ensimmäinen siirto
+    }
     //itse.auto.sallitutSuunnat(1).muutaSiirroksi(sijainti).kohdeKoordinaatti
     
 

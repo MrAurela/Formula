@@ -18,7 +18,15 @@ object NappuloidenHallinta {
   
   def laskeVaihdetta() = Peli.pelitilanne.get.vuorossa.auto.laskeVaihdetta()
   
-  def peruEdellinenSiirto() = if (Peli.pelitilanne.isDefined) Peli.pelitilanne.get.peruSiirto()
+  def peruEdellinenSiirto() = {
+    val tilanne = Peli.pelitilanne
+    if (tilanne.isDefined) {
+      tilanne.get.peruSiirto()
+      if (tilanne.get.vuorossa.onTekoaly) { //Jos perumisen jälkeen tietokone olisi vuorossa, perutaan myös oma siirto
+        tilanne.get.peruSiirto()
+      }
+    }
+  }
   
   def paivita() = {
     paivitaNappulat()

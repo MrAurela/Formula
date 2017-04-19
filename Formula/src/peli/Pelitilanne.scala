@@ -36,11 +36,6 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
       auto.palautaEdellinenVaihde()
       this.vaihdaVuoroa() //Perutun auton vuoro
     }
-    println("Peruttiin yksi auto")
-    if (vuorossa.onTekoaly) { //Jos perumisen jälkeen tietokone olisi vuorossa, perutaan myös oma siirto
-      println("Peruttiin kaksi autoa")
-      peruSiirto() 
-    }
   }
 
   def sallitutSiirrot = pelilauta.sallitutSiirrot(vuorossa.auto, true) //True => tietyllä vaihteella sallitut siirrot
@@ -65,12 +60,14 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
     pelaaja.auto.kierrokset >= vaadittavatKierrokset
   }
   
+  def siirraTekoalya = {
+    if (vuorossa.onTekoaly) this.siirraAutoa( vuorossa.tekoaly.get.siirto ) //Tekoäly siirtää autoa vuorollaan.
+  }
+  
   private def vaihdaVuoroa() = {
     if (pelaajat(0) == vuorossa) vuorossa = pelaajat(1)
     else vuorossa = pelaajat(0)
     vuorossa.auto.aloitaVuoro()
-    
-    if (vuorossa.onTekoaly) this.siirraAutoa( vuorossa.tekoaly.get.siirto ) //Tekoäly siirtää autoa vuorollaan.
   }
   
 }

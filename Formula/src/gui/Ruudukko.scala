@@ -93,8 +93,10 @@ class Ruudukko(pelitilanne: Pelitilanne) extends Panel {
             Ikkuna.top.vaihdaIkkunanSisaltoMenuun()
           }
           else pelitilanne.peruSiirto()
+        } else {
+          pelitilanne.siirraTekoalya //Siirretään tekoälyä, jos sellainen on pelissä.
+          repaint() //Päivitetään uudestaan
         }
-        repaint() //Päivitetään uudestaan
         
         //Jos siirto onnistui ja vuoro vaihtui, päivitetään vaihdelaatikon teksti
         NappuloidenHallinta.paivita()
