@@ -48,9 +48,9 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
       else if (this.onkoMaalissa(pelaajat(1))) return (Some(pelaajat(1)), "Punainen kiersi radan.") //Tasatilanteessa voittaa toisena siirtävä pelaaja.
       else if (this.onkoMaalissa(pelaajat(0))) return (Some(pelaajat(0)), "Sininen kiersi radan.")
     }
-    if (vuorossa.auto.eiVoiLiikkua(this)) (Some(vuorossa), 
-        if (vuorossa==pelaajat(0)) "Sininen ajaa ulos." //Jos ei voi liikkua laillisesti, häviää
-        else "Punainen ajaa ulos.")
+    if (vuorossa.auto.eiVoiLiikkua(this))
+        if (vuorossa==pelaajat(0)) (Some(pelaajat(1)),"Sininen ajaa ulos.") //Jos ei voi liikkua laillisesti, häviää
+        else (Some(pelaajat(0)), "Punainen ajaa ulos.")
     else (None, "")
   }
   
@@ -81,12 +81,12 @@ object Pelitilanne {
                      else ai.pelitilanne.pelilauta.etsiAuto( vanhaAuto1 )
     val lahtoAuto2 = if (vanhaAuto2.siirrot.isDefinedAt(0)) vanhaAuto2.siirrot(0).lahtoKoordinaatti
                      else ai.pelitilanne.pelilauta.etsiAuto( vanhaAuto2 )
-    ai.pelitilanne.pelilauta.ruudut(lahtoAuto1.y)(lahtoAuto1.x).lisaaAuto(auto1) //Asetetaan autot lähtöihin.
-    ai.pelitilanne.pelilauta.ruudut(lahtoAuto2.y)(lahtoAuto2.x).lisaaAuto(auto2)
+    uusi.ruudut(lahtoAuto1.y)(lahtoAuto1.x).lisaaAuto(auto1) //Asetetaan autot uuden laudan lähtöihin.
+    uusi.ruudut(lahtoAuto2.y)(lahtoAuto2.x).lisaaAuto(auto2)
     auto1.asetaAloitusSuunta(ai.pelitilanne.pelilauta.ruudut(lahtoAuto1.y)(lahtoAuto1.x).maasto) //Asetetaan autojen lähtösuunnat
     auto2.asetaAloitusSuunta(ai.pelitilanne.pelilauta.ruudut(lahtoAuto2.y)(lahtoAuto2.x).maasto)
-    vanhaAuto1.siirrot.foreach{siirto => uusi.siirraAutoaLaillisesti(vanhaAuto1, siirto.kohdeKoordinaatti)} //Toistetaan autojen aiemmat siirrot
-    vanhaAuto2.siirrot.foreach{siirto => uusi.siirraAutoaLaillisesti(vanhaAuto2, siirto.kohdeKoordinaatti)}
+    vanhaAuto1.siirrot.foreach{siirto => uusi.siirraAutoaLaillisesti(auto1, siirto.kohdeKoordinaatti)} //Toistetaan autojen aiemmat siirrot
+    vanhaAuto2.siirrot.foreach{siirto => uusi.siirraAutoaLaillisesti(auto2, siirto.kohdeKoordinaatti)} //uudella laudalla
 
     val profiili1 = if (ai.pelitilanne.pelaajat(0).onTekoaly) Some(new Profiili(Peli.ai.nimi)) else None //Luodaan uudet profiilit
     val profiili2 = if (!ai.pelitilanne.pelaajat(0).onTekoaly) Some(new Profiili(Peli.ai.nimi)) else None //toinen AI, toinen None
@@ -95,7 +95,9 @@ object Pelitilanne {
     val pelaajat = Vector(pelaaja1, pelaaja2)
     pelaajat.foreach{pelaaja => if (pelaaja.profiili.isDefined) pelaaja.asetaAI(ai)} //Asetetaan AI:lle AI
     
-    new Pelitilanne(uusi, pelaajat)
+    val kuviteltuTilanne = new Pelitilanne(uusi, pelaajat)
+    kuviteltuTilanne.vuorossa = if (pelaaja1.onTekoaly) pelaaja1 else pelaaja2 //Asetetaan tietokonepelaaja vuoroon.
+    kuviteltuTilanne
   }
   
 }
