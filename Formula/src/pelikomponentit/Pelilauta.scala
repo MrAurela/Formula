@@ -1,7 +1,8 @@
 package pelikomponentit
 
 import siirrot.{Koordinaatti, Siirto, Suunta}
-import tietojenTallennus.Rata
+import peli.{Peli, Pelaaja, AI}
+import tietojenTallennus.{Rata, Profiili}
 import pelikomponentit._
 
 import scala.util.Random
@@ -143,5 +144,12 @@ class Pelilauta(radanTiedot: Rata) {
     }
     throw new Exception("Funktio etsiAuto, ei löytänyt autoa.")
   }
+  
+}
+
+
+object Pelilauta {
+ 
+
   
 }

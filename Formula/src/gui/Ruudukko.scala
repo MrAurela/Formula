@@ -83,7 +83,7 @@ class Ruudukko(pelitilanne: Pelitilanne) extends Panel {
     reactions += {
       case MouseClicked(ruudukko, sijainti, _, _, _) => {
         NappuloidenHallinta.teeSiirto(Koordinaatti(sijainti.x / ruudunKoko, sijainti.y  / ruudunKoko))
-
+        repaint() //Päivitetään heti siirron jälkeen
         if ( pelitilanne.tarkistaVoitto._1.isDefined ) {
           val voittaja = pelitilanne.tarkistaVoitto._1.get
           val tulos = pelitilanne.tarkistaVoitto._2
@@ -94,7 +94,7 @@ class Ruudukko(pelitilanne: Pelitilanne) extends Panel {
           }
           else pelitilanne.peruSiirto()
         }
-        repaint()
+        repaint() //Päivitetään uudestaan
         
         //Jos siirto onnistui ja vuoro vaihtui, päivitetään vaihdelaatikon teksti
         NappuloidenHallinta.paivita()

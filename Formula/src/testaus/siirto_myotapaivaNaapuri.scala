@@ -1,11 +1,13 @@
 package testaus
 
+
 import siirrot._
 import scala.util.Random
 
 /* Tulostettiin sarja satunnaisia laskuja. Toistettiin kunnes kaikki päätapaustyypit oli kohdattu.
  * Tarkastettiin tulokset itse.
  */
+
 
 object siirto_myotapaivaNaapuri extends App {
   val random = new Random()
@@ -16,3 +18,4 @@ object siirto_myotapaivaNaapuri extends App {
   }
   
 }
+
