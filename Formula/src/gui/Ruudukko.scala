@@ -103,5 +103,5 @@ class Ruudukko(pelitilanne: Pelitilanne) extends Panel {
       }
     }
   
-  
+  if (pelitilanne.pelaajat(0).onTekoaly) pelitilanne.siirraTekoalya
 }

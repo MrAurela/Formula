@@ -6,7 +6,7 @@ class AI(pelitilanne_ : Pelitilanne) {
   
   var pelitilanne = pelitilanne_
   
-  //TUTKI TOIMIIKO KUVITELTU TILANNE SITTEN JATKA TÄTÄ
+  //TEKOÄLY VALITSEE AINA ENSIMMÄISEN SIIRTOVAIHTOEHDON? MIKSEI LÖYDÄ PAREMPAA
   
   def siirto: Koordinaatti = {
     var kuviteltuTilanne = Pelitilanne.kuvitteellinen(this)
@@ -15,17 +15,17 @@ class AI(pelitilanne_ : Pelitilanne) {
     
     def etsiParasSiirtoSarja(pelitilanne: Pelitilanne, siirrot: List[Siirto]): (List[Siirto], Double) = {
       val vuorossa = pelitilanne.vuorossa
-      
+      println(siirrot.size)
       if (vuorossa == itse) println(pelitilanne.pelilauta.etsiAuto(itse.auto))
       
       pelitilanne.kaikkiSallitutSiirrot(vuorossa.auto).foreach{ siirto: Siirto => 
         pelitilanne.siirraAutoa(siirto.kohdeKoordinaatti)
         val arvostelu = arvosteleTilanne(pelitilanne, siirrot) //Tarkistetaan onko jompikumpi voittanut
         if (arvostelu == 1.0 && vuorossa == itse) {
-          println("Pisteet: "+arvostelu)
+          //("Pisteet: "+arvostelu)
           return (siirrot ++ List(siirto), arvostelu) //Jos löydetään voitto, tyydytään siihen.
         } else if (arvostelu == -1.0 && vuorossa != itse) {
-          println("Pisteet: "+arvostelu)
+          //println("Pisteet: "+arvostelu)
           return (siirrot ++ List(siirto), arvostelu) //Jos vastustaja löytää voiton, hän tyytyy siihen.
         } else 
           etsiParasSiirtoSarja(pelitilanne, siirrot ++ List(siirto)) //Muuten jatketaan etsimistä syvemmälle.
@@ -39,24 +39,16 @@ class AI(pelitilanne_ : Pelitilanne) {
     //Palautetaan 1.0 jos tietokone on voittanut aseman ja -1.0 jos pelaaja on voittanut aseman. 0 jos peli on kesken.
     def arvosteleTilanne(pelitilanne: Pelitilanne, siirrot: List[Siirto]): Double = {
       val mahdollinenVoittaja = pelitilanne.tarkistaVoitto._1
-      println("Arvostellaan tilanne: "+pelitilanne.tarkistaVoitto._2)
+      //println("Arvostellaan tilanne: "+pelitilanne.tarkistaVoitto._2)
       if (mahdollinenVoittaja.isDefined) {
         if (mahdollinenVoittaja.get == itse) 1.0
         else {
-          println("Vastustaja on: "+pelitilanne.pelilauta.etsiAuto(pelitilanne.pelaajat(1).auto))
           -1.0
         }
       } //else if (siirrot.size >= 100) -1.0 //RAJA SUORITUKSELLLE
       else {
         0.0
       }
-    }
-    
-    def vaihdaVuoroa() = {
-      if (pelitilanne.vuorossa == pelitilanne.pelaajat(0)) pelitilanne.vuorossa = pelitilanne.pelaajat(1)
-      else pelitilanne.vuorossa = pelitilanne.pelaajat(0)
-      
-      pelitilanne.vuorossa.auto.aloitaVuoro()
     }
     
     val siirrotJaArvo = etsiParasSiirtoSarja(kuviteltuTilanne, List[Siirto]())
