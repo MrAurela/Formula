@@ -43,8 +43,8 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
   def kaikkiSallitutSiirrot(auto: Auto) = pelilauta.sallitutSiirrot(auto, false) //False => sallittujen vaihteiden kaikki siirrot
   
   def tarkistaVoitto: (Option[Pelaaja], String) =  {
-    println("Tarkistetaan voittoa. KONE: "+pelaajat(0).auto.kierrokset+", PELAAJA: "+pelaajat(1).auto.kierrokset)
-    println("KONE: "+pelaajat(0).auto.siirrot.size+", PELAAJA: "+pelaajat(1).auto.siirrot.size)
+    //println("Tarkistetaan voittoa. KONE: "+pelaajat(0).auto.kierrokset+", PELAAJA: "+pelaajat(1).auto.kierrokset)
+    //println("KONE: "+pelaajat(0).auto.siirrot.size+", PELAAJA: "+pelaajat(1).auto.siirrot.size)
     if (pelaajat(0).auto.tehdytSiirrot == pelaajat(1).auto.tehdytSiirrot) { //Maaliin pääsemisesssä annetaan "tasoittava vuoro"
       if (this.onkoMaalissa(pelaajat(1)) && this.onkoMaalissa(pelaajat(0))) return (Some(pelaajat(1)), "Molemmat pelaajat kiersivät radan.")
       else if (this.onkoMaalissa(pelaajat(1))) return (Some(pelaajat(1)), "Punainen kiersi radan.") //Tasatilanteessa voittaa toisena siirtävä pelaaja.

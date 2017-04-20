@@ -40,7 +40,9 @@ class Ruudukko(pelitilanne: Pelitilanne) extends Panel {
     val ruudut = pelitilanne.pelilauta.ruudut
     for (vaaka <- 0 until vaakaRuudut; pysty <- 0 until pystyRuudut) {
       ruudut(pysty)(vaaka).maasto match { //Valitaan maaston väri
-        case Tie => g.setColor(Color.WHITE)
+        case Jaa => g.setColor(Color.CYAN)
+        case Hiekka => g.setColor(Color.getHSBColor(33, 68, 66))
+        case Tie(_) => g.setColor(Color.WHITE) 
         case Reuna => g.setColor(Color.BLACK)
         case Maali(_) => g.setColor(Color.GRAY)
       }

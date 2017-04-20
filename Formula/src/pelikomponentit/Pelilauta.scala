@@ -95,7 +95,8 @@ class Pelilauta(radanTiedot: Rata) {
     val siirrot = suunnat.map(_.muutaSiirroksi(lahto))
     siirrot.filter{ siirto: Siirto =>
       val kohde = siirto.kohdeKoordinaatti
-      kohde.onLaudalla(this) && this.lapimentavatRuudut(siirto).forall(_.voiAjaa)
+      kohde.onLaudalla(this) && this.lapimentavatRuudut(siirto).forall(_.voiAjaa) &&//Yleinen laillisuus
+      Maasto.hiekanSaannot(this, siirto, auto) && Maasto.jaanSaannot(this, siirto, auto) //Maastojen säännöt
     }
   }
   

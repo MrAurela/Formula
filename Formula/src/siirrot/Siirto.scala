@@ -67,7 +67,8 @@ class Siirto(lahto: Koordinaatti, kohde: Koordinaatti) {
     val korkeus = this.yLiike.toDouble
     
     //Hallitaan erikoistapaus, jossa siirron kulmakerronta laskettaessa pitäisi jakaa nollalla.
-    if ( leveys == 0 ) { 
+    if ( leveys == 0 && korkeus == 0) koordinaatit = Buffer[Koordinaatti]() //Virheellinen siirto
+    else if ( leveys == 0 ) { 
       val lahtoY = this.lahtoKoordinaatti.y
       val lahtoX = this.lahtoKoordinaatti.x
       for ( y <- lahtoY to lahtoY + korkeus.toInt by signum(korkeus).toInt) koordinaatit.append(Koordinaatti(lahtoX, y) )

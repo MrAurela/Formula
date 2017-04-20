@@ -52,7 +52,7 @@ object Rata {
     //Radan muoto.
     //Selvitetään pisimmän alkion pituus
     val maksimiLeveys = radanMuoto.map(_.length).fold(0)(Math.max(_,_))
-    val radanMaastot = Array.tabulate[Array[Maasto]](radanMuoto.length)(_=>Array.tabulate(maksimiLeveys)(_=>Tie))
+    val radanMaastot = Array.tabulate[Array[Maasto]](radanMuoto.length)(_=>Array.tabulate(maksimiLeveys)(_=>Normaali))
     
     for (j <- 0 until radanMuoto.length; i <- 0 until radanMuoto(j).length) {
       radanMaastot(j)(i) = Maasto(radanMuoto(j)(i))
