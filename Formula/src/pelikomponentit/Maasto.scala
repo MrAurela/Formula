@@ -26,6 +26,8 @@ sealed case class Maali(maalityyppi: Char) extends Maasto(maalityyppi)
 object Normaali extends Tie(Maasto.tie)
 object Jaa extends Tie(Maasto.jaa)
 object Hiekka extends Tie(Maasto.hiekka)
+object SyvaHiekka extends Tie(Maasto.syvaHiekka)
+object Oljy extends Tie(Maasto.oljy)
 
 object MaaliYlos extends Maali(Maasto.maaliYlos)
 object MaaliAlas extends Maali(Maasto.maaliAlas)
@@ -41,22 +43,38 @@ object Maasto {
   val tie = ' '
   val jaa = 'j'
   val hiekka = 'h'
+  val syvaHiekka = 'H'
+  val oljy = 'o'
   val reuna = '#'
   val maaliYlos = '^'
   val maaliAlas = 'v'
   val maaliOikea = '>'
   val maaliVasen = '<'
   
-  def hiekanSaannot(pelilauta: Pelilauta, siirto: Siirto, auto: Auto) = {
-    (!(pelilauta(siirto.lahtoKoordinaatti).onHiekka || pelilauta.lapimentavatRuudut(siirto).exists(_.onHiekka)) || //Jos kulkee hiekalla
-      (auto.edellinenSiirto.forall{edellinen =>  edellinen.vaihde >= siirto.vaihde}) ) //vauhti hidastuu
+  def hiekanSaannot(pelilauta: Pelilauta, lapimentavatRuudut: Vector[Ruutu], siirto: Siirto, auto: Auto) = {
+    !pelilauta(siirto.lahtoKoordinaatti).on(Hiekka) || //Jos lähtee liikkeelle hiekalta
+      (auto.edellinenSiirto.forall{edellinen =>  edellinen.vaihde >= siirto.vaihde})  //ei voi nopeuttaa
   }
   
-  def jaanSaannot(pelilauta: Pelilauta, siirto: Siirto, auto: Auto) = {
-    (!(pelilauta(siirto.lahtoKoordinaatti).onJaa || pelilauta.lapimentavatRuudut(siirto).exists(_.onJaa)) || //Jos kulkee jäällä
-        (auto.edellinenSiirto.forall{edellinen => //pitää joko nopeuden tai suunnan pysyä muuttumattomana.
-           edellinen.vaihde == siirto.vaihde || edellinen.samaSuunta(siirto.vaihde) == siirto.muutaSuunnaksi} ) )
+  def syvanHiekanSaannot(pelilauta: Pelilauta, lapimentavatRuudut: Vector[Ruutu], siirto: Siirto, auto: Auto) = {
+    !pelilauta(siirto.lahtoKoordinaatti).on(SyvaHiekka) || //Jos lähtee liikkeelle syvällä hiekalla
+      (auto.edellinenSiirto.forall{edellinen =>  edellinen.vaihde > siirto.vaihde})  //vauhti hidastuu, kunnes pysähtyy (=häviö)
   }
+  
+  def jaanSaannot(pelilauta: Pelilauta, lapimentavatRuudut: Vector[Ruutu], siirto: Siirto, auto: Auto) = {
+    !( pelilauta(siirto.lahtoKoordinaatti).on(Jaa) || lapimentavatRuudut.exists(_.on(Jaa)) ) || //Jos kulkee jäällä
+        (auto.edellinenSiirto.forall{edellinen => //pysyy sama nopeus, samaan suuntaan tai voi ajaa kovempaa minne vaan
+           edellinen.muutaSuunnaksi == siirto.muutaSuunnaksi || edellinen.vaihde < siirto.vaihde} )
+    
+  }
+  
+  def oljynSaannot(pelilauta: Pelilauta, lapimentavatRuudut: Vector[Ruutu], siirto: Siirto, auto: Auto) = {
+    !(pelilauta(siirto.lahtoKoordinaatti).on(Oljy) || lapimentavatRuudut.exists(_.on(Oljy))) || //Jos kulkee öljyssä
+        (auto.edellinenSiirto.forall(_.samaSuunta(siirto.vaihde) != siirto.muutaSuunnaksi))
+    
+  }
+  
+  
 
   def apply(maastonTunnus: Char): Maasto = {
     maastonTunnus match {
@@ -67,6 +85,8 @@ object Maasto {
       case this.maaliVasen => MaaliVasen
       case this.jaa => Jaa //Tarkoitettujen teiden lisäksi, kaikki tunnistamattomat merkit tulkitaan tieksi.
       case this.hiekka => Hiekka
+      case this.syvaHiekka => SyvaHiekka
+      case this.oljy => Oljy
       case _ => Normaali
     }
   }

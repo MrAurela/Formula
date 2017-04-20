@@ -8,8 +8,7 @@ class Ruutu(maasto_ : Maasto) {
   override def toString = maasto.toString + ", " + auto.getOrElse("Ei autoa")
   
   val onMaali = this.maasto.onMaali
-  val onJaa = this.maasto.tyyppi == Jaa
-  val onHiekka = this.maasto.tyyppi == Hiekka
+  def on(kysyttavaMaasto: Maasto) = this.maasto == kysyttavaMaasto
   
   def voiAjaa = this.maasto != Reuna && this.eiAutoa  //Voiko ruutuun tai sen läpi ajaa
   

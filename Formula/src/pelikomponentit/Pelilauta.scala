@@ -93,10 +93,13 @@ class Pelilauta(radanTiedot: Rata) {
     val suunnat = if (vainVaihteella) this.mahdollisetSuunnat(auto)
                   else this.kaikkiMahdollisetSuunnat(auto)
     val siirrot = suunnat.map(_.muutaSiirroksi(lahto))
-    siirrot.filter{ siirto: Siirto =>
-      val kohde = siirto.kohdeKoordinaatti
-      kohde.onLaudalla(this) && this.lapimentavatRuudut(siirto).forall(_.voiAjaa) &&//Yleinen laillisuus
-      Maasto.hiekanSaannot(this, siirto, auto) && Maasto.jaanSaannot(this, siirto, auto) //Maastojen säännöt
+    siirrot.filter(_.kohdeKoordinaatti.onLaudalla(this)).filter{siirto =>
+      val lapimentavatRuudut = this.lapimentavatRuudut(siirto)
+      lapimentavatRuudut.forall(_.voiAjaa) && //Yleinen laillisuus
+      Maasto.hiekanSaannot(this, lapimentavatRuudut, siirto, auto) && //Maastojen säännöt
+      Maasto.syvanHiekanSaannot(this, lapimentavatRuudut, siirto, auto) &&
+      Maasto.jaanSaannot(this, lapimentavatRuudut, siirto, auto) &&
+      Maasto.oljynSaannot(this, lapimentavatRuudut, siirto, auto)
     }
   }
   

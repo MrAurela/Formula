@@ -13,6 +13,7 @@ import scala.swing.Dialog
 /* Lähteet:
  * Samoja lähteitä kuin Ikkunassa.
  * http://www.scala-lang.org/api/rc2/scala/swing/Dialog$.html
+ * värit: http://colorizer.org/
  */
 
 class Ruudukko(pelitilanne: Pelitilanne) extends Panel {
@@ -41,8 +42,10 @@ class Ruudukko(pelitilanne: Pelitilanne) extends Panel {
     for (vaaka <- 0 until vaakaRuudut; pysty <- 0 until pystyRuudut) {
       ruudut(pysty)(vaaka).maasto match { //Valitaan maaston väri
         case Jaa => g.setColor(Color.CYAN)
-        case Hiekka => g.setColor(Color.getHSBColor(33, 68, 66))
-        case Tie(_) => g.setColor(Color.WHITE) 
+        case Hiekka => g.setColor(new Color(186,126,54)) // Oranssi/ruskea
+        case SyvaHiekka => g.setColor(new Color(84,58,29)) // Tumman ruskea
+        case Oljy => g.setColor(new Color(102,5,70)) //Tumman lila
+        case Tie(_) => g.setColor(Color.WHITE)
         case Reuna => g.setColor(Color.BLACK)
         case Maali(_) => g.setColor(Color.GRAY)
       }

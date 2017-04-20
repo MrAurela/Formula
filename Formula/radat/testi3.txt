@@ -5,8 +5,8 @@
 #     hh#########hh    ########
 ##    hhh#########h     #######
 ###   jhhh#########    j  h####
-####  jjhh##########  jj hhhhh#
-####    hhh  jjj      hhhhhhhh#
-#####        jjj   hhhhhhhhhh##
-#######      jj  hhhhhhhhhhh###
+####  jjhh##########  jj HHHHH#
+####    hhh  ooo      HHHHHHHH#
+#####        ooo   HHHHHHHHHH##
+#######      oo  HHHHHHHHHHH###
 ###############################
