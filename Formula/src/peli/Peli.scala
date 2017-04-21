@@ -36,6 +36,12 @@ object Peli {
     tietojenTallennus.TiedostonHallinta.uusiProfiili(profiili) //Päivitetään tiedostoon tallennettu lista
   }
   
+  def uusiRata(rata: Rata) {
+    val rataList: List[Rata] = rataLista.toList
+    rataLista = (rataLista ++ List(rata)).toVector
+    tietojenTallennus.TiedostonHallinta.uusiRata(rata)
+  }
+  
 }
 
 

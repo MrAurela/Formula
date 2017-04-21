@@ -14,9 +14,6 @@ class Pelilauta(radanTiedot: Rata) {
   val nimi = rata.nimi
   val maastot = rata.muoto
   
-  require(maastot.forall(_.length == maastot(0).length)) //Taulukon pitää olla suorakaide.
-  require(maastot.length > 0)
-  
   val ruudut = maastot.map(_.map(new Ruutu(_))) //Vaihdetaan maastot vastaavaan ruutuun
   
   val korkeus = ruudut.length

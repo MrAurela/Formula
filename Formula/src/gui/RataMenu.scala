@@ -14,7 +14,7 @@ class RataMenu(nimi: String) extends Menu(nimi) {
   val radat = menulista.zip(Peli.rataLista).toMap //yhdistetään nappulat ratoihin
   
   var vaihtoehdot = new ButtonGroup() //Luodaan radiobox ryhmä
-  vaihtoehdot.buttons ++= menulista
+  vaihtoehdot.buttons ++= menulista.sortWith{(menu1, menu2) => menu1.text < menu2.text} //Lisätään aakkosjärjestyksessä
   
   contents ++= vaihtoehdot.buttons //Lisätään menuun vaihtoehdot
   

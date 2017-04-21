@@ -140,8 +140,6 @@ object Ikkuna extends SimpleSwingApplication {
   }
   //(profiilienhallina)--------------------------------------------------------------------------------------
   
-  
-  //SEURAAVAKSI TÄMÄ PIÄTIS TEHDÄ
   //Ratojen tilastot-----------------------------------------------------------------------------------------
   def rataTiedot(rata: Rata) = new GridBagPanel {
     val c = new Constraints
@@ -160,6 +158,14 @@ object Ikkuna extends SimpleSwingApplication {
     }
   }
   //(Ratojen tilastot)-----------------------------------------------------------------------------------------
+  
+  //Rataeditori------------------------------------------------------------------------------------------------
+  def rataeditori(rata: Rata) = new GridBagPanel {
+    val c = new Constraints
+    c.insets = new Insets(50,50,50,50)
+    layout(new Rataeditori(rata)) = c
+  }
+  //(Rataeditori)----------------------------------------------------------------------------------------------
   
   val paaIkkuna = new MainFrame {
     title = "Formula"
@@ -188,6 +194,10 @@ object Ikkuna extends SimpleSwingApplication {
       this.menuBar = NappuloidenHallinta.profiiliValikko
       this.vaihdaIkkunanSisalto(new GridBagPanel)
     }
+    def vaihdaIkkunanSisaltoRataeditoriin() = {
+      this.menuBar = NappuloidenHallinta.rataeditoriValikko
+      this.vaihdaIkkunanSisalto(new GridBagPanel)
+    }
     
     //Tarvitaan vain jos käytetään näppäimistöä
     //gameScreen.requestFocus
@@ -203,7 +213,7 @@ object Ikkuna extends SimpleSwingApplication {
         else if (nappula == palaaMenuun) NappuloidenHallinta.lopetaPeli()
         else if (nappula == menu.uusiPeli) this.vaihdaIkkunanSisaltoPeliin()
         else if (nappula == menu.profiilit) this.vaihdaIkkunanSisaltoProfiilienHallintaan()
-        else if (nappula == menu.rataeditori) println("Rataeditoria ei ole toteutettu vielä.")
+        else if (nappula == menu.rataeditori) this.vaihdaIkkunanSisaltoRataeditoriin()
         else if (nappula == menu.lopetaPeli) this.dispose()
         NappuloidenHallinta.paivita() //Nappuloiden painamisen jälkeen päivitetään nappuoiden tekstit (oleellista lähinnä pelin aikana)
         this.repaint() // ja repaintataan ruutu

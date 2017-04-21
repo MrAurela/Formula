@@ -7,12 +7,19 @@ import scala.collection.mutable.Buffer
 
 
 
-class Rata(radanNimi: String, radanMuoto: Vector[Vector[Maasto]], ennatykset: Map[String, Int]) {
+class Rata(radanNimi: String, radanMuoto: Array[Array[Maasto]], ennatykset: Map[String, Int]) {
   override def toString = nimi + "\n" + radanMuoto.mkString("\n")
   
   val nimi = radanNimi
   val muoto = radanMuoto
+  def muotoTekstina = muoto.toVector.map(_.toVector.map(_.toString).mkString(""))
  
+  require(muoto.forall(_.length == muoto(0).length)) //Taulukon pitää olla suorakaide.
+  require(muoto.length > 0)
+  
+  val korkeus = muoto.length
+  val leveys = muoto(0).length
+  
   var ennatysKierrokset = ennatykset //Mapin ansioista kaikilla ajajilla on tallessa vain paras aika.
   
   def parhaatAjajat = ennatysKierrokset.toVector.sortWith(_._1 < _._1).sortWith(_._2 < _._2) //Ensisijaisesti tuloksen, sitten nimen mukaan.
@@ -23,15 +30,24 @@ class Rata(radanNimi: String, radanMuoto: Vector[Vector[Maasto]], ennatykset: Ma
     for (tulos <- kierrosajat) {
       if (tulos._2.isDefined) ennatysKierrokset += tulos._1 -> tulos._2.get //Lisätään vain jos kirrosaika määritetty (pelaaja pääsi maaliin).
     }
-    val muotoTekstina = muoto.map(_.map(_.toString).mkString(""))
     TiedostonHallinta.paivitaRata(nimi, muotoTekstina, ennatysKierrokset.toVector)
   }
+  
+  def muutaMaasto(y: Int, x: Int, maasto: Maasto) = {
+    muoto(y)(x) = maasto
+  }
+  
 }
 
-
-///ONGELMA RATOJEN LATAUKSESSA: Vector(Vector(), Vector((hei,1)))
-
 object Rata {
+  
+  def uusi(nimi: String, leveys: Int, korkeus: Int) = {
+    new Rata(nimi,  Array.tabulate(korkeus, leveys)((_,_)=>Maasto(Maasto.tie)), Map[String, Int]())
+  }
+  
+  def kopio(nimi: String, rata: Rata) = {
+    new Rata(nimi, Array.tabulate(rata.korkeus, rata.leveys)((y,x)=>rata.muoto(y)(x)), Map[String, Int]())
+  }
   
   def apply(nimi: String, tiedot: Vector[String]): Rata = {
     
@@ -58,7 +74,7 @@ object Rata {
       radanMaastot(j)(i) = Maasto(radanMuoto(j)(i))
     }
     
-    new Rata(nimi, radanMaastot.map(_.toVector).toVector, ennatykset)
+    new Rata(nimi, radanMaastot, ennatykset)
     
   }
   

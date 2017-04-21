@@ -1,3 +1,4 @@
 testi2 0 2 3
 rata2 0 3 -
 rata1 1 1 -
+testi3 1 1 19

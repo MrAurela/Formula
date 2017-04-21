@@ -14,11 +14,12 @@ import scala.swing.Dialog
  * Samoja lähteitä kuin Ikkunassa.
  * http://www.scala-lang.org/api/rc2/scala/swing/Dialog$.html
  * värit: http://colorizer.org/
+ * värien toiminta: http://www.users.csbsju.edu/~lziegler/apidocs/java.awt.Color.html
  */
 
 class Ruudukko(pelitilanne: Pelitilanne) extends Panel {
   
-  var ruudunKoko = 20
+  val ruudunKoko = 20
   val vaakaRuudut = pelitilanne.pelilauta.leveys
   val pystyRuudut = pelitilanne.pelilauta.korkeus
   
@@ -42,12 +43,12 @@ class Ruudukko(pelitilanne: Pelitilanne) extends Panel {
     for (vaaka <- 0 until vaakaRuudut; pysty <- 0 until pystyRuudut) {
       ruudut(pysty)(vaaka).maasto match { //Valitaan maaston väri
         case Jaa => g.setColor(Color.CYAN)
-        case Hiekka => g.setColor(new Color(186,126,54)) // Oranssi/ruskea
-        case SyvaHiekka => g.setColor(new Color(84,58,29)) // Tumman ruskea
-        case Oljy => g.setColor(new Color(102,5,70)) //Tumman lila
-        case Tie(_) => g.setColor(Color.WHITE)
+        case Hiekka => g.setColor(new Color(232,255,56)) // 232,255,56 => keltainen
+        case SyvaHiekka => g.setColor(new Color(175,55,4)) // 175,55,4 => ruskea
+        case Oljy => g.setColor(new Color(95,2,92)) // 95,2,92 => Tumman lila
+        case Tie(_,_) => g.setColor(Color.WHITE)
         case Reuna => g.setColor(Color.BLACK)
-        case Maali(_) => g.setColor(Color.GRAY)
+        case Maali(_,_) => g.setColor(Color.GRAY)
       }
       g.fillRect(vaaka * ruudunKoko, pysty * ruudunKoko, ruudunKoko, ruudunKoko) //Piirretään maastoruutu
     }

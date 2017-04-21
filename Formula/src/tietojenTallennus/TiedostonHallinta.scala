@@ -127,6 +127,10 @@ object TiedostonHallinta {
     this.kirjoitaTiedostoon(tiedosto, teksti)
   }
   
+  def uusiRata(rata: Rata) = {
+    this.paivitaRata(rata.nimi, rata.muotoTekstina, rata.ennatysKierrokset.toVector)
+  }
+  
   def kirjoitaTiedostoon(tiedostonNimi: String, sisalto: String) = {
     try { //Yritetään avata tiedosto
       val tiedosto = new File(tiedostonNimi)

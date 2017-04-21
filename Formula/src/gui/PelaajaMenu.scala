@@ -23,7 +23,7 @@ class PelaajaMenu(nimi: String) extends Menu(nimi) {
   contents += eiProfiilia//Lisätään menuun vaihtoehdot
   contents += ai
   contents += new Separator
-  contents ++= menulista
+  contents ++= menulista.sortWith{(menu1, menu2) => menu1.text < menu2.text} //Lisätään aakkosjärjestyksessä
   
   vaihtoehdot.select(eiProfiilia)
   

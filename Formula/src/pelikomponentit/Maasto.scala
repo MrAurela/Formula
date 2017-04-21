@@ -7,10 +7,14 @@ import siirrot.Siirto
  * O1-kurssin tehtävän Chess luokka Piece
  */
 
-sealed abstract class Maasto(maastonTunnus: Char) {
+sealed class Maasto(maastonTunnus: Char, nimi_ : String) {
+  
   override def toString = maastonTunnus.toString
+  
+  def nimi = nimi_
+  
   def onMaali = this match {
-    case Maali(_) => true
+    case Maali(_,_) => true
     case _ => false
   }
   
@@ -19,20 +23,20 @@ sealed abstract class Maasto(maastonTunnus: Char) {
   }
 }
 
-sealed case class Tie(tietyyppi: Char) extends Maasto(tietyyppi)
-case object Reuna extends Maasto(Maasto.reuna)
-sealed case class Maali(maalityyppi: Char) extends Maasto(maalityyppi)
+sealed case class Tie(tietyyppi: Char, tyypinNimi: String) extends Maasto(tietyyppi, "Tie, "+tyypinNimi)
+case object Reuna extends Maasto(Maasto.reuna, "Reuna")
+sealed case class Maali(maalityyppi: Char, tyypinNimi: String) extends Maasto(maalityyppi, "Maali ("+tyypinNimi+")")
 
-object Normaali extends Tie(Maasto.tie)
-object Jaa extends Tie(Maasto.jaa)
-object Hiekka extends Tie(Maasto.hiekka)
-object SyvaHiekka extends Tie(Maasto.syvaHiekka)
-object Oljy extends Tie(Maasto.oljy)
+object Normaali extends Tie(Maasto.tie, "normaali")
+object Jaa extends Tie(Maasto.jaa, "jaa")
+object Hiekka extends Tie(Maasto.hiekka, "hiekka")
+object SyvaHiekka extends Tie(Maasto.syvaHiekka, "syvä hiekka")
+object Oljy extends Tie(Maasto.oljy, "öljy")
 
-object MaaliYlos extends Maali(Maasto.maaliYlos)
-object MaaliAlas extends Maali(Maasto.maaliAlas)
-object MaaliOikea extends Maali(Maasto.maaliOikea)
-object MaaliVasen extends Maali(Maasto.maaliVasen)
+object MaaliYlos extends Maali(Maasto.maaliYlos, "ylos")
+object MaaliAlas extends Maali(Maasto.maaliAlas, "alas")
+object MaaliOikea extends Maali(Maasto.maaliOikea, "oikealle")
+object MaaliVasen extends Maali(Maasto.maaliVasen, "vasemmalle")
 /*
 case object Maaliviiva extends Maasto('!')
 case object AloitusRuutu1 extends Maasto('1')
@@ -74,7 +78,7 @@ object Maasto {
     
   }
   
-  
+  val maastoTunnukset = Vector(tie, hiekka, syvaHiekka, jaa, oljy, reuna, maaliYlos, maaliAlas, maaliOikea, maaliVasen) 
 
   def apply(maastonTunnus: Char): Maasto = {
     maastonTunnus match {
