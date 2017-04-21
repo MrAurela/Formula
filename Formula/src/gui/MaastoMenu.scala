@@ -8,10 +8,10 @@ class MaastoMenu(nimi: String) extends Menu(nimi) {
   val nimistaMaastoihin = Maasto.maastoTunnukset.map(Maasto(_)).map(maasto => (new RadioMenuItem(maasto.nimi), maasto)).toMap
   
   var vaihtoehdot = new ButtonGroup() //Luodaan radiobox ryhmä
-  vaihtoehdot.buttons ++= nimistaMaastoihin.keySet
+  vaihtoehdot.buttons ++= nimistaMaastoihin.keys.toArray.sortWith{(menuMaasto1,menuMaasto2) => menuMaasto1.text < menuMaasto2.text}
   
   //Lisätään vaihtoehdot aakkosjärjestyksessä.
-  contents ++= vaihtoehdot.buttons.toArray.sortWith{(menuMaasto1,menuMaasto2) => menuMaasto1.text < menuMaasto2.text}
+  contents ++= vaihtoehdot.buttons
   
   if ( !vaihtoehdot.buttons.isEmpty) vaihtoehdot.select(vaihtoehdot.buttons.toList(0))
   

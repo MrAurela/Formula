@@ -160,10 +160,10 @@ object Ikkuna extends SimpleSwingApplication {
   //(Ratojen tilastot)-----------------------------------------------------------------------------------------
   
   //Rataeditori------------------------------------------------------------------------------------------------
-  def rataeditori(rata: Rata) = new GridBagPanel {
+  def rataeditori(rata: Rata, menu: MaastoMenu) = new GridBagPanel {
     val c = new Constraints
     c.insets = new Insets(50,50,50,50)
-    layout(new Rataeditori(rata)) = c
+    layout(new Rataeditori(rata, menu)) = c
   }
   //(Rataeditori)----------------------------------------------------------------------------------------------
   
@@ -195,7 +195,7 @@ object Ikkuna extends SimpleSwingApplication {
       this.vaihdaIkkunanSisalto(new GridBagPanel)
     }
     def vaihdaIkkunanSisaltoRataeditoriin() = {
-      this.menuBar = NappuloidenHallinta.rataeditoriValikko
+      this.menuBar = NappuloidenHallinta.rataeditoriValikko(None)
       this.vaihdaIkkunanSisalto(new GridBagPanel)
     }
     

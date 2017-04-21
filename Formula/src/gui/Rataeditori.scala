@@ -1,6 +1,7 @@
 package gui
 
 import pelikomponentit._
+import siirrot.Koordinaatti
 import tietojenTallennus.Rata
 
 import scala.swing._
@@ -10,7 +11,7 @@ import scala.swing.Dialog
 
 //SUURIMMILTA OSILTAAN RAKENNETTU RUUDUKKO-LUOKAN POHJALTA. LUOKISSA ON TOISTEISUUTTA.
 
-class Rataeditori(rata: Rata) extends Panel {
+class Rataeditori(rata: Rata, menu: MaastoMenu) extends Panel {
   
   val ruudunKoko = 20
   val vaakaRuudut = rata.leveys
@@ -48,7 +49,8 @@ class Rataeditori(rata: Rata) extends Panel {
   listenTo(this.mouse.clicks)
     reactions += {
       case MouseClicked(ruudukko, sijainti, _, _, _) => {
-        
+        val koordinaatti = Koordinaatti(sijainti.x / ruudunKoko, sijainti.y  / ruudunKoko)
+        menu.valittu.foreach { valittu => rata.muutaMaasto(koordinaatti.y, koordinaatti.x, valittu) }
         repaint()
       }
     }

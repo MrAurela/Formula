@@ -110,42 +110,45 @@ object NappuloidenHallinta {
     contents += tasovalinta
   }
 
-  def rataeditoriValikko: MenuBar = new MenuBar {
+  def rataeditoriValikko(tallennus: Option[MenuItem]): MenuBar = new MenuBar {
     val yleisvalikko = new Menu("Menu") {
-      contents += new MenuItem(Action("Uusi rata"){NappuloidenHallinta.avaaUusi})
-      contents += new MenuItem(Action("Tallenna nykyinen"){???})
+      contents += new MenuItem(Action("Uusi rata"){NappuloidenHallinta.avaaUusi(maastoValikko)})
+      tallennus.foreach(menu => contents += menu)
       contents += new MenuItem(Action("Palaa päävalikkoon"){NappuloidenHallinta.palaaMenuun()})
     }
     val kopioiRata = new Menu("Kopio rata") {
       val menulista: Vector[MenuItem] = Peli.rataLista.map(rata => 
-        new MenuItem(Action(rata.nimi)(NappuloidenHallinta.avaaKopioRata(rata)) ) )
+        new MenuItem(Action(rata.nimi)(NappuloidenHallinta.avaaKopioRata(rata, maastoValikko)) ) )
       menulista.foreach(contents += _) //Lisätään kaikki profiilit menuun
     }
     val muokkaaRataa = new Menu("Muokkaa rataa") {
       val menulista: Vector[MenuItem] = Peli.rataLista.map(rata => 
-        new MenuItem(Action(rata.nimi)(NappuloidenHallinta.avaaRata(rata)) ) )
+        new MenuItem(Action(rata.nimi)(NappuloidenHallinta.avaaRata(rata, maastoValikko)) ) )
       menulista.foreach(contents += _) //Lisätään kaikki profiilit menuun
-
     }
+    val maastoValikko = new MaastoMenu("Lisää maasto")
     contents +=yleisvalikko
     contents += kopioiRata
     contents += muokkaaRataa
+    contents += maastoValikko
   }
   
-  def avaaKopioRata(rata: Rata): Unit = {
+  def avaaKopioRata(rata: Rata, menu: MaastoMenu): Unit = {
     val nimi = JOptionPane.showInputDialog("Valitse radan nimi:")
     val malli = """([a-zA-Z0-9]+)""".r
     if (nimi != null) {
       if (Peli.rataLista.map(_.nimi).contains(nimi)) {
         Dialog.showMessage(null, "Nimi "+nimi+ " on jo käytössä. Valitse toinen nimi.",
                            "Virhe rataa luodessa", Dialog.Message.Error)
-        avaaKopioRata(rata)
+        avaaKopioRata(rata, menu)
       } else {
         nimi match {
           case malli(nimi) => {
             val kopio = Rata.kopio(nimi, rata)
+            Ikkuna.paaIkkuna.menuBar =
+              NappuloidenHallinta.rataeditoriValikko(Some(new MenuItem(Action("Tallenna "+nimi)(NappuloidenHallinta.tallennaRata(rata)))))
             Peli.uusiRata(kopio)
-            Ikkuna.paaIkkuna.contents = Ikkuna.rataeditori(rata)
+            Ikkuna.paaIkkuna.contents = Ikkuna.rataeditori(rata, menu)
             Dialog.showMessage(null, "Uusi rata "+nimi+ " luotiin onnistuneesti.\n"+
                         "Voit nyt muokata rataa editorilla, mutta saatat joutua käynnistämään pelin uudestaan "+
                         "pystyäksesi pelaamaan sitä.","Uusi rata luotiin", Dialog.Message.Info)
@@ -153,31 +156,36 @@ object NappuloidenHallinta {
           case _ => {
             Dialog.showMessage(null, "Nimeä "+nimi+ " ei voida hyväksyä. Nimi saa sisältää vain aakkosia (a-z) ja numeroita.",
                            "Virhe rataa luodessa", Dialog.Message.Error)
-            avaaKopioRata(rata)
+            avaaKopioRata(rata, menu)
           }
         }
       }
     }
   }
   
-  def avaaRata(rata: Rata) = {
-    Ikkuna.paaIkkuna.contents = Ikkuna.rataeditori(rata)
+  def avaaRata(rata: Rata, menu: MaastoMenu) = {
+    Ikkuna.paaIkkuna.menuBar =
+              NappuloidenHallinta.rataeditoriValikko(Some(new MenuItem(Action("Tallenna "+rata.nimi)
+                  (NappuloidenHallinta.tallennaRata(rata)))))
+    Ikkuna.paaIkkuna.contents = Ikkuna.rataeditori(rata, menu)
   }
   
-  def avaaUusi(): Unit = {
+  def avaaUusi(menu: MaastoMenu): Unit = {
     val nimi = JOptionPane.showInputDialog("Valitse radan nimi:")
     val malli = """([a-zA-Z0-9]+)""".r
     if (nimi != null) {
       if (Peli.rataLista.map(_.nimi).contains(nimi)) {
         Dialog.showMessage(null, "Nimi "+nimi+ " on jo käytössä. Valitse toinen nimi.",
                            "Virhe rataa luodessa", Dialog.Message.Error)
-        avaaUusi()
+        avaaUusi(menu)
       } else {
         nimi match {
           case malli(nimi) => {
             val uusi = Rata.uusi(nimi, 32, 28)
             Peli.uusiRata(uusi)
-            Ikkuna.paaIkkuna.contents = Ikkuna.rataeditori(uusi)
+            Ikkuna.paaIkkuna.menuBar =
+              NappuloidenHallinta.rataeditoriValikko(Some(new MenuItem(Action("Tallenna "+nimi)(NappuloidenHallinta.tallennaRata(uusi)))))
+            Ikkuna.paaIkkuna.contents = Ikkuna.rataeditori(uusi, menu)
             Dialog.showMessage(null, "Uusi rata "+nimi+ " luotiin onnistuneesti.\n"+
                         "Voit nyt muokata rataa editorilla, mutta saatat joutua käynnistämään pelin uudestaan "+
                         "pystyäksesi pelaamaan sitä.","Uusi rata luotiin", Dialog.Message.Info)
@@ -185,11 +193,15 @@ object NappuloidenHallinta {
           case _ => {
             Dialog.showMessage(null, "Nimeä "+nimi+ " ei voida hyväksyä. Nimi saa sisältää vain aakkosia (a-z) ja numeroita.",
                            "Virhe rataa luodessa", Dialog.Message.Error)
-            avaaUusi()
+            avaaUusi(menu)
           }
         }
       }
     }
+  }
+  
+  def tallennaRata(rata: Rata) {
+    rata.paivita(Map())
   }
   
   def profiiliValikko: MenuBar= new MenuBar {
