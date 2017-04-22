@@ -22,7 +22,8 @@ object Peli {
     val lauta = new Pelilauta(rata)
     val tilanne = new Pelitilanne(lauta, pelaajat)
     
-    tilanne.pelilauta.alustaAutot(pelaajat.map(_.auto))
+    if (rata.onkoEhja) //Ei pitäisi olla ongelma tässä kohtaa, mutta tarkistetaan varmuuden vuoksi.
+      tilanne.pelilauta.alustaAutot(pelaajat.map(_.auto))
     
     this.pelitilanne = Some(tilanne)
     

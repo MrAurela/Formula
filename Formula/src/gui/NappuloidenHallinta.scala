@@ -53,7 +53,9 @@ object NappuloidenHallinta {
       Some("Rata pitää valita ennen pelin aloittamista.")
     } else if (profiili1.getOrElse(Profiili("eiOlemassa1")) == profiili2.getOrElse(Profiili("eiOlemassa2"))) { //Kaksi Nonea kelpaa.
       Some("Käytettävät profiilit eivät voi olla samat.")
-    } else { //Kunhan rata on määritelty ja profiilit erit
+    } else if (!rata.get.onkoEhja) {//rata on määritelty tässä vaiheessa.
+      Some("Valittu rata ei sisällä lähtöruutua kaikille pelaajille. Lisää lähtöruudut rataeditorilla.")
+    } else  { //Kunhan rata on määritelty ja profiilit erit
       val uusiPeli = Peli.uusiPeli(rata.get, Vector(profiili1, profiili2))
       if (profiili1.isDefined && profiili1.get.nimi == Peli.ai.nimi) uusiPeli.pelaajat(0).asetaAI(new AI(uusiPeli)) //Luodaan AI tarvittaessa
       else if (profiili2.isDefined && profiili2.get.nimi == Peli.ai.nimi) uusiPeli.pelaajat(1).asetaAI(new AI(uusiPeli))
@@ -115,8 +117,8 @@ object NappuloidenHallinta {
     val uusiRata = new Menu("Uusi rata") {
       contents += new MenuItem(Action("12 x 12"){NappuloidenHallinta.avaaUusi(12,12,maastoValikko)})
       contents += new MenuItem(Action("22 x 16"){NappuloidenHallinta.avaaUusi(22,16,maastoValikko)})
-      contents += new MenuItem(Action("28 x 20"){NappuloidenHallinta.avaaUusi(28,20,maastoValikko)})
       contents += new MenuItem(Action("24 x 24"){NappuloidenHallinta.avaaUusi(24,24,maastoValikko)})
+      contents += new MenuItem(Action("28 x 20"){NappuloidenHallinta.avaaUusi(28,20,maastoValikko)})
       contents += new MenuItem(Action("32 x 28"){NappuloidenHallinta.avaaUusi(32,28,maastoValikko)})
     }
     val kopioiRata = new Menu("Kopio rata") {
@@ -130,7 +132,8 @@ object NappuloidenHallinta {
       menulista.foreach(contents += _) //Lisätään kaikki profiilit menuun
     }
     val maastoValikko = new MaastoMenu("Lisää maasto")
-    contents +=yleisvalikko
+    contents += yleisvalikko
+    contents += uusiRata
     contents += kopioiRata
     contents += muokkaaRataa
     contents += maastoValikko

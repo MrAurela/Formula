@@ -37,6 +37,8 @@ class Rata(radanNimi: String, radanMuoto: Array[Array[Maasto]], ennatykset: Map[
     muoto(y)(x) = maasto
   }
   
+  def onkoEhja: Boolean = this.muoto.flatten.toList.count(_.onMaali) >= 2
+  
 }
 
 object Rata {
