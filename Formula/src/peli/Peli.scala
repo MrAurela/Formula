@@ -42,6 +42,12 @@ object Peli {
     tietojenTallennus.TiedostonHallinta.uusiRata(rata)
   }
   
+  def haeTiedotUudestaan() = {
+    println("MOI")
+    rataLista = TiedostonHallinta.haeRadat
+    profiiliLista = TiedostonHallinta.haeProfiilit
+  }
+  
 }
 
 

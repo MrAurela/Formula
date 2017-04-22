@@ -160,11 +160,17 @@ object Ikkuna extends SimpleSwingApplication {
   //(Ratojen tilastot)-----------------------------------------------------------------------------------------
   
   //Rataeditori------------------------------------------------------------------------------------------------
-  def rataeditori(rata: Rata, menu: MaastoMenu) = new GridBagPanel {
-    val c = new Constraints
-    c.insets = new Insets(50,50,50,50)
-    layout(new Rataeditori(rata, menu)) = c
+  def rataeditori(rata: Rata, menu: MaastoMenu) = new BoxPanel(Orientation.Vertical) {
+    val radanNimi = new Label{text="Muokattava rata: "+rata.nimi; font=new Font("Arial",0,40)}
+    val ruudukko = new GridBagPanel {
+      val c = new Constraints
+      layout(new Rataeditori(rata, menu)) = c
+    }
+    contents += radanNimi
+    contents += ruudukko
   }
+  
+  
   //(Rataeditori)----------------------------------------------------------------------------------------------
   
   val paaIkkuna = new MainFrame {
@@ -195,7 +201,7 @@ object Ikkuna extends SimpleSwingApplication {
       this.vaihdaIkkunanSisalto(new GridBagPanel)
     }
     def vaihdaIkkunanSisaltoRataeditoriin() = {
-      this.menuBar = NappuloidenHallinta.rataeditoriValikko(None)
+      this.menuBar = NappuloidenHallinta.rataeditoriValikko
       this.vaihdaIkkunanSisalto(new GridBagPanel)
     }
     

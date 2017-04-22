@@ -51,6 +51,7 @@ class Rataeditori(rata: Rata, menu: MaastoMenu) extends Panel {
       case MouseClicked(ruudukko, sijainti, _, _, _) => {
         val koordinaatti = Koordinaatti(sijainti.x / ruudunKoko, sijainti.y  / ruudunKoko)
         menu.valittu.foreach { valittu => rata.muutaMaasto(koordinaatti.y, koordinaatti.x, valittu) }
+        rata.paivita(Map())
         repaint()
       }
     }
