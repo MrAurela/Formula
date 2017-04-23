@@ -15,23 +15,27 @@ class AI(pelitilanne_ : Pelitilanne) {
     val itse = kuviteltuTilanne.vuorossa
     val sijainti = kuviteltuTilanne.pelilauta.etsiAuto(itse.auto)
     
-    def etsiParasSiirtoSarja(pelitilanne: Pelitilanne, siirrot: List[Siirto]): (List[Siirto], Double) = {
+    def etsiParasSiirtoSarja(pelitilanne: Pelitilanne, siirrot: List[Siirto], paras: (List[Siirto],Int)): (List[Siirto], Double) = {
       try {
+        var parasVaihtoehto = paras
+        
         val vuorossa = pelitilanne.vuorossa
         println(pelitilanne.kaikkiSallitutSiirrot(vuorossa.auto))
-        if (vuorossa == itse) println(pelitilanne.pelilauta.etsiAuto(itse.auto))
         
-        pelitilanne.kaikkiSallitutSiirrot(vuorossa.auto).reverse.foreach{ siirto: Siirto => 
-          pelitilanne.siirraAutoa(siirto.kohdeKoordinaatti)
+        pelitilanne.kaikkiSallitutSiirrot(vuorossa.auto).foreach{ siirto: Siirto =>
+          if (siirto.vaihde > vuorossa.auto.vaihde) vuorossa.auto.nostaVaihdetta() //Vaihdetaan siirrolle sopiva vaihde
+          else if (siirto.vaihde < vuorossa.auto.vaihde) vuorossa.auto.laskeVaihdetta()
+          
+          pelitilanne.siirraAutoa(siirto.kohdeKoordinaatti) //siirretään autoa
+          
           val arvostelu = arvosteleTilanne(pelitilanne, siirrot) //Tarkistetaan onko jompikumpi voittanut
           if (arvostelu == 1.0 && vuorossa == itse) {
-            //("Pisteet: "+arvostelu)
+            println("Uskoo voittavansa.")
             return (siirrot ++ List(siirto), arvostelu) //Jos löydetään voitto, tyydytään siihen.
-          } else if (arvostelu == -1.0 && vuorossa != itse) {
-            //println("Pisteet: "+arvostelu)
-            return (siirrot ++ List(siirto), arvostelu) //Jos vastustaja löytää voiton, hän tyytyy siihen.
+          } else if (arvostelu == -1.0 && vuorossa == itse) {
+            println("Löysi huonon tilanteen")
           } else if (Math.abs(arvostelu) != 1.0) //Jos siirto ei ole varmasti huono, etsitään syvemmältä
-              etsiParasSiirtoSarja(pelitilanne, siirrot ++ List(siirto))
+              return etsiParasSiirtoSarja(pelitilanne, siirrot ++ List(siirto), paras)
           pelitilanne.peruSiirto() //Otetaan äskeinen siirto takaisin.
         }
         
@@ -57,7 +61,7 @@ class AI(pelitilanne_ : Pelitilanne) {
       else 0.0
     }
     
-    val siirrotJaArvo = etsiParasSiirtoSarja(kuviteltuTilanne, List[Siirto]())
+    val siirrotJaArvo = etsiParasSiirtoSarja(kuviteltuTilanne, List[Siirto](), (List[Siirto](),0))
     
     if (siirrotJaArvo._1.size > 0) {
       //println("VALITTIIN "+siirrotJaArvo)
