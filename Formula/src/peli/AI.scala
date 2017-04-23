@@ -3,6 +3,9 @@ package peli
 import siirrot._
 import java.lang.StackOverflowError
 import pelikomponentit.Auto
+import scala.collection.mutable.Buffer
+
+// min-funktion Ordering: http://www.scala-lang.org/old/node/7529
 
 class AI(pelitilanne_ : Pelitilanne) {
   
@@ -10,66 +13,100 @@ class AI(pelitilanne_ : Pelitilanne) {
   
   //TEKOÄLY VALITSEE AINA ENSIMMÄISEN SIIRTOVAIHTOEHDON? MIKSEI LÖYDÄ PAREMPAA
   
-  def siirto: Koordinaatti = {
+  def siirto(): Koordinaatti = {
     var kuviteltuTilanne = Pelitilanne.kuvitteellinen(this)
     val itse = kuviteltuTilanne.vuorossa
     val sijainti = kuviteltuTilanne.pelilauta.etsiAuto(itse.auto)
     
-    def etsiParasSiirtoSarja(pelitilanne: Pelitilanne, siirrot: List[Siirto], paras: (List[Siirto],Int)): (List[Siirto], Double) = {
+    println(sijainti)
+    
+    def etsiParasSiirtoSarja(pelitilanne: Pelitilanne, siirrot: List[Siirto]): (List[Siirto], Int) = {
       try {
-        var parasVaihtoehto = paras
-        
-        val vuorossa = pelitilanne.vuorossa
-        println(pelitilanne.kaikkiSallitutSiirrot(vuorossa.auto))
-        
-        pelitilanne.kaikkiSallitutSiirrot(vuorossa.auto).foreach{ siirto: Siirto =>
-          if (siirto.vaihde > vuorossa.auto.vaihde) vuorossa.auto.nostaVaihdetta() //Vaihdetaan siirrolle sopiva vaihde
-          else if (siirto.vaihde < vuorossa.auto.vaihde) vuorossa.auto.laskeVaihdetta()
+        if (siirrot.size <= 5 ) {
+          val vuorossa = pelitilanne.vuorossa
+          //println(pelitilanne.kaikkiSallitutSiirrot(vuorossa.auto))
           
-          pelitilanne.siirraAutoa(siirto.kohdeKoordinaatti) //siirretään autoa
+          var vaihtoehdot = Buffer[(List[Siirto],Int)]()
           
-          val arvostelu = arvosteleTilanne(pelitilanne, siirrot) //Tarkistetaan onko jompikumpi voittanut
-          if (arvostelu == 1.0 && vuorossa == itse) {
-            println("Uskoo voittavansa.")
-            return (siirrot ++ List(siirto), arvostelu) //Jos löydetään voitto, tyydytään siihen.
-          } else if (arvostelu == -1.0 && vuorossa == itse) {
-            println("Löysi huonon tilanteen")
-          } else if (Math.abs(arvostelu) != 1.0) //Jos siirto ei ole varmasti huono, etsitään syvemmältä
-              return etsiParasSiirtoSarja(pelitilanne, siirrot ++ List(siirto), paras)
-          pelitilanne.peruSiirto() //Otetaan äskeinen siirto takaisin.
-        }
-        
-        //Jos tullaan tänne, yhtään voittoa ei löytynyt.
-        (siirrot, -1.0)
+          pelitilanne.kaikkiSallitutSiirrot(vuorossa.auto).foreach{ siirto: Siirto =>
+            if (siirto.vaihde > vuorossa.auto.vaihde) vuorossa.auto.nostaVaihdetta() //Vaihdetaan siirrolle sopiva vaihde
+            else if (siirto.vaihde < vuorossa.auto.vaihde) vuorossa.auto.laskeVaihdetta()
+            
+            pelitilanne.siirraAutoa(siirto.kohdeKoordinaatti) //siirretään autoa
+            
+            val arvostelu = arvosteleTilanne(pelitilanne, siirrot) //Tarkistetaan onko jompikumpi voittanut
+
+            if (arvostelu != 0) vaihtoehdot.append( (siirrot ++ List(siirto), arvostelu) ) //Jos on, palautetaan siirrot ja arvo
+            else {
+              val v = etsiParasSiirtoSarja(pelitilanne, siirrot ++ List(siirto)) //Muutoin etsitään paras jatko ja palautetaan se
+              //println(v)
+              vaihtoehdot.append( v )
+            }
+            
+            pelitilanne.peruSiirto() //Otetaan äskeinen siirto takaisin.
+          }
+          
+          //Palautetaan AI:n kannalta paras siirto, jos on AI:n vuoro ja vastustajan kannalta paras siirto (AI:lle huonoin),
+          //jos on vastustajan vuoro
+          if (vuorossa == itse) valitseParas(vaihtoehdot)
+          else valitseHuonoin(vaihtoehdot)
+      
+      } else {
+        (siirrot, 0) //Jos laskua jatketaan liian pitkälle, reitin arvo on 0
+      }
         
       } catch {
-        case e: StackOverflowError => (siirrot, 0)
-      }
-    
-    }
-    //Palautetaan 1.0 jos tietokone on voittanut aseman ja -1.0 jos pelaaja on voittanut aseman. 0 jos peli on kesken.
-    def arvosteleTilanne(pelitilanne: Pelitilanne, siirrot: List[Siirto]): Double = {
-      val mahdollinenVoittaja = pelitilanne.tarkistaVoitto._1
-      //println("Arvostellaan tilanne: "+pelitilanne.tarkistaVoitto._2)
-      if (mahdollinenVoittaja.isDefined) {
-        if (mahdollinenVoittaja.get == itse) 1.0
-        else {
-          -1.0
+        case e: StackOverflowError => {
+          println(e)
+          (siirrot, 0) //Jos laskua ei jakseta laskea loppuun, reitin arvo on 0
         }
+        case _: Throwable => (siirrot, 0) //Samoin jos jokin muu virhe sattuu.
       }
-      else if (itse.auto.kierrokset <= -1) -1.0 //Tekoäly ei halua miinuskierroksille
-      else 0.0
+    
     }
     
-    val siirrotJaArvo = etsiParasSiirtoSarja(kuviteltuTilanne, List[Siirto](), (List[Siirto](),0))
-    
-    if (siirrotJaArvo._1.size > 0) {
-      //println("VALITTIIN "+siirrotJaArvo)
-      siirrotJaArvo._1(0).kohdeKoordinaatti
-    } else {
-      pelitilanne.sallitutSiirrot(0).kohdeKoordinaatti //Jos paremapaa ei löydetty, otetaan ensimmäinen siirto
+    //Jos pelaaja on voittamassa, palautetaan positiivinen luku, kuinka monta kierrosta voittoon menee
+    //Jos pelaaja on häviämässä, palautetaan negatiivinen luku, kuinka monta kierrosta häviämiseen menee
+    //Muutoin 0.
+    def arvosteleTilanne(pelitilanne: Pelitilanne, siirrot: List[Siirto]): Int = {
+      val mahdollinenVoittaja = pelitilanne.tarkistaVoitto._1
+      if (mahdollinenVoittaja.isDefined) {
+        if (mahdollinenVoittaja.get == itse) siirrot.size
+        else -siirrot.size
+      }
+      //else if (itse.auto.kierrokset <= -1) -1.0 //Tekoäly ei halua miinuskierroksille
+      else 0
     }
-    //itse.auto.sallitutSuunnat(1).muutaSiirroksi(sijainti).kohdeKoordinaatti
+    
+    def valitseParas(lista: Buffer[(List[Siirto],Int)]): (List[Siirto],Int) = {
+      require(lista.size > 0)
+      val positiiviset = lista.filter(_._2 > 0)
+      val neutraalit = lista.filter(_._2 == 0)
+      val negatiiviset = lista.filter(_._2 < 0)
+      if (positiiviset.size > 0) positiiviset.min(Ordering.by{pari: (List[Siirto],Int) => pari._2}) //Pienin siirtomäärä on paras voitto
+      else if (neutraalit.size > 0) neutraalit.max(Ordering.by{pari: (List[Siirto],Int) => pari._1(0).vaihde})
+      else negatiiviset.min(Ordering.by{pari: (List[Siirto],Int) => pari._2}) //Itseisarvoiltaan suurin -> pisin häviö, on paras.
+    }
+    
+    def valitseHuonoin(lista: Buffer[(List[Siirto],Int)]): (List[Siirto],Int) = {
+      require(lista.size > 0)
+      val positiiviset = lista.filter(_._2 > 0)
+      val neutraalit = lista.filter(_._2 == 0)
+      val negatiiviset = lista.filter(_._2 < 0)
+      if (negatiiviset.size > 0) negatiiviset.max(Ordering.by{pari: (List[Siirto],Int) => pari._2}) //Nopein häviö on huonoin
+      else if (neutraalit.size > 0) neutraalit.max(Ordering.by{pari: (List[Siirto],Int) => pari._1(0).vaihde})
+      else positiiviset.max(Ordering.by{pari: (List[Siirto],Int) => pari._2}) //Hitain voitto on huonoin.
+    }
+
+    val parasSiirtoSarja = etsiParasSiirtoSarja(kuviteltuTilanne, List[Siirto]())
+    val siirto = parasSiirtoSarja._1(0)
+    println("Siirretään ruutuun: "+parasSiirtoSarja._1(0)+", laatu: "+parasSiirtoSarja._2)
+    
+    if (siirto.vaihde > pelitilanne.vuorossa.auto.vaihde) pelitilanne.vuorossa.auto.nostaVaihdetta() //Vaihdetaan siirrolle sopiva vaihde
+    else if (siirto.vaihde < pelitilanne.vuorossa.auto.vaihde) pelitilanne.vuorossa.auto.laskeVaihdetta()
+    println("Siirto: "+siirto+", siirron vaihde: "+siirto.vaihde)
+    siirto.kohdeKoordinaatti //Palautetaan kohderuutu
+
   }
   /*
   //Hakee eri vaihteilla kaikki ruudut, joista voi siirtyä maaliin.

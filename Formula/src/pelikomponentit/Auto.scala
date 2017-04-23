@@ -54,13 +54,9 @@ class Auto() {
   
   def vaihdettaVoiLaskea = vaihde >= vaihdeVuoronAlussa && vaihde > 1 && tehdytSiirrot > 0
   
-  def nostaVaihdetta() = {
-    if (vaihdettaVoiNostaa) vaihde += 1
-  }
+  def nostaVaihdetta() = if (vaihdettaVoiNostaa) vaihde += 1
   
-  def laskeVaihdetta() = {
-    if (vaihdettaVoiLaskea) vaihde -= 1
-  }
+  def laskeVaihdetta() = if (vaihdettaVoiLaskea) vaihde -= 1
   
   def merkitseSiirto(lahto: Koordinaatti, kohde: Koordinaatti) {
     this.siirtoLista.append(new Siirto(lahto, kohde))
