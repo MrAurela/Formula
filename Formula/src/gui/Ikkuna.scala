@@ -90,9 +90,9 @@ object Ikkuna extends SimpleSwingApplication {
       preferredSize = new Dimension(200,200)
       text = "Uusi peli" 
     }
-    val lopetaPeli = new Button {
+    val ohjeet = new Button {
       preferredSize = new Dimension(200,200)
-      text = "Lopeta" 
+      text = "Ohjeet"
     }
     val rataeditori = new Button {
       preferredSize = new Dimension(200,200)
@@ -117,7 +117,7 @@ object Ikkuna extends SimpleSwingApplication {
     layout(rataeditori) = c
     c.gridx = 1 //Lopeta-nappul
     c.gridy = 1
-    layout(lopetaPeli) = c
+    layout(ohjeet) = c
   }
   //(menu)---------------------------------------------------------------------------------------------
   
@@ -173,6 +173,37 @@ object Ikkuna extends SimpleSwingApplication {
   
   //(Rataeditori)----------------------------------------------------------------------------------------------
   
+  //Ohjeet-----------------------------------------------------------------------------------------------------
+  val ohjeet = new GridBagPanel {
+    val c = new Constraints
+    val teksti = new TextArea(20,50) {
+      font = new Font("Arial",0,20)
+      text = "Pelin tarkoitus on kiertää lauta vastustajan autoa (kuvataan ympyrällä) nopeammin. Pelaaja joka ylittää "+
+             "maaliviivan ensimmäisenä voittaa pelin. " +
+             "Jos pelaajat ylittävät viivan samalla kierroksella, voittaa toisena pelaava. Pelin voi myös hävitä, jos pelaajalla ei "+
+             "ole enää mahdollisuutta tehdä laillista siirtoa.\n\n" +
+             "Pelaaja voi halutessaan nostaa tai laskea vaihdetta yhdellä jokaisella vuorollaan ja sitten valita vaihteen mukaisista " +
+             "kolmesta vaihtoehdosta siirtonsa. Siirtovaihtoehdot määräytyvät sen suunnan mukaan, johon autolla edellisellä siirrolla " +
+             "ajettiin. Mahdolliset siirrot ovat merkitty isoilla neliöillä.\n\n" +
+             "Siirtovaihtoehtoja saattavat rajoittaa eri maastot joita pelissä esiintyy. Kaksi tavallisinta maastotyyppia ovat normaali "+
+             "TIE (valkoinen) ja radan REUNA (musta). Tie ei rajoita ajamista mitenkään, mutta reunan yli taas ei saa ajaa. "+
+             "Muita maastotyyppijä ovat:\n\n"+
+             "HIEKKA (keltainen): estää siinä ajavaa autoa nostamasta vaihdetta.\n"+
+             "SYVÄ HIEKKA (ruskea): pakottaa pienentämään vaihdetta. Jos auton vaihde laskee nollaan, pelaaja häviää.\n"+
+             "JÄÄ (vaaleansininen): jään yli ajavan siirron on pakko olla suuremmalla vaihteella kuin edellinen siirto tai "+
+             "samalla vaihteella ja samaan suuntaan kuin edellinnen siirto.\n" +
+             "ÖLJY (tumman lila): öljyn yli ajava siirto ei voi olla samaan suuntaan kuin edellinen siirto.\n"+
+             "MAALI (harmaa): maaleja on neljää eri tyyppiä, vaikka se ei väristä näykään. Maalin tyyppi ratkaisee sen " +
+             "mihin suuntaan maalin läpi pitää ajaa eli kierretäänkö rataa myötä vai vastapäivään ja onko maaliviiva pysty- vai vaakasuora."
+      wordWrap = true
+      lineWrap = true
+      editable = false
+      opaque = false
+    }
+    layout(teksti) = c
+  }
+  //(ohjeet)---------------------------------------------------------------------------------------------------
+  
   val paaIkkuna = new MainFrame {
     title = "Formula"
     preferredSize = new Dimension(leveys, korkeus)
@@ -204,13 +235,17 @@ object Ikkuna extends SimpleSwingApplication {
       this.menuBar = NappuloidenHallinta.rataeditoriValikko
       this.vaihdaIkkunanSisalto(new GridBagPanel)
     }
+    def vaihdaIkkunanSisaltoOhjeisiin() = {
+      this.menuBar = NappuloidenHallinta.ohjeetValikko
+      this.vaihdaIkkunanSisalto(ohjeet)
+    }
     
     //Tarvitaan vain jos käytetään näppäimistöä
     //gameScreen.requestFocus
     
     listenTo(vaihteenVaihto.vaihdeYlos, vaihteenVaihto.vaihdeAlas,
              peruSiirto, palaaMenuun,
-             menu.uusiPeli, menu.profiilit, menu.rataeditori, menu.lopetaPeli)
+             menu.uusiPeli, menu.profiilit, menu.rataeditori, menu.ohjeet)
     reactions += {
       case ButtonClicked(nappula) => {
         if (nappula == vaihteenVaihto.vaihdeYlos) NappuloidenHallinta.nostaVaihdetta()
@@ -220,7 +255,7 @@ object Ikkuna extends SimpleSwingApplication {
         else if (nappula == menu.uusiPeli) this.vaihdaIkkunanSisaltoPeliin()
         else if (nappula == menu.profiilit) this.vaihdaIkkunanSisaltoProfiilienHallintaan()
         else if (nappula == menu.rataeditori) this.vaihdaIkkunanSisaltoRataeditoriin()
-        else if (nappula == menu.lopetaPeli) this.dispose()
+        else if (nappula == menu.ohjeet) this.vaihdaIkkunanSisaltoOhjeisiin()
         NappuloidenHallinta.paivita() //Nappuloiden painamisen jälkeen päivitetään nappuoiden tekstit (oleellista lähinnä pelin aikana)
         this.repaint() // ja repaintataan ruutu
       }

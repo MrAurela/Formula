@@ -262,6 +262,12 @@ object NappuloidenHallinta {
   def palaaMenuun() {
     Ikkuna.paaIkkuna.vaihdaIkkunanSisaltoMenuun()
   }
+  
+  def ohjeetValikko = new MenuBar {
+    contents += new Menu("Menu") {
+      contents += new MenuItem(Action("Palaa päävalikkoon"){NappuloidenHallinta.palaaMenuun()})
+    }
+  }
 
   def tallenaPelinTiedot(pelitilanne: Pelitilanne) = {
     val voittaja = pelitilanne.tarkistaVoitto._1

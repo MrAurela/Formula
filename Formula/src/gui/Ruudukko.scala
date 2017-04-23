@@ -41,7 +41,7 @@ class Ruudukko(pelitilanne: Pelitilanne) extends Panel {
   private def piirraMaastot(g: Graphics2D) = { //Piirtää maastoruudut eri väreillä
     val ruudut = pelitilanne.pelilauta.ruudut
     for (vaaka <- 0 until vaakaRuudut; pysty <- 0 until pystyRuudut) {
-      ruudut(pysty)(vaaka).maasto match { //Valitaan maaston väri
+      ruudut(pysty)(vaaka).maasto match { //Valitaan maaston väri. Kaikki vaihtoehdot käyty läpi!
         case Jaa => g.setColor(Color.CYAN)
         case Hiekka => g.setColor(new Color(232,255,56)) // 232,255,56 => keltainen
         case SyvaHiekka => g.setColor(new Color(175,55,4)) // 175,55,4 => ruskea
