@@ -240,9 +240,6 @@ object Ikkuna extends SimpleSwingApplication {
       this.vaihdaIkkunanSisalto(ohjeet)
     }
     
-    //Tarvitaan vain jos käytetään näppäimistöä
-    //gameScreen.requestFocus
-    
     listenTo(vaihteenVaihto.vaihdeYlos, vaihteenVaihto.vaihdeAlas,
              peruSiirto, palaaMenuun,
              menu.uusiPeli, menu.profiilit, menu.rataeditori, menu.ohjeet)

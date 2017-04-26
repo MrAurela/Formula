@@ -11,6 +11,7 @@ import javax.swing.JOptionPane
 
 object NappuloidenHallinta {
   
+  //Peli-ikkuna-----------------------------------------------------------------------------------------------------------
   val vaihdeYlos = Ikkuna.vaihteenVaihto.vaihdeYlos
   val vaihdeAlas = Ikkuna.vaihteenVaihto.vaihdeAlas
   val peruSiirto = Ikkuna.peruSiirto
@@ -18,6 +19,14 @@ object NappuloidenHallinta {
   def nostaVaihdetta() = Peli.pelitilanne.get.vuorossa.auto.nostaVaihdetta()
   
   def laskeVaihdetta() = Peli.pelitilanne.get.vuorossa.auto.laskeVaihdetta()
+  
+  //Tekee siirron ja palauttaa tiedon siitä, jatkuuko peli edelleen.
+  def teeSiirto(koordinaatti: Koordinaatti) = {
+    val pelitilanne = Peli.pelitilanne
+    if (pelitilanne.isDefined) { //Funktiota kutsutaan vain kun pelitilanne on määritelty. Varmuuden vuoksi tarkistetaan asia.
+      pelitilanne.get.siirraAutoa(koordinaatti)
+    }
+  }
   
   def peruEdellinenSiirto() = {
     val tilanne = Peli.pelitilanne
@@ -29,47 +38,17 @@ object NappuloidenHallinta {
     }
   }
   
-  def paivita() = {
-    paivitaNappulat()
-    paivitaVaihde()
-    paivitaVuorossa()
-  }
-  
-  //Tekee siirron ja palauttaa tiedon siitä, jatkuuko peli edelleen.
-  def teeSiirto(koordinaatti: Koordinaatti) = {
-    val pelitilanne = Peli.pelitilanne
-    if (pelitilanne.isDefined) { //Funktiota kutsutaan vain kun pelitilanne on määritelty. Varmuuden vuoksi tarkistetaan asia.
-      pelitilanne.get.siirraAutoa(koordinaatti)
-    }
-  }
-  
-  //Aloittaa uuden pelin, jos asetukset ovat sallitut. Palauttaa virheilmoituksen Option-kääreessä.
-  def uusiPeli(): Option[String] = {
-    val valikko = this.paaValikko
-    val rata = valikko.tasovalinta.valittu
-    val profiili1 = valikko.pelaaja1.valittu
-    val profiili2 = valikko.pelaaja2.valittu
-    if ( !rata.isDefined) { //Ei pitäisi tapahtua, mutta varmuuden vuoksi tässä.
-      Some("Rata pitää valita ennen pelin aloittamista.")
-    } else if (profiili1.getOrElse(Profiili("eiOlemassa1")) == profiili2.getOrElse(Profiili("eiOlemassa2"))) { //Kaksi Nonea kelpaa.
-      Some("Käytettävät profiilit eivät voi olla samat.")
-    } else if (!rata.get.onkoEhja) {//rata on määritelty tässä vaiheessa.
-      Some("Valittu rata ei sisällä lähtöruutua kaikille pelaajille. Lisää lähtöruudut rataeditorilla.")
-    } else  { //Kunhan rata on määritelty ja profiilit erit
-      val uusiPeli = Peli.uusiPeli(rata.get, Vector(profiili1, profiili2))
-      if (profiili1.isDefined && profiili1.get.nimi == Peli.ai.nimi) uusiPeli.pelaajat(0).asetaAI(new AI(uusiPeli)) //Luodaan AI tarvittaessa
-      else if (profiili2.isDefined && profiili2.get.nimi == Peli.ai.nimi) uusiPeli.pelaajat(1).asetaAI(new AI(uusiPeli))
-      Ikkuna.paaIkkuna.vaihdaIkkunanSisalto(Ikkuna.peliIkkuna(uusiPeli))
-      None
-    }
-  }
-  
   def lopetaPeli() {
     val vastaus = Dialog.showConfirmation(null, "Pelin tiedot menetetään, jos se keskeytetään. \n Oletko varma, että haluat lopettaa?",
                                           "Varoitus", Dialog.Options.YesNo, Dialog.Message.Warning)
     if (vastaus == Dialog.Result.Yes) Ikkuna.paaIkkuna.vaihdaIkkunanSisaltoMenuun()
   }
   
+  def paivita() = {
+    paivitaNappulat()
+    paivitaVaihde()
+    paivitaVuorossa()
+  }
   
   private def paivitaNappulat() {
     if (Peli.pelitilanne.isDefined) { // Päivitys on tarpeellinen vain jos peli on käynnissä.
@@ -100,7 +79,10 @@ object NappuloidenHallinta {
       if (Ikkuna.oikeaPuoli.vari.text == Ikkuna.oikeaPuoli.pelaaja.text) Ikkuna.oikeaPuoli.pelaaja.text = ""
     }
   }
+  //(peli-ikkuna)-----------------------------------------------------------------------------------------------------------
   
+  
+  //Päävalikko------------------------------------------------------------------------------------------------------------
   val paaValikko = new MenuBar {
     val pelaaja1 = new PelaajaMenu("Pelaaja1: Sininen")
     val pelaaja2 = new PelaajaMenu("Pelaaja2: Punainen")
@@ -109,8 +91,48 @@ object NappuloidenHallinta {
     contents += pelaaja2
     contents += tasovalinta
   }
+  
+  //Aloittaa uuden pelin, jos asetukset ovat sallitut. Palauttaa virheilmoituksen Option-kääreessä.
+  def uusiPeli(): Option[String] = {
+    val valikko = this.paaValikko
+    val rata = valikko.tasovalinta.valittu
+    val profiili1 = valikko.pelaaja1.valittu
+    val profiili2 = valikko.pelaaja2.valittu
+    if ( !rata.isDefined) { //Ei pitäisi tapahtua, mutta varmuuden vuoksi tässä.
+      Some("Rata pitää valita ennen pelin aloittamista.")
+    } else if (profiili1.getOrElse(Profiili("eiOlemassa1")) == profiili2.getOrElse(Profiili("eiOlemassa2"))) { //Kaksi Nonea kelpaa.
+      Some("Käytettävät profiilit eivät voi olla samat.")
+    } else if (!rata.get.onkoEhja) {//rata on määritelty tässä vaiheessa.
+      Some("Valittu rata ei sisällä lähtöruutua kaikille pelaajille. Lisää lähtöruudut rataeditorilla.")
+    } else  { //Kunhan rata on määritelty ja profiilit erit
+      val uusiPeli = Peli.uusiPeli(rata.get, Vector(profiili1, profiili2))
+      if (profiili1.isDefined && profiili1.get.nimi == Peli.ai.nimi) uusiPeli.pelaajat(0).asetaAI(new AI(uusiPeli)) //Luodaan AI tarvittaessa
+      else if (profiili2.isDefined && profiili2.get.nimi == Peli.ai.nimi) uusiPeli.pelaajat(1).asetaAI(new AI(uusiPeli))
+      Ikkuna.paaIkkuna.vaihdaIkkunanSisalto(Ikkuna.peliIkkuna(uusiPeli))
+      None
+    }
+  }
+  
+  def tallenaPelinTiedot(pelitilanne: Pelitilanne) = {
+    val voittaja = pelitilanne.tarkistaVoitto._1
+    val selitys = pelitilanne.tarkistaVoitto._2
+    var kierrosajat = Map[String, Option[Int]]()
+    if (voittaja.isDefined) { //Jos peli on päättynyt
+      pelitilanne.pelaajat.foreach { pelaaja => 
+        pelaaja.profiili.foreach{ profiili => if (profiili.nimi != Peli.ai.nimi) { //Jos profiili != Non ja != AI
+          val voitti = pelaaja == voittaja.get
+          val siirrot = if (pelitilanne.onkoMaalissa(pelaaja)) Some(pelaaja.auto.tehdytSiirrot) else None
+          profiili.paivita(voitti, pelitilanne.pelilauta.nimi, siirrot)
+          kierrosajat += (profiili.nimi -> siirrot)
+        }}
+      }
+      pelitilanne.pelilauta.rata.paivita(kierrosajat)
+    }
+  }
+  //(päävalikko)-----------------------------------------------------------------------------------------------------------------------
 
-  def rataeditoriValikko: MenuBar = new MenuBar {
+  //Rataeditori------------------------------------------------------------------------------------------------------------------------
+def rataeditoriValikko: MenuBar = new MenuBar {
     val yleisvalikko = new Menu("Menu") {
       contents += new MenuItem(Action("Palaa päävalikkoon"){NappuloidenHallinta.palaaMenuun()})
     }
@@ -202,7 +224,10 @@ object NappuloidenHallinta {
       }
     }
   }
+  //(Rataeditori)-----------------------------------------------------------------------------------------------------------------------
   
+  
+  //Profiilit ja radat-----------------------------------------------------------------------------------------------------------------
   def profiiliValikko: MenuBar= new MenuBar {
     contents += new Menu("Menu") {
       contents += new MenuItem(Action("Uusi profiili"){NappuloidenHallinta.luoUusiProfiili()})
@@ -257,34 +282,19 @@ object NappuloidenHallinta {
     }
   }
   
-  //Tämän funktion ainut tarkoitus on kiertää rekursiivinen viittaus, joka olisi syntynyt, jos 
-  //profiilivalikossa olisi kutsuttu alla olevaa metodia.
+  //Tämän funktion ainut tarkoitus on kiertää rekursiivinen viittaus, joka syntyi, kun profiilivalikossa kutsuttiin tätä metodia.
   def palaaMenuun() {
     Ikkuna.paaIkkuna.vaihdaIkkunanSisaltoMenuun()
   }
+  //(profiilit ja radat)--------------------------------------------------------------------------------------------------------------
   
+  //Ohjeet---------------------------------------------------------------------------------------------
   def ohjeetValikko = new MenuBar {
     contents += new Menu("Menu") {
       contents += new MenuItem(Action("Palaa päävalikkoon"){NappuloidenHallinta.palaaMenuun()})
     }
   }
-
-  def tallenaPelinTiedot(pelitilanne: Pelitilanne) = {
-    val voittaja = pelitilanne.tarkistaVoitto._1
-    val selitys = pelitilanne.tarkistaVoitto._2
-    var kierrosajat = Map[String, Option[Int]]()
-    if (voittaja.isDefined) { //Jos peli on päättynyt
-      pelitilanne.pelaajat.foreach { pelaaja => 
-        pelaaja.profiili.foreach{ profiili => if (profiili.nimi != Peli.ai.nimi) { //Jos profiili != Non ja != AI
-          val voitti = pelaaja == voittaja.get
-          val siirrot = if (pelitilanne.onkoMaalissa(pelaaja)) Some(pelaaja.auto.tehdytSiirrot) else None
-          profiili.paivita(voitti, pelitilanne.pelilauta.nimi, siirrot)
-          kierrosajat += (profiili.nimi -> siirrot)
-        }}
-      }
-      pelitilanne.pelilauta.rata.paivita(kierrosajat)
-    }
-  }
+  //(ohjeet)--------------------------------------------------------------------------------------------
   
   
 }

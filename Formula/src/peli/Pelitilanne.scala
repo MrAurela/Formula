@@ -20,10 +20,8 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
   def eiVuorossa = if (this.vuorossa == pelaajat(0)) pelaajat(1) else pelaajat(0)
   
   def siirraAutoa(kohde: Koordinaatti): Unit = {
-    val teksti = "Siirto epäonnistui! Vaihde: "+vuorossa.auto.vaihde.toString()+", siirron vaihde: "+new Siirto(pelilauta.etsiAuto(vuorossa.auto),kohde).vaihde
     val siirtoOnnistui = this.pelilauta.siirraAutoaLaillisesti(vuorossa.auto, kohde) //Siirtää autoa, jos siirto on laillinen
     if (siirtoOnnistui) vaihdaVuoroa()
-    else println(teksti)
   }
   
   def peruSiirto(): Unit = {
@@ -45,8 +43,6 @@ class Pelitilanne(lauta: Pelilauta, pelaajaLista: Vector[Pelaaja]) {
   def kaikkiSallitutSiirrot(auto: Auto) = pelilauta.sallitutSiirrot(auto, false) //False => sallittujen vaihteiden kaikki siirrot
   
   def tarkistaVoitto: (Option[Pelaaja], String) =  {
-    //println("Tarkistetaan voittoa. KONE: "+pelaajat(0).auto.kierrokset+", PELAAJA: "+pelaajat(1).auto.kierrokset)
-    //println("KONE: "+pelaajat(0).auto.siirrot.size+", PELAAJA: "+pelaajat(1).auto.siirrot.size)
     if (pelaajat(0).auto.tehdytSiirrot == pelaajat(1).auto.tehdytSiirrot) { //Maaliin pääsemisesssä annetaan "tasoittava vuoro"
       if (this.onkoMaalissa(pelaajat(1)) && this.onkoMaalissa(pelaajat(0))) return (Some(pelaajat(1)), "Molemmat pelaajat kiersivät radan.")
       else if (this.onkoMaalissa(pelaajat(1))) return (Some(pelaajat(1)), "Punainen kiersi radan.") //Tasatilanteessa voittaa toisena siirtävä pelaaja.
@@ -92,11 +88,7 @@ object Pelitilanne {
     uusi.ruudut(lahtoAuto2.y)(lahtoAuto2.x).lisaaAuto(auto2)
     auto1.asetaAloitusSuunta(ai.pelitilanne.pelilauta.ruudut(lahtoAuto1.y)(lahtoAuto1.x).maasto) //Asetetaan autojen lähtösuunnat
     auto2.asetaAloitusSuunta(ai.pelitilanne.pelilauta.ruudut(lahtoAuto2.y)(lahtoAuto2.x).maasto)
-    
-    /*vanhaAuto1.siirrot.foreach{siirto => uusi.siirraAutoaLaillisesti(auto1, siirto.kohdeKoordinaatti)} //Toistetaan autojen aiemmat siirrot
-    vanhaAuto2.siirrot.foreach{siirto => uusi.siirraAutoaLaillisesti(auto2, siirto.kohdeKoordinaatti)} //uudella laudalla
-		**/
-    
+
     for (i <- 0 until vanhaAuto1.siirrot.size) {
       val siirto1 = vanhaAuto1.siirrot(i)
       auto1.vaihde = siirto1.vaihde //Pakotetaan vaihde sopivaksi
@@ -107,30 +99,6 @@ object Pelitilanne {
         uusi.siirraAutoaLaillisesti(auto2, vanhaAuto2.siirrot(i).kohdeKoordinaatti)
       }
     }
-    
-    println("Auto1: "+uusi.etsiAuto(auto1))
-    println("Auto2: "+uusi.etsiAuto(auto2))
-    
-    /*
-    for (i <- 0 until autot.size) {
-      if (vanhatAutot(i).edellinenSiirto.isDefined) {
-        val viimeinenSiirto = vanhatAutot(i).edellinenSiirto.get
-        val viimeinenSijainti = viimeinenSiirto.kohdeKoordinaatti
-        uusi.ruudut(viimeinenSijainti.y)(viimeinenSijainti.x).lisaaAuto(autot(i)) //Asetetaan oikeaan paikkaan.
-        autot(i).merkitseSiirto(viimeinenSiirto.lahtoKoordinaatti, viimeinenSijainti) //Merkitään siirto, josta voidaan laskea suunta.
-      } else {
-        val viimeinenSijainti = ai.pelitilanne.pelilauta.etsiAuto( vanhatAutot(i) )
-        val viimeinenSuunta = vanhatAutot(i).aloitusSuunta
-        uusi.ruudut(viimeinenSijainti.y)(viimeinenSijainti.x).lisaaAuto(autot(i)) //Asetetaan oikeaan paikkaan.
-        autot(i).merkitseSiirto(viimeinenSijainti-viimeinenSuunta.kohdeKoordinaatti, viimeinenSijainti)  //Merkitään siirto, josta voidaan laskea suunta.
-      }
-    }
-    autot.foreach { auto =>
-      println()
-      println("Edellinen siirto: "+auto.edellinenSiirto.get)
-      println("Nykyinen sijainti: "+uusi.etsiAuto(auto))
-    }*/
-    
     
     val profiili1 = if (ai.pelitilanne.pelaajat(0).onTekoaly) Some(new Profiili(Peli.ai.nimi)) else None //Luodaan uudet profiilit
     val profiili2 = if (!ai.pelitilanne.pelaajat(0).onTekoaly) Some(new Profiili(Peli.ai.nimi)) else None //toinen AI, toinen None

@@ -26,8 +26,6 @@ class Pelaaja(profiili_ : Option[Profiili], auto_ : Auto) {
     this.tekoaly = Some(ai)
   }
   
-  
-  
 }
 
 object Pelaaja {

@@ -7,7 +7,7 @@ import siirrot.Siirto
  * O1-kurssin tehtävän Chess luokka Piece
  */
 
-sealed class Maasto(maastonTunnus: Char, nimi_ : String) {
+sealed abstract class Maasto(maastonTunnus: Char, nimi_ : String) {
   
   override def toString = maastonTunnus.toString
   
@@ -37,11 +37,6 @@ object MaaliYlos extends Maali(Maasto.maaliYlos, "ylos")
 object MaaliAlas extends Maali(Maasto.maaliAlas, "alas")
 object MaaliOikea extends Maali(Maasto.maaliOikea, "oikealle")
 object MaaliVasen extends Maali(Maasto.maaliVasen, "vasemmalle")
-/*
-case object Maaliviiva extends Maasto('!')
-case object AloitusRuutu1 extends Maasto('1')
-case object AloitusRuutu2 extends Maasto('2')
-*/
 
 object Maasto {
   val tie = ' '
@@ -87,11 +82,11 @@ object Maasto {
       case this.maaliAlas => MaaliAlas
       case this.maaliOikea => MaaliOikea
       case this.maaliVasen => MaaliVasen
-      case this.jaa => Jaa //Tarkoitettujen teiden lisäksi, kaikki tunnistamattomat merkit tulkitaan tieksi.
+      case this.jaa => Jaa 
       case this.hiekka => Hiekka
       case this.syvaHiekka => SyvaHiekka
       case this.oljy => Oljy
-      case _ => Normaali
+      case _ => Normaali //Tarkoitettujen teiden lisäksi, kaikki tunnistamattomat merkit tulkitaan tieksi.
     }
   }
 }

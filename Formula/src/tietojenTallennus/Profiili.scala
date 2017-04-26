@@ -1,8 +1,10 @@
 package tietojenTallennus
 
+//Lähteet:
 //Tarkistus mapin toiminnasta: http://docs.scala-lang.org/overviews/collections/maps.html
 //regex mathcing: http://stackoverflow.com/questions/15119238/scala-regular-expressions-string-delimited-by-double-quotes
-// -||- : https://www.tutorialspoint.com/scala/scala_regular_expressions.htm
+// -||- : https://www.tutorialspoint.com/scala/scala_regular_expressions.html
+
 import scala.collection.mutable.Map
 import scala.collection.mutable.Buffer
 import peli.Peli
@@ -76,32 +78,6 @@ object Profiili {
         case _ => virheellisetRivit.append(rivi)
       }
     }
-    
-    /* VANHA IDEA TIEDOSTON LUKEMISEEN
-     * 
-     * 
-     * val maarittelyRivi = """#([a-z]*)""".r
-    	 val tietoRivi = """([a-zA-Z0-9]+) ([0-9]+)""".r
-    	 
-    	 val maarittelySanat = Map[String,Map[String,Int]]("voitot" -> Map[String,Int](),
-                                                      "pelit" -> Map[String,Int](),
-                                                      "ennätykset" -> Map[String,Int]() )
-       var luettavaTieto = ""
-     * 
-    for ( rivi <- tiedot filter (_.nonEmpty) ) { //Käydään läpi kaikki ei-tyhjät rivit.
-      rivi match {
-        case maarittelyRivi(tunniste) => {
-          if (maarittelySanat.keys.toVector contains tunniste) luettavaTieto = tunniste
-          else luettavaTieto = ""
-        }
-        case tietoRivi(radanNimi, luku) => {
-          if (luettavaTieto != "" && Peli.rataLista.map(_.nimi).contains(radanNimi) ) //radan pitää olla olemassa
-            maarittelySanat.getOrElse(luettavaTieto, Map[String,Int]()) += (radanNimi -> luku.toInt)
-        }
-        case _ => {}
-      }
-      
-    }*/
     
     val uusiProfiili = new Profiili(nimi)
     uusiProfiili.voitetutOttelut = voitot

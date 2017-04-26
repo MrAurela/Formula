@@ -3,6 +3,9 @@ package siirrot
 import Math._
 import scala.collection.mutable.Buffer
 
+//Lähteet:
+//Läpimentävien koordinaattien laskeminen pohjautui: https://fi.wikipedia.org/wiki/Bresenhamin_algoritmi
+
 class Siirto(lahto: Koordinaatti, kohde: Koordinaatti) {
   
   val lahtoKoordinaatti = lahto
@@ -19,12 +22,6 @@ class Siirto(lahto: Koordinaatti, kohde: Koordinaatti) {
                       else 2*PI - asin(abs( yLiike / liike ))
   val kulmaAsteina: Double = (this.kulma*360)/(2*Math.PI)
   
-  //KÄYTETÄÄNKÖ MIHINKÄÄN?
-  val kulmaKerroin: Option[Double] = {
-    if (xLiike != 0 ) Some( yLiike.toDouble / xLiike.toDouble )
-    else None
-  }
-  
   def muutaSuunnaksi = Suunta( Koordinaatti(this.xLiike, this.yLiike) ) // Siirtovektori siirrettynä alkamaan origosta.
   
   def samaSuunta(vaihde: Int): Suunta = {
@@ -34,7 +31,6 @@ class Siirto(lahto: Koordinaatti, kohde: Koordinaatti) {
                                                             //annettua kulmaa.
   }
   
-  //VOISI EHKÄ YKSINKERTAISTAA YHDISTÄMÄLLÄ EHTOJA
   def myotapaivaNaapuri: Siirto = {
     if (xLiike == yLiike) { // Vino liike (oikealle alas tai vasemmalle ylös)
       new Siirto( this.lahto, Koordinaatti(this.kohde.x-signum(yLiike).toInt, this.kohde.y) )

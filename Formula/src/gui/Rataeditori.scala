@@ -9,7 +9,7 @@ import scala.swing.event._
 import java.awt.Color
 import scala.swing.Dialog
 
-//SUURIMMILTA OSILTAAN RAKENNETTU RUUDUKKO-LUOKAN POHJALTA. LUOKISSA ON TOISTEISUUTTA.
+//Suurimmilta osiltaan rakennettu Ruudukko-luokan pohjalta, joten luokissa on toisteisuutta.
 
 class Rataeditori(rata: Rata, menu: MaastoMenu) extends Panel {
   

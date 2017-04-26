@@ -5,26 +5,22 @@ import java.lang.StackOverflowError
 import pelikomponentit.Auto
 import scala.collection.mutable.Buffer
 
+//Lähteet:
 // min-funktion Ordering: http://www.scala-lang.org/old/node/7529
 
 class AI(pelitilanne_ : Pelitilanne) {
   
   var pelitilanne = pelitilanne_
   
-  //TEKOÄLY VALITSEE AINA ENSIMMÄISEN SIIRTOVAIHTOEHDON? MIKSEI LÖYDÄ PAREMPAA
-  
   def siirto(): Koordinaatti = {
     var kuviteltuTilanne = Pelitilanne.kuvitteellinen(this)
     val itse = kuviteltuTilanne.vuorossa
     val sijainti = kuviteltuTilanne.pelilauta.etsiAuto(itse.auto)
     
-    println(sijainti)
-    
     def etsiParasSiirtoSarja(pelitilanne: Pelitilanne, siirrot: List[Siirto]): (List[Siirto], Int) = {
       try {
         if (siirrot.size <= 5 ) {
           val vuorossa = pelitilanne.vuorossa
-          //println(pelitilanne.kaikkiSallitutSiirrot(vuorossa.auto))
           
           var vaihtoehdot = Buffer[(List[Siirto],Int)]()
           
@@ -39,7 +35,6 @@ class AI(pelitilanne_ : Pelitilanne) {
             if (arvostelu != 0) vaihtoehdot.append( (siirrot ++ List(siirto), arvostelu) ) //Jos on, palautetaan siirrot ja arvo
             else {
               val v = etsiParasSiirtoSarja(pelitilanne, siirrot ++ List(siirto)) //Muutoin etsitään paras jatko ja palautetaan se
-              //println(v)
               vaihtoehdot.append( v )
             }
             
@@ -57,7 +52,6 @@ class AI(pelitilanne_ : Pelitilanne) {
         
       } catch {
         case e: StackOverflowError => {
-          println(e)
           (siirrot, 0) //Jos laskua ei jakseta laskea loppuun, reitin arvo on 0
         }
         case _: Throwable => (siirrot, 0) //Samoin jos jokin muu virhe sattuu.
@@ -74,7 +68,6 @@ class AI(pelitilanne_ : Pelitilanne) {
         if (mahdollinenVoittaja.get == itse) siirrot.size
         else -siirrot.size
       }
-      //else if (itse.auto.kierrokset <= -1) -1.0 //Tekoäly ei halua miinuskierroksille
       else 0
     }
     
@@ -100,27 +93,11 @@ class AI(pelitilanne_ : Pelitilanne) {
 
     val parasSiirtoSarja = etsiParasSiirtoSarja(kuviteltuTilanne, List[Siirto]())
     val siirto = parasSiirtoSarja._1(0)
-    println("Siirretään ruutuun: "+parasSiirtoSarja._1(0)+", laatu: "+parasSiirtoSarja._2)
     
     if (siirto.vaihde > pelitilanne.vuorossa.auto.vaihde) pelitilanne.vuorossa.auto.nostaVaihdetta() //Vaihdetaan siirrolle sopiva vaihde
     else if (siirto.vaihde < pelitilanne.vuorossa.auto.vaihde) pelitilanne.vuorossa.auto.laskeVaihdetta()
-    println("Siirto: "+siirto+", siirron vaihde: "+siirto.vaihde)
     siirto.kohdeKoordinaatti //Palautetaan kohderuutu
 
   }
-  /*
-  //Hakee eri vaihteilla kaikki ruudut, joista voi siirtyä maaliin.
-  def voittavatSiirrot = {
-    val lauta = pelitilanne.pelilauta
-    for (sarake <- 0 until lauta.leveys; rivi <- 0 until lauta.korkeus) {
-      val ruutu = lauta.ruudut(rivi)(sarake)
-      if (ruutu.voiAjaa) { //Jos ruutu on sallittu sijainti
-        val auto = new Auto
-        ruutu.lisaaAuto(auto)
-        
-      }
-    }
-  }*/
-  
   
 }

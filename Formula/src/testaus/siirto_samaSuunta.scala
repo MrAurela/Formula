@@ -10,7 +10,9 @@ import scala.util.Random
  */
 
 class siirto_samaSuunta{
-  /*
+  
+  
+  /* Aiempi testi
   val random = new Random()
   val siirrot = Array.tabulate(10)(_ => new Siirto(Koordinaatti(0,0),
                                                   Koordinaatti(random.nextInt(11)-5, random.nextInt(11)-5)))
@@ -19,6 +21,7 @@ class siirto_samaSuunta{
     println("Siirto: "+siirrot(i)+", vaihde "+vaihteet(i)+" => "+siirrot(i).samaSuunta(vaihteet(i)))
   }*/
   
+  //Uusi yksittäinen testi
   @Test def siirto = {
     val siirto = new Siirto(Koordinaatti(2,7), Koordinaatti(0,9))
     val siirtoVaihteella1 = siirto.samaSuunta(1)

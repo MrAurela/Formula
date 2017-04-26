@@ -3,10 +3,6 @@ package tietojenTallennus
 import pelikomponentit._
 import scala.collection.mutable.Buffer
 
-//RADAN NIMI EI VOI SISÄLTÄÄ ÄÄKKÖSIÄ, JOTTA SITÄ VOIDAAN KÄSITELLÄ TIEDOSTOJA LUETTAESSA
-
-
-
 class Rata(radanNimi: String, radanMuoto: Array[Array[Maasto]], ennatykset: Map[String, Int]) {
   override def toString = nimi + "\n" + radanMuoto.mkString("\n")
   

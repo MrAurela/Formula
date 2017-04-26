@@ -28,7 +28,6 @@ object Peli {
     this.pelitilanne = Some(tilanne)
     
     tilanne
-   
   }
   
   def uusiProfiili(profiili: Profiili) {
@@ -44,7 +43,6 @@ object Peli {
   }
   
   def haeTiedotUudestaan() = {
-    println("MOI")
     rataLista = TiedostonHallinta.haeRadat
     profiiliLista = TiedostonHallinta.haeProfiilit
   }

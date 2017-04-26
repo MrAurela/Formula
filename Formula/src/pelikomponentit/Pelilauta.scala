@@ -12,7 +12,7 @@ class Pelilauta(radanTiedot: Rata) {
   
   val rata = radanTiedot
   val nimi = rata.nimi
-  val maastot = rata.muoto
+  val maastot = rata.muoto.map(_.toVector).toVector
   
   val ruudut = maastot.map(_.map(new Ruutu(_))) //Vaihdetaan maastot vastaavaan ruutuun
   
@@ -22,17 +22,7 @@ class Pelilauta(radanTiedot: Rata) {
   def apply(koordinaatti: Koordinaatti) = {
     ruudut(koordinaatti.y)(koordinaatti.x)
   }
-  
-  /* Alkuperäinen autojen alustus tapahtui valitut ruudun perusteella. Vaihdettiin tehtävänannon mukaiseen satunnaisuuteen.
-  def alustaAutot(autot: Vector[Auto]) = {
-    for (pystySuorat <- ruudut; ruutu <- pystySuorat) {
-      if (ruutu.maasto == AloitusRuutu1) {
-        ruutu.lisaaAuto(autot(0))
-      } else if (ruutu.maasto == AloitusRuutu2) {
-        ruutu.lisaaAuto(autot(1))
-      }
-    }
-  }*/
+
   def alustaAutot(autot: Vector[Auto]) = {
     val vaihtoehdot = ruudut.flatten.filter(_.onMaali).toBuffer
     require(vaihtoehdot.size >= autot.size)
@@ -64,11 +54,6 @@ class Pelilauta(radanTiedot: Rata) {
         this.siirtoMaaliin( new Siirto(lahto, kohde) )
     )
   }
-  /*
-  def siirraAutoaSuuntaan(auto: Auto, suunta: Suunta): Boolean = {
-    val kohde = ( suunta.muutaSiirroksi(this.etsiAuto(auto)) ).kohdeKoordinaatti
-    siirraAutoa(auto, kohde)
-  }*/
   
   //Ottaa huomioon vaihteen ja suunnan
   def mahdollisetSuunnat(auto: Auto): Vector[Suunta] = {
@@ -145,12 +130,5 @@ class Pelilauta(radanTiedot: Rata) {
     }
     throw new Exception("Funktio etsiAuto, ei löytänyt autoa.")
   }
-  
-}
-
-
-object Pelilauta {
- 
-
   
 }

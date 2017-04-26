@@ -11,14 +11,9 @@ import pelikomponentit.Maasto
  * Tiedostojen kirjoittaminen: http://alvinalexander.com/scala/how-to-write-text-files-in-scala-printwriter-filewriter
  */
 
-
-//KYSYMYS: lueRadanRivit; voiko return-rivi olla ennne finallya? Käydäänkö finally kuitenkin?
-//Miksei try-catch toimi haeRadassa? --> NullPointerException
-
 object TiedostonHallinta {
   
   private val rataKansio = "radat"
-  private val ratojenEnnatyslistat = "radat/ennatykset"
   private val profiiliKansio = "profiilit"
   
   def haeRadat: Vector[Rata] = {
@@ -131,7 +126,7 @@ object TiedostonHallinta {
     this.paivitaRata(rata.nimi, rata.muotoTekstina, rata.ennatysKierrokset.toVector)
   }
   
-  def kirjoitaTiedostoon(tiedostonNimi: String, sisalto: String) = {
+  private def kirjoitaTiedostoon(tiedostonNimi: String, sisalto: String) = {
     try { //Yritetään avata tiedosto
       val tiedosto = new File(tiedostonNimi)
       val  kirjoittaja = new BufferedWriter( new FileWriter(tiedosto) )
